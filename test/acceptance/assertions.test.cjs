@@ -4,7 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const {
   expectedMissingPaths, childSummaryDiagnostics,
-  leakedCommentCompletions, diagnosticCode
+  leakedCommentCompletions, diagnosticCode, isFreshInvocationReport
 } = require('./assertions.cjs');
 
 const file = 'geometry.tgc';
@@ -77,4 +77,20 @@ test('inline comment fails for command completion even with no universal values'
   assert.deepEqual(leakedCommentCompletions([
     {label: 'Unrelated editor suggestion', kind: 0}
   ], commands, universal, keyword, fileKind), []);
+});
+
+
+test('a stale or incomplete Host report never qualifies for known-failure exemption', () => {
+  const report = {
+    environment: {invocationId: 'current-run'},
+    finishedAt: '2026-11-22T16:00:00Z',
+    checks: [{id: 'multiword-command-hover', status: 'fail'}],
+    summary: {pass: 0, fail: 1, blocked: 0, unverified: 0}
+  };
+  assert.equal(isFreshInvocationReport(report, 'current-run'), true);
+  assert.equal(isFreshInvocationReport(report, 'previous-run'), false);
+  assert.equal(isFreshInvocationReport({...report, environment: {}}, 'current-run'), false);
+  assert.equal(isFreshInvocationReport({...report, finishedAt: undefined}, 'current-run'), false);
+  assert.equal(isFreshInvocationReport({...report, checks: undefined}, 'current-run'), false);
+  assert.equal(isFreshInvocationReport(null, 'current-run'), false);
 });
