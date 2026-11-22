@@ -11,8 +11,8 @@ on:
 
 jobs:
   pinned-host-evidence:
-    name: Real VS Code host (\${{ matrix.os }})
-    runs-on: \${{ matrix.os }}
+    name: Real VS Code host (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 35
     strategy:
       fail-fast: false
@@ -50,11 +50,11 @@ jobs:
       - name: Run four isolated real Extension Host profiles
         shell: bash
         env:
-          NODE_PATH: \${{ github.workspace }}/validator/node_modules
-          TUFLOW_ACCEPT_ARTIFACTS: \${{ github.workspace }}/acceptance-host-reports
+          NODE_PATH: ${{ github.workspace }}/validator/node_modules
+          TUFLOW_ACCEPT_ARTIFACTS: ${{ github.workspace }}/acceptance-host-reports
           TUFLOW_HOST_HELPER_SHA: ec6ac6b774f119320d2f623b012f91c2d0215057
           TUFLOW_HOST_VALIDATOR_SHA: 4a0282e93b979345374076fb0adc60c7faf6af99
-          TUFLOW_HOST_ACCEPTANCE_SHA: \${{ github.event.pull_request.head.sha }}
+          TUFLOW_HOST_ACCEPTANCE_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           if [[ "$RUNNER_OS" == "Linux" ]]; then
             xvfb-run -a node acceptance/test/acceptance/run-host.cjs \
@@ -67,7 +67,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: tuflow-acceptance-\${{ matrix.os }}-pinned-baseline
+          name: tuflow-acceptance-${{ matrix.os }}-pinned-baseline
           path: acceptance-host-reports/*.json
           if-no-files-found: warn
           retention-days: 30
