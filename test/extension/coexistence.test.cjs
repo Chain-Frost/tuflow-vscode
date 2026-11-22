@@ -132,7 +132,7 @@ if (mode) {
         return Array.isArray(result) ? result : [];
       };
       // Validator's formatter is registered but disabled by default.
-      await settings.update('enableIfStatementFormatting', false, vscode.ConfigurationTarget.Global);
+      if (hasValidator) await settings.update('enableIfStatementFormatting', false, vscode.ConfigurationTarget.Global);
       try {
         const disabled = await format();
         assert.equal(disabled.length, 0, 'disabled formatter must make no edits');
@@ -148,7 +148,7 @@ if (mode) {
           evidence.observed.format = { disabledEdits: disabled.length, enabledEdits: enabled.length };
         }
       } finally {
-        await settings.update('enableIfStatementFormatting', false, vscode.ConfigurationTarget.Global);
+        if (hasValidator) await settings.update('enableIfStatementFormatting', false, vscode.ConfigurationTarget.Global);
       }
     });
 
