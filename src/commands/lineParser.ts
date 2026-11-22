@@ -42,7 +42,7 @@ function trimmedSegment(text: string, line: number, from: number, to: number): L
     return start < end ? segment(text, line, start, end) : null;
 }
 
-/** Parse the first unquoted "==" delimiter and first unquoted "!" comment. */
+/** Parse the first unquoted "==" delimiter and first unquoted "#" or "!" comment. */
 export function parseTuflowLine(text: string, lineNumber = 0): ParsedTuflowLine {
     if (!Number.isInteger(lineNumber) || lineNumber < 0) {
         throw new RangeError('lineNumber must be a non-negative integer');
@@ -64,7 +64,7 @@ export function parseTuflowLine(text: string, lineNumber = 0): ParsedTuflowLine 
         }
         if (current === '"' || current === "'") {
             quote = current;
-        } else if (current === '!') {
+        } else if (current === '!' || current === '#') {
             commentAt = index;
             break;
         } else if (current === '=' && text[index + 1] === '=' && delimiterAt === -1) {

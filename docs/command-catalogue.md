@@ -4,7 +4,7 @@ This is an **editor-only** metadata source, not a control-file validator. Filesy
 
 ## API
 
-- **parseTuflowLine(text, zeroBasedLineNumber?)**: pure single-line parser with nullable leftHand, delimiter, value, comment and kind fields. Source ranges are half-open UTF-16 line/character coordinates compatible with VS Code. Incomplete commands and non-assignment directives are not treated as errors.
+- **parseTuflowLine(text, zeroBasedLineNumber?)**: pure single-line parser with nullable leftHand, delimiter, value, comment and kind fields. Source ranges are half-open UTF-16 line/character coordinates compatible with VS Code. Both unquoted `#` and `!` initiate comments (including when commenting out an entire line), while quoted markers remain content; incomplete commands and non-assignment directives are not treated as errors. Comment semantics follow [TUFLOW 2026.3, Section 4.1.1, Table 4.2](https://docs.tuflow.com/classic-hpc/manual/2026.3/04-ControlFiles-and-Inputs.html#rules-and-notation).
 - **getCommandsForFile(fileNameOrExtension)**: registry entries for a recognized control-file extension; unknown contexts return an empty list.
 - **lookupCommandsForFile(fileNameOrExtension, completeLineOrParsedLine)**: all matching definitions for the *complete* left-hand phrase in that file context. Ignores case, extra whitespace and parentheses layout. Supports documented optional suffix groups in order. Unknowns produce no errors.
 - **getCommandsByName(name)**: returns all contextual matches, not a global arbitrary first match.
