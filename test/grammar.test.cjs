@@ -20,6 +20,15 @@ function jsRegex(onigurumaExpression, global = false) {
     return new RegExp(source, `${ignoreCase ? 'i' : ''}${global ? 'g' : ''}`);
 }
 
+// Language-configuration regexes use JavaScript RegExp syntax, not TextMate
+// Oniguruma syntax. Match VS Code's loader so invalid '(?i)' flags fail tests.
+function vscodeConfigRegex(value) {
+    if (typeof value === 'string') return new RegExp(value, '');
+    assert.equal(typeof value.pattern, 'string');
+    assert.equal(typeof value.flags, 'string');
+    return new RegExp(value.pattern, value.flags);
+}
+
 function matchRules(group) {
     return grammar.repository[group].patterns.filter(rule => typeof rule.match === 'string');
 }
@@ -174,8 +183,12 @@ test('fixtures: command headers, comments, paths, placeholders, numeric values',
 });
 
 test('indentation: only conditional blocks, not scenario/event declarations', () => {
-    const increase = jsRegex(config.indentationRules.increaseIndentPattern);
-    const decrease = jsRegex(config.indentationRules.decreaseIndentPattern);
+    const increase = vscodeConfigRegex(config.indentationRules.increaseIndentPattern);
+    const decrease = vscodeConfigRegex(config.indentationRules.decreaseIndentPattern);
+    assert.equal(config.indentationRules.increaseIndentPattern.flags, 'i');
+    assert.equal(config.indentationRules.decreaseIndentPattern.flags, 'i');
+    assert.ok(!config.indentationRules.increaseIndentPattern.pattern.includes('(?i)'));
+    assert.ok(!config.indentationRules.decreaseIndentPattern.pattern.includes('(?i)'));
     for (const line of ['If Scenario == Flood', 'IF Event == 01p', 'Else If Scenario == Standard', 'Else', 'if (condition == ON) then']) {
         assert.ok(increase.test(line), `must increase: ${line}`);
     }
@@ -187,7 +200,7 @@ test('indentation: only conditional blocks, not scenario/event declarations', ()
 });
 
 test('on-enter comment continuation only applies to comment-only lines', () => {
-    const rule = jsRegex(config.onEnterRules[0].beforeText);
+    const rule = vscodeConfigRegex(config.onEnterRules[0].beforeText);
     assert.ok(rule.test('  ! Example'));
     assert.ok(!rule.test('Cell Size == 10 ! inline comment'));
     assert.ok(!rule.test('Output == "file!name"'));

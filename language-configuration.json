@@ -57,8 +57,14 @@
     ]
   ],
   "indentationRules": {
-    "increaseIndentPattern": "(?i)^\\s*(?:(?:else\\s+)?if\\b|else\\b)(?![^!]*\\bend\\s+if\\b)[^!\\r\\n]*(?:!.*)?$",
-    "decreaseIndentPattern": "(?i)^\\s*(?:else(?:\\s+if)?|end\\s+if)\\b"
+    "increaseIndentPattern": {
+      "pattern": "^\\s*(?:(?:else\\s+)?if\\b|else\\b)(?![^!]*\\bend\\s+if\\b)[^!\\r\\n]*(?:!.*)?$",
+      "flags": "i"
+    },
+    "decreaseIndentPattern": {
+      "pattern": "^\\s*(?:else(?:\\s+if)?|end\\s+if)\\b",
+      "flags": "i"
+    }
   },
   "onEnterRules": [
     {
