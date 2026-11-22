@@ -7,7 +7,7 @@ require a TUFLOW executable or model installation for its test suite.
 
 - Node.js 22.x and npm 10 or later (VSIX tooling)
 - Network access for `npm ci`, the pinned CLI tools and the VS Code test download
-- VS Code is downloaded by the Extension Host test runner when required
+- VS Code 1.147.0 is downloaded by the Extension Host test runner when required
 - Headless Linux: `xvfb-run` for Extension Host tests
 
 ## From a fresh clone
