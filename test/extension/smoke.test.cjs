@@ -4,8 +4,11 @@ const os = require('node:os');
 const path = require('node:path');
 const vscode = require('vscode');
 
-const extensionId = 'lmillard79.tuflow-helper';
-const languageId = 'tuflow-helper';
+// Read contributions from the manifest so the coexistence workstream can
+// migrate the language ID and remove legacy commands without breaking this suite.
+const projectManifest = require('../../package.json');
+const extensionId = `${projectManifest.publisher}.${projectManifest.name}`;
+const languageId = projectManifest.contributes.languages[0].id;
 
 suite('TUFLOW Helper Extension Host smoke tests', () => {
   test('extension activates and contributes required resources', async () => {
@@ -38,8 +41,9 @@ suite('TUFLOW Helper Extension Host smoke tests', () => {
     }
     assert.ok(fs.existsSync(path.join(extension.extensionPath, 'doc')));
     const commands = await vscode.commands.getCommands(true);
-    assert.ok(commands.includes('tuflow-helper.openFileUnderCursor'));
-    assert.ok(commands.includes('tuflow-helper.openDocumentation'));
+    for (const { command } of manifest.contributes.commands || []) {
+      assert.ok(commands.includes(command), `command not registered: ${command}`);
+    }
   });
 
   test('TUFLOW file extensions resolve to the contributed language', async () => {
