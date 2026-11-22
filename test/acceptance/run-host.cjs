@@ -112,7 +112,7 @@ async function main() {
         reuseMachineInstall: true,
         extensionDevelopmentPath: driver,
         extensionTestsPath: runner,
-        launchArgs: [fixtures, path.join(fixtures, 'model.tcf'),
+        launchArgs: [fixtures,
           '--user-data-dir', user, '--extensions-dir', extensions,
           '--disable-gpu', '--no-sandbox'],
         extensionTestsEnv: {
