@@ -110,7 +110,8 @@
     "test:unit": "node scripts/run-unit-tests.cjs",
     "test:extension": "vscode-test",
     "package:vsix": "vsce package --no-dependencies --out tuflow-helper.vsix && node scripts/verify-vsix.cjs tuflow-helper.vsix",
-    "test:vsix": "vscode-test --config .vscode-test-installed.mjs"
+    "test:vsix": "vscode-test --config .vscode-test-installed.mjs",
+    "test:fail-closed": "node scripts/verify-failure-propagation.cjs"
   },
   "devDependencies": {
     "@types/vscode": "^1.74.0",

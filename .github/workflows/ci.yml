@@ -32,6 +32,8 @@ jobs:
         run: npm run compile
       - name: Lint
         run: npm run lint
+      - name: Verify build/test failure propagation
+        run: npm run test:fail-closed
       - name: Full test command (Linux)
         if: runner.os == 'Linux'
         run: xvfb-run -a npm test

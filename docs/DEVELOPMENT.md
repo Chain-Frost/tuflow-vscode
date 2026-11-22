@@ -63,6 +63,15 @@ VS Code testing and packaging tools are pinned as development dependencies
 in `package.json` and resolved from the committed `package-lock.json`.
 All local and CI commands use `npm ci` for reproducibility.
 
+### Failure-propagation verification
+
+`npm run test:fail-closed` temporarily adds a deliberately invalid TypeScript
+source and a deliberately failing Node unit test. It confirms that the normal
+`npm run compile` and `npm run test:unit` commands return failure and report
+the injected error. Temporary source, test and compiled files are removed in
+`finally` blocks. CI runs this verification on Linux and Windows before the
+normal full test suite; a failure in detection or cleanup fails the job.
+
 ## CI
 
 The pull-request and `master` workflows run locked installation, compilation,
