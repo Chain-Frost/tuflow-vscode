@@ -10,6 +10,27 @@ on:
   workflow_dispatch:
 
 jobs:
+  integration-merge-audit:
+    name: Disposable feature-stack merge audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Attempt integration without pushing or merging main
+        shell: bash
+        env:
+          TUFLOW_ACCEPT_ARTIFACTS: acceptance-integration-reports
+        run: bash test/acceptance/merge-audit.sh
+      - name: Upload blocked/merged branch evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tuflow-acceptance-feature-stack-merge-audit
+          path: acceptance-integration-reports/*.md
+          if-no-files-found: warn
+          retention-days: 30
+
   pinned-host-evidence:
     name: Real VS Code host (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
