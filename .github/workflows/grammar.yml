@@ -13,6 +13,10 @@ on:
       - 'src/**'
       - 'package.json'
       - 'package-lock.json'
+      - 'test/extension/coexistence.test.cjs'
+      - '.vscode-test-installed.mjs'
+      - '.vscode-test-coexistence.mjs'
+      - '.vscode-test-validator-only.mjs'
   push:
     branches: [master]
     paths:
@@ -26,6 +30,10 @@ on:
       - 'src/**'
       - 'package.json'
       - 'package-lock.json'
+      - 'test/extension/coexistence.test.cjs'
+      - '.vscode-test-installed.mjs'
+      - '.vscode-test-coexistence.mjs'
+      - '.vscode-test-validator-only.mjs'
 
 jobs:
   grammar:
@@ -121,3 +129,84 @@ jobs:
           path: tuflow-helper.vsix
           retention-days: 14
           if-no-files-found: error
+
+  installed-coexistence:
+    name: Installed Helper / Validator coexistence (${{ matrix.os }})
+    needs: qa-vsix
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    env:
+      GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      VALIDATOR_SOURCE_SHA: 4a0282e93b979345374076fb0adc60c7faf6af99
+    steps:
+      - name: Checkout PR integration test suite
+        uses: actions/checkout@v4
+      - name: Checkout exact, corrected Validator source
+        uses: actions/checkout@v4
+        with:
+          repository: Chain-Frost/tuflow_validator
+          ref: 4a0282e93b979345374076fb0adc60c7faf6af99
+          path: _validator
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Retrieve exact-head packaged Helper VSIX
+        uses: actions/download-artifact@v4
+        with:
+          name: tuflow-helper-pr17-qa-vsix
+          path: .
+      - name: Install locked test and Validator toolchains
+        run: |
+          npm ci
+          npm ci --prefix _validator
+      - name: Verify Validator source identity
+        shell: bash
+        run: |
+          test "$(git -C _validator rev-parse HEAD)" = "$VALIDATOR_SOURCE_SHA"
+          echo "Validator source: $VALIDATOR_SOURCE_SHA" >> "$GITHUB_STEP_SUMMARY"
+      - name: Package Validator source as separate QA VSIX (not published)
+        working-directory: _validator
+        run: |
+          npm run compile
+          npx vsce package --no-dependencies --out ../tuflow-path-validator.vsix
+      - name: Record installed VSIX hashes and source versions
+        shell: node {0}
+        run: |
+          const fs = require('node:fs');
+          const crypto = require('node:crypto');
+          for (const name of ['tuflow-helper.vsix', 'tuflow-path-validator.vsix']) {
+            const sha = crypto.createHash('sha256').update(fs.readFileSync(name)).digest('hex');
+            console.log(name + ': ' + sha);
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, name + ': ' + sha + '\n');
+          }
+      - name: Test Helper-only installed VSIX on Linux
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run test:vsix
+      - name: Test Helper-only installed VSIX on Windows
+        if: runner.os == 'Windows'
+        run: npm run test:vsix
+      - name: Test Validator-only installed VSIX on Linux
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npx --no-install vscode-test --config .vscode-test-validator-only.mjs
+      - name: Test Validator-only installed VSIX on Windows
+        if: runner.os == 'Windows'
+        run: npx --no-install vscode-test --config .vscode-test-validator-only.mjs
+      - name: Test Helper plus Validator installed VSIX on Linux
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npx --no-install vscode-test --config .vscode-test-coexistence.mjs
+      - name: Test Helper plus Validator installed VSIX on Windows
+        if: runner.os == 'Windows'
+        run: npx --no-install vscode-test --config .vscode-test-coexistence.mjs
+      - name: Retain isolated host acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue7-installed-coexistence-${{ matrix.os }}
+          path: coexist-evidence/*.json
+          retention-days: 30
+          if-no-files-found: warn
