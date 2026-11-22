@@ -41,6 +41,7 @@ test('audited commands have official references without guessed fragments', () =
     assert.equal(getAuditedCommandDocumentationUrl('.tcf', 'Geometry Control File'), getDocumentationUrlForExtension('.tcf'));
     assert.equal(getAuditedCommandDocumentationUrl('.tgc', '  read   GIS  z  shape  '), getDocumentationUrlForExtension('.tgc'));
     assert.equal(getAuditedCommandDocumentationUrl('.tef', 'End Define'), getDocumentationUrlForExtension('.tef'));
+    assert.equal(getAuditedCommandDocumentationUrl('.tef', 'End Time'), getDocumentationUrlForExtension('.tcf'));
     assert.equal(getAuditedCommandDocumentationUrl('.tgc', 'Unverified Command'), undefined);
     assert.equal(getAuditedCommandDocumentationUrl('.tcf', 'Cell Size'), undefined);
     assert.equal(getAuditedCommandDocumentationUrl('.ecf', 'Geometry Control File'), undefined);
@@ -49,6 +50,7 @@ test('audited commands have official references without guessed fragments', () =
 test('help action resolves a command with whitespace and comments', () => {
     assert.equal(getDocumentationUrlForLine('.tgc', ' Read GIS Z Shape == input.shp ! comment'), getDocumentationUrlForExtension('.tgc'));
     assert.equal(getDocumentationUrlForLine('.tef', '  End Define  '), getDocumentationUrlForExtension('.tef'));
+    assert.equal(getDocumentationUrlForLine('.tef', '  End Time == 12  '), getDocumentationUrlForExtension('.tcf'));
     assert.equal(getDocumentationUrlForLine('.qcf', '  Base Cell Size == 20  # comment'), getDocumentationUrlForExtension('.qcf'));
     assert.equal(getDocumentationUrlForLine('.tcf', '! End Time == 20'), getDocumentationUrlForExtension('.tcf'));
 });

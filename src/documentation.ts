@@ -56,11 +56,21 @@ export function getDocumentationUrlForExtension(extension: string): string {
  */
 export function getAuditedCommandDocumentationUrl(extension: string, commandName: string): string | undefined {
     const normalizedExtension = normalizeExtension(extension);
-    const names = auditedCommands[normalizedExtension];
-    if (!names || !names.some(name => normalizeCommand(name) === normalizeCommand(commandName))) {
-        return undefined;
+    const hasAuditedCommand = (category: string): boolean =>
+        (auditedCommands[category] || []).some(name => normalizeCommand(name) === normalizeCommand(commandName));
+    if (hasAuditedCommand(normalizedExtension)) {
+        return getDocumentationUrlForExtension(normalizedExtension);
     }
-    return getDocumentationUrlForExtension(normalizedExtension);
+    // TEF event blocks also accept TCF and ECF commands; use their defining
+    // appendix for an audited inherited command, not Appendix K.
+    if (normalizedExtension === '.tef') {
+        for (const category of ['.tcf', '.ecf']) {
+            if (hasAuditedCommand(category)) {
+                return getDocumentationUrlForExtension(category);
+            }
+        }
+    }
+    return undefined;
 }
 
 /**
