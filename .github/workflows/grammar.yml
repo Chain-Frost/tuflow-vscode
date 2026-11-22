@@ -184,18 +184,24 @@ jobs:
             console.log(name + ': ' + sha);
             fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, name + ': ' + sha + '\n');
           }
+      - name: Reset disposable test profile before Helper-only run
+        run: node scripts/reset-vscode-test-profile.cjs
       - name: Test Helper-only installed VSIX on Linux
         if: runner.os == 'Linux'
         run: xvfb-run -a npm run test:vsix
       - name: Test Helper-only installed VSIX on Windows
         if: runner.os == 'Windows'
         run: npm run test:vsix
+      - name: Reset disposable test profile before Validator-only run
+        run: node scripts/reset-vscode-test-profile.cjs
       - name: Test Validator-only installed VSIX on Linux
         if: runner.os == 'Linux'
         run: xvfb-run -a npx --no-install vscode-test --config .vscode-test-validator-only.mjs
       - name: Test Validator-only installed VSIX on Windows
         if: runner.os == 'Windows'
         run: npx --no-install vscode-test --config .vscode-test-validator-only.mjs
+      - name: Reset disposable test profile before combined run
+        run: node scripts/reset-vscode-test-profile.cjs
       - name: Test Helper plus Validator installed VSIX on Linux
         if: runner.os == 'Linux'
         run: xvfb-run -a npx --no-install vscode-test --config .vscode-test-coexistence.mjs

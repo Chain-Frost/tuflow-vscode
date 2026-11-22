@@ -5,11 +5,6 @@ export default {
   files: 'test/extension/**/*.test.cjs',
   extensionDevelopmentPath: 'test/fixtures/host',
   installExtensions: [resolve('tuflow-helper.vsix'), resolve('tuflow-path-validator.vsix')],
-  // Separate profiles prevent previously installed test extensions leaking.
-  launchArgs: [
-    '--user-data-dir=' + resolve('.vscode-test/coexist/combined/user'),
-    '--extensions-dir=' + resolve('.vscode-test/coexist/combined/extensions')
-  ],
   env: {
     TUFLOW_TEST_INSTALLED: '1',
     TUFLOW_TEST_COEXIST_MODE: 'combined',
