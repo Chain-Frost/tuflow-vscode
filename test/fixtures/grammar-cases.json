@@ -472,5 +472,19 @@
         "<<scenario>>"
       ]
     ]
+  },
+  {
+    "name": "incomplete command without left-hand text",
+    "line": "== -1",
+    "expected": [
+      [
+        "keyword.operator.assignment.tuflow",
+        "=="
+      ],
+      [
+        "constant.numeric.tuflow",
+        "-1"
+      ]
+    ]
   }
 ]

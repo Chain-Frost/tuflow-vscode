@@ -52,7 +52,7 @@
       "patterns": [
         {
           "name": "meta.command.header.tuflow",
-          "begin": "^(?=\\s*[^!\\r\\n]+?\\s*==)",
+          "begin": "^(?=\\s*[^!=\\r\\n]+?\\s*==)",
           "end": "(?=\\s*==)|$",
           "patterns": [
             {
