@@ -107,7 +107,7 @@
     "lint": "eslint \"src/**/*.ts\"",
     "pretest": "npm run compile && npm run lint",
     "test": "npm run test:unit && npm run test:extension",
-    "test:unit": "node --test test/unit/commands.test.cjs",
+    "test:unit": "node scripts/run-unit-tests.cjs",
     "test:extension": "vscode-test",
     "package:vsix": "vsce package --no-dependencies --out tuflow-helper.vsix && node scripts/verify-vsix.cjs tuflow-helper.vsix",
     "test:vsix": "vscode-test --config .vscode-test-installed.mjs"

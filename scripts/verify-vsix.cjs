@@ -72,16 +72,21 @@ for (const resource of [
   'extension/out/commands/index.js'
 ]) readEntry(resource);
 
-// These captured references are still used by the documentation command.
-// Retain them until the documentation workstream deliberately replaces them.
-for (const section of ['A TCF', 'B ECF', 'C TGC', 'D TBC', 'F TRFC', 'H QCF']) {
-  assert.ok([...entries.keys()].some(name => name.startsWith(`extension/doc/Appendix ${section} Commands`)),
-    `bundled documentation missing: ${section}`);
+// The current implementation opens bundled HTML snapshots. Future documentation
+// implementations may use official online links instead. Enforce the snapshot
+// presence whenever the packaged runtime still references those paths.
+const runtime = readEntry(packagedPath(manifest.main)).toString('utf8');
+if (runtime.includes('doc/Appendix ')) {
+  for (const section of ['A TCF', 'B ECF', 'C TGC', 'D TBC', 'F TRFC', 'H QCF']) {
+    assert.ok([...entries.keys()].some(name => name.startsWith(`extension/doc/Appendix ${section} Commands`)),
+      `bundled documentation missing: ${section}`);
+  }
 }
 
 for (const name of entries.keys()) {
   assert.ok(!/^extension\/(src|test|scripts|docs|node_modules|\.github|\.vscode-test)\//.test(name),
     `unwanted file in VSIX: ${name}`);
+  assert.ok(!/^extension\/out\/test\//.test(name), `compiled test in VSIX: ${name}`);
   assert.ok(!/\.js\.map$/.test(name), `source map in VSIX: ${name}`);
   assert.ok(!/^extension\/(package-lock\.json|tsconfig\.json|test\.tcf|myDummymodel\.tcf|indentation-test\.tcf)$/.test(name),
     `development asset in VSIX: ${name}`);

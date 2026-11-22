@@ -39,7 +39,11 @@ suite('TUFLOW Helper Extension Host smoke tests', () => {
     for (const resource of resources) {
       assert.ok(fs.existsSync(path.resolve(extension.extensionPath, resource)), `missing contribution: ${resource}`);
     }
-    assert.ok(fs.existsSync(path.join(extension.extensionPath, 'doc')));
+    // Only require captured HTML when the installed runtime still uses it.
+    const runtime = fs.readFileSync(path.join(extension.extensionPath, manifest.main), 'utf8');
+    if (runtime.includes('doc/Appendix ')) {
+      assert.ok(fs.existsSync(path.join(extension.extensionPath, 'doc')));
+    }
     const commands = await vscode.commands.getCommands(true);
     for (const { command } of manifest.contributes.commands || []) {
       assert.ok(commands.includes(command), `command not registered: ${command}`);

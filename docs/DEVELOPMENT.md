@@ -28,7 +28,10 @@ xvfb-run -a npm test
 ```
 
 To run suites independently, use `npm run test:unit` or
-`npm run test:extension`. The Extension Host tests cover activation, command
+`npm run test:extension`. The unit runner discovers Node pure-logic tests in
+`test/` (except `test/extension/` and fixtures) and compiled `out/test/`.
+This includes tests added by parallel feature workstreams without listing files
+in the package scripts. The Extension Host tests cover activation, command
 registration, language associations, completion and contributed resources.
 The tests do not invoke TUFLOW.
 
@@ -43,9 +46,10 @@ reports the VSIX size. A separate `npm run test:vsix` installs that VSIX into
 the VS Code test profile and repeats the Extension Host tests against the
 installed package rather than the development checkout.
 
-The captured documentation under `doc/` is deliberately retained because the
-existing documentation command references these paths. Its removal must be
-coordinated with the separate documentation workstream.
+The captured documentation under `doc/` is retained while the extension still
+references those paths. The VSIX checker requires those assets if it detects
+such references in the packaged runtime. Removing them requires the separate
+documentation workstream to replace the runtime references first.
 
 To manually verify the installed package:
 

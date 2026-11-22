@@ -27,8 +27,13 @@ test('registry includes every command family', () => {
 });
 
 test('case-insensitive name lookup and missing lookup', () => {
-  assert.equal(getCommandsByName('cElL sIzE')?.name, 'Cell Size');
-  assert.equal(getCommandsByName('not a valid command'), undefined);
+  // The typed registry returns all contextual definitions; the legacy registry
+  // returned one. This baseline asserts the shared user-facing contract.
+  const found = getCommandsByName('cElL sIzE');
+  const matches = Array.isArray(found) ? found : found ? [found] : [];
+  assert.ok(matches.some(command => command.name === 'Cell Size'));
+  const absent = getCommandsByName('not a valid command');
+  assert.ok(absent === undefined || (Array.isArray(absent) && absent.length === 0));
 });
 
 test('category and file extension registries agree', () => {
@@ -41,8 +46,11 @@ test('category and file extension registries agree', () => {
     ['.qcf', 'QCF', qcfCommands]
   ];
   for (const [extension, category, commands] of cases) {
-    assert.equal(fileTypeCommands[extension], commands);
-    assert.deepEqual(getCommandsByCategory(category), commands);
+    // A typed registry can wrap legacy records with verified metadata.
+    // Check catalogue contents instead of JS reference identity.
+    const expectedNames = commands.map(command => command.name);
+    assert.deepEqual(fileTypeCommands[extension].map(command => command.name), expectedNames);
+    assert.deepEqual(getCommandsByCategory(category).map(command => command.name), expectedNames);
     assert.ok(commands.every(command => command.name && command.description));
   }
 });
