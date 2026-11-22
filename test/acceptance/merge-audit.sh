@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-set -uo pipefail
+set -euo pipefail
 
 # Disposable attempt to compose feature PR heads without pushing changes.
-reports="$TUFLOW_ACCEPT_ARTIFACTS"
-if [[ -z "$reports" ]]; then reports="acceptance-integration-reports"; fi
+reports="${TUFLOW_ACCEPT_ARTIFACTS:-acceptance-integration-reports}"
 mkdir -p "$reports"
 report="$reports/integration-merge-audit.md"
 git config user.name "Issue 9 Acceptance CI"
