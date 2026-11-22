@@ -1,6 +1,6 @@
 /**
- * Central editor command registry. Existing records are retained until the
- * separate official-documentation audits are completed by Agents D/E.
+ * Central editor command registry. TCF/TGC entries are audited; the other four categories retain legacy
+ * source data pending Agent E's official-documentation audit.
  */
 import { tcfCommands } from './tcfCommands';
 import { tgcCommands } from './tgcCommands';
@@ -37,14 +37,6 @@ interface VerifiedMetadata {
 
 /** Individually verified fields only. Legacy descriptions/examples remain unaudited. */
 const verified: Readonly<Record<string, VerifiedMetadata>> = {
-    'TGC:read gis z shape': {
-        valueKind: 'file-path',
-        suffixGroups: [
-            { optional: true, alternatives: ['RIDGE', 'MAX', 'RAISE', 'GULLY', 'MIN', 'LOWER'] },
-            { optional: true, alternatives: ['XF ON', 'XF OFF', 'Write TIN'] }
-        ],
-        verifiedFields: ['valueKind', 'suffixGroups']
-    },
     'ECF:apply all inverts': {
         valueKind: 'keyword', allowedValues: ['ON', 'OFF'],
         safeExamples: ['Apply All Inverts == ON'],
@@ -104,8 +96,8 @@ function importLegacy(category: ControlFileCategory, commands: readonly TuflowCo
 }
 
 const registry = createCommandRegistry([
-    ...importLegacy('TCF', tcfCommands),
-    ...importLegacy('TGC', tgcCommands),
+    ...tcfCommands,
+    ...tgcCommands,
     ...importLegacy('TBC', tbcCommands),
     ...importLegacy('ECF', ecfCommands),
     ...importLegacy('TRFC', trfcCommands),
