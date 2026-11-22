@@ -21,7 +21,7 @@ TUFLOW Helper focuses on control-file syntax highlighting and command-editing as
 - **[TUFLOW Path Validator](https://marketplace.visualstudio.com/items?itemName=Chain-Frost.tuflow-path-validator)** — checks TUFLOW control-file references and reports missing files and other supported issues through VS Code diagnostics. See its [source and documentation](https://github.com/Chain-Frost/tuflow_validator).
 - **[Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens)** — optionally displays VS Code diagnostics directly beside the relevant lines, including those produced by TUFLOW Path Validator. It displays diagnostics; it does not perform TUFLOW validation itself.
 
-These extensions are independent installations. TUFLOW Path Validator owns file-reference diagnostics, seito-openfile owns file opening, and TUFLOW Helper owns editor assistance. Compatibility of the two TUFLOW extensions' language registrations is being reviewed; refer to [the integration tracking issue](https://github.com/Chain-Frost/tuflow-vscode/issues/1).
+These extensions are independent installations. TUFLOW Path Validator owns file-reference diagnostics, seito-openfile owns file opening, and TUFLOW Helper owns editor assistance. Both TUFLOW extensions use the VS Code language ID `tuflow`; see the [co-installation guide](docs/coexistence.md) for migration and smoke tests.
 
 ## Supported File Types
 
