@@ -46,7 +46,14 @@ async function run() {
             document.uri, new vscode.Position(0, line.length)
         );
         assert.ok(items && Array.isArray(items.items), 'Completion API must return a list');
-        return items.items.map(label);
+        // The VS Code editor also contributes word and snippet completions.
+        // Only the extension's Keyword/File/Value provider categories are relevant.
+        const kinds = new Set([
+            vscode.CompletionItemKind.Keyword,
+            vscode.CompletionItemKind.File,
+            vscode.CompletionItemKind.Value
+        ]);
+        return items.items.filter(item => kinds.has(item.kind)).map(label);
     }
 
     async function hovers(ext, line, character) {
@@ -106,7 +113,16 @@ async function run() {
         console.log('PASS: VS Code TCF/TGC completions, modifier value types, ' +
             'hover syntax, contexts and comments');
     } finally {
-        fs.rmSync(folder, { recursive: true, force: true });
+        await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+        try {
+            fs.rmSync(folder, {
+                recursive: true, force: true, maxRetries: 15, retryDelay: 250
+            });
+        } catch (error) {
+            // Windows file watchers can temporarily hold VS Code test documents
+            // open; never mask a real test assertion with cleanup failure.
+            console.warn('Temporary fixture cleanup deferred:', error.message);
+        }
     }
 }
 
