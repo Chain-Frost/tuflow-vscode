@@ -44,6 +44,63 @@ test('blank, comments, incomplete and unknown entries never claim errors', () =>
     assert.equal(lookupCommandsForFile('.tcf', '! Set Mat == 1').length, 0);
 });
 
+test('both documented comment delimiters ignore whole-line and trailing directives', () => {
+    for (const marker of ['#', '!']) {
+        const wholeLine = '  ' + marker + ' Read GIS Z Shape == absent.gpkg';
+        const commented = parseTuflowLine(wholeLine, 4);
+        assert.equal(commented.kind, 'comment');
+        assert.equal(commented.leftHand, null);
+        assert.equal(commented.delimiter, null);
+        assert.equal(commented.value, null);
+        assert.equal(commented.comment?.text, marker + ' Read GIS Z Shape == absent.gpkg');
+        assert.deepEqual(commented.comment?.range, {
+            start: { line: 4, character: 2 },
+            end: { line: 4, character: wholeLine.length }
+        });
+        assert.equal(lookupCommandsForFile('model.tgc', wholeLine).length, 0);
+
+        const trailing = 'Start Time == 0  ' + marker + ' end of command';
+        const parsed = parseTuflowLine(trailing, 9);
+        assert.equal(parsed.kind, 'assignment');
+        assert.equal(parsed.leftHand?.text, 'Start Time');
+        assert.equal(parsed.value?.text, '0');
+        assert.equal(parsed.comment?.text, marker + ' end of command');
+        assert.deepEqual(parsed.comment?.range, {
+            start: { line: 9, character: trailing.indexOf(marker) },
+            end: { line: 9, character: trailing.length }
+        });
+
+        const emptyValue = parseTuflowLine('Start Time ==  ' + marker + ' pending');
+        assert.equal(emptyValue.value, null);
+        assert.equal(emptyValue.comment?.text, marker + ' pending');
+    }
+});
+
+test('quoted comment markers remain in values and earliest unquoted marker wins', () => {
+    for (const marker of ['#', '!']) {
+        const other = marker === '#' ? '!' : '#';
+        const line = 'Read GIS Z Shape == "model/' + marker + other + '.gpkg" ' +
+            marker + ' first ' + other + ' second';
+        const parsed = parseTuflowLine(line, 3);
+        assert.equal(parsed.value?.text, '"model/' + marker + other + '.gpkg"');
+        assert.equal(parsed.comment?.text, marker + ' first ' + other + ' second');
+        assert.equal(parsed.comment?.range.start.character, line.indexOf(marker + ' first'));
+        assert.equal(parsed.comment?.range.end.character, line.length);
+
+        const quotedSingle = "Read GIS Z Shape == 'a" + marker + "b.gpkg' " + other + ' ignored';
+        const single = parseTuflowLine(quotedSingle);
+        assert.equal(single.value?.text, "'a" + marker + "b.gpkg'");
+        assert.equal(single.comment?.text, other + ' ignored');
+    }
+    const doubledQuotes = parseTuflowLine('Command == "a""#b" # trailing');
+    assert.equal(doubledQuotes.value?.text, '"a""#b"');
+    assert.equal(doubledQuotes.comment?.text, '# trailing');
+    const commentBeforeDelimiter = parseTuflowLine('Start Time # disabled == 0');
+    assert.equal(commentBeforeDelimiter.delimiter, null);
+    assert.equal(commentBeforeDelimiter.leftHand?.text, 'Start Time');
+    assert.equal(commentBeforeDelimiter.comment?.text, '# disabled == 0');
+});
+
 test('complete multiword lookup is case-insensitive and whitespace tolerant', () => {
     const matches = lookupCommandsForFile('folder\\MODEL.TGC', ' \t read   GIS   Z   sHaPe == gis/terrain.shp');
     assert.equal(matches.length, 1);
