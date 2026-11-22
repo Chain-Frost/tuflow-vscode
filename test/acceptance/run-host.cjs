@@ -8,6 +8,7 @@ const os = require('node:os');
 const path = require('node:path');
 const cp = require('node:child_process');
 const crypto = require('node:crypto');
+const {isFreshInvocationReport} = require('./assertions.cjs');
 const {
   downloadAndUnzipVSCode, resolveCliArgsFromVSCodeExecutablePath, runTests
 } = require('@vscode/test-electron');
@@ -63,6 +64,11 @@ async function main() {
   if (![helper, validator, runner, path.join(fixtures, 'model.tcf')]
     .every(file => fs.existsSync(file))) throw new Error('Missing test input');
   fs.mkdirSync(outputDir, {recursive: true});
+  // A rerun must not upload or classify evidence from an earlier invocation.
+  fs.rmSync(path.join(outputDir, 'summary.json'), {force: true});
+  for (const profile of profiles) {
+    fs.rmSync(path.join(outputDir, 'host-' + profile.name + '.json'), {force: true});
+  }
   const installDir = path.join(outputDir, 'installed-profiles');
   const driver = path.join(outputDir, 'test-driver');
   fs.mkdirSync(driver, {recursive: true});
@@ -102,6 +108,8 @@ async function main() {
       'tuflowValidator.enableIfStatementFormatting': false
     }));
     const reportFile = path.join(outputDir, 'host-' + profile.name + '.json');
+    fs.rmSync(reportFile, {force: true});
+    const invocationId = crypto.randomUUID();
     let runError = null;
     try {
       for (const target of profile.extensions) {
@@ -120,6 +128,7 @@ async function main() {
           TUFLOW_ACCEPT_PHASE: 'pinned-preintegration-linux-windows',
           TUFLOW_ACCEPT_REVISION: process.env.TUFLOW_HOST_HELPER_SHA || 'unrecorded',
           TUFLOW_ACCEPT_OUTPUT: reportFile,
+          TUFLOW_ACCEPT_INVOCATION: invocationId,
           TUFLOW_ACCEPT_REPEATS: '5',
           TUFLOW_ACCEPT_LINES: '1000',
           TUFLOW_ACCEPT_SETTLE_MS: '1500'
@@ -129,8 +138,10 @@ async function main() {
       runError = String(error);
       console.log('[host ' + profile.name + '] ' + runError);
     }
-    const report = fs.existsSync(reportFile) ?
+    const parsedReport = fs.existsSync(reportFile) ?
       JSON.parse(fs.readFileSync(reportFile, 'utf8')) : null;
+    const fresh = isFreshInvocationReport(parsedReport, invocationId);
+    const report = fresh ? parsedReport : null;
     const failures = (report?.checks || [])
       .filter(item => item.status === 'fail').map(item => item.id);
     const known = failures.filter(id => knownBaselineFailures.has(id));
@@ -138,6 +149,7 @@ async function main() {
     if (!report || unexpected.length || (runError && !failures.length)) unexpectedFailures++;
     const result = {
       profile: profile.name, reportRecorded: Boolean(report),
+      reportFresh: fresh, invocationId,
       hostVscodeVersion: report?.environment?.vscodeVersion || null,
       installed: report?.extensions || null,
       failedChecks: failures, knownBaselineFailures: known,
