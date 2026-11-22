@@ -53,10 +53,9 @@ To manually verify the installed package:
 4. Type `Cell` in a `.tcf`; confirm a **Cell Size** completion is offered.
 5. Inspect the extension's commands and verify **Open Documentation** is available.
 
-The CLI tools are pinned by exact version in `package.json` scripts. They are
-obtained transiently by `npm exec --package` so the existing package lock
-does not need a large, unrelated dev-dependency upgrade. The core TypeScript
-toolchain remains locked by `package-lock.json`.
+VS Code testing and packaging tools are pinned as development dependencies
+in `package.json` and resolved from the committed `package-lock.json`.
+All local and CI commands use `npm ci` for reproducibility.
 
 ## CI
 

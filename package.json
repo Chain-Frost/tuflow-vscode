@@ -108,8 +108,8 @@
     "pretest": "npm run compile && npm run lint",
     "test": "npm run test:unit && npm run test:extension",
     "test:unit": "node --test test/unit/commands.test.cjs",
-    "test:extension": "npm exec --yes --package=@vscode/test-cli@0.0.15 -- vscode-test",
-    "package:vsix": "npm run compile && npm exec --yes --package=@vscode/vsce@3.7.1 -- vsce package --no-dependencies --out tuflow-helper.vsix && node scripts/verify-vsix.cjs tuflow-helper.vsix"
+    "test:extension": "vscode-test",
+    "package:vsix": "npm run compile && vsce package --no-dependencies --out tuflow-helper.vsix && node scripts/verify-vsix.cjs tuflow-helper.vsix"
   },
   "devDependencies": {
     "@types/vscode": "^1.74.0",
@@ -117,7 +117,10 @@
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
     "eslint": "^8.28.0",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.4",
+    "@vscode/test-cli": "0.0.15",
+    "@vscode/test-electron": "3.1.0",
+    "@vscode/vsce": "3.7.1"
   },
   "__metadata": {
     "id": "0805575c-1827-403e-9b99-d2f77f2c84a9",
