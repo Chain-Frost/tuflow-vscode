@@ -235,7 +235,7 @@
     {
       "id": "trd-existing",
       "file": "include/nested.trd",
-      "line": "Read File == leaf.trd",
+      "line": "Read File == include/leaf.trd",
       "kind": "existing-relative",
       "owner": "validator",
       "reference": "include/leaf.trd"
