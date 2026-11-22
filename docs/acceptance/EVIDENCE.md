@@ -118,3 +118,25 @@ No remote branch or default branch was modified.
 This is a **merge-composition diagnostic**, not approval of partially
 integrated code. Findings have been linked to the owning PRs; a complete
 #1–#8 candidate has **not** been compiled or end-to-end tested.
+
+
+## Corrected first-open measurement verification
+
+The independent Codex follow-up review found that the performance comparison
+omitted the runner's `rootFirstOpen` measurement. The comparator now outputs
+`root first open/show` and `root subsequent open/show` separately, with a
+unit test where first-open latency doubles but warm reopen remains unchanged.
+
+The CI host driver no longer preopens `model.tcf`. In the [corrected Linux and
+Windows Extension Host run 45042111135](https://github.com/Chain-Frost/tuflow-vscode/actions/runs/45042111135),
+the first-root-open metadata reports
+`alreadyOpenBeforeMeasurement: false` in **all eight profile results**.
+Every profile again completed with no unexpected acceptance-harness failures;
+the four documented Helper #12 failures persist as recorded failures, while
+Validator-only has zero failed assertions.
+
+Example first-open-and-show values from this run: Linux combined **199.04 ms**,
+full **218.19 ms**; Windows combined **685.61 ms**, full **608.58 ms**. Each is
+one first-open operation on a hosted runner, not a distribution estimate, and
+there is still no integrated-feature post-change dataset. These results must
+not be interpreted as a performance regression or a platform benchmark.
