@@ -131,9 +131,16 @@ export function activate(context: vscode.ExtensionContext) {
                 }
                 const name = left.trim().replace(/\s+/g, ' ').toLowerCase();
                 const extension = path.extname(document.fileName).toLowerCase().slice(1);
-                const command = allTuflowCommands.find(cmd =>
-                    cmd.category.toLowerCase() === extension && cmd.name.toLowerCase() === name
-                );
+                const sameName = allTuflowCommands.filter(cmd => cmd.name.toLowerCase() === name);
+                const scoped = sameName.find(cmd => cmd.category.toLowerCase() === extension);
+                // TEF files admit TCF and ECF commands, and Read File / untitled
+                // buffers have no dedicated catalogue. Preserve their hovers,
+                // without showing unrelated commands in a known file category.
+                const hasOwnCatalogue = ['tcf', 'tgc', 'tbc', 'ecf', 'trfc', 'qcf'].includes(extension);
+                const inherited = extension === 'tef'
+                    ? sameName.find(cmd => cmd.category === 'TCF' || cmd.category === 'ECF')
+                    : (!hasOwnCatalogue ? sameName[0] : undefined);
+                const command = scoped || inherited;
                 
                 if (command) {
                     const markdown = new vscode.MarkdownString();
@@ -156,7 +163,12 @@ export function activate(context: vscode.ExtensionContext) {
                         content += `\n\n**Notes:** ${command.notes}`;
                     }
                     
-                    const officialUrl = getAuditedCommandDocumentationUrl(path.extname(document.fileName), command.name);
+                    // Event files inherit TCF/ECF commands; link those to the
+                    // appendix that actually defines them, not the TEF appendix.
+                    const sourceExtension = extension === 'tef' || !extension
+                        ? '.' + command.category.toLowerCase()
+                        : '.' + extension;
+                    const officialUrl = getAuditedCommandDocumentationUrl(sourceExtension, command.name);
                     if (officialUrl) {
                         content += `\n\n[Official TUFLOW command reference](${officialUrl})`;
                     }

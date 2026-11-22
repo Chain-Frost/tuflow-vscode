@@ -94,6 +94,43 @@ suite('TUFLOW Helper Extension Host smoke tests', () => {
     }
   });
 
+  test('TEF and extensionless commands preserve context-appropriate hover', async () => {
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'tuflow-hover-context-'));
+    try {
+      const samples = [
+        { filename: path.join(directory, 'events.tef'), text: 'End Time == 12\n', expected: /80-AppendicesA-TCFCommands\.html/ },
+        { filename: path.join(directory, 'timestep.tef'), text: 'Timestep == 1\n', expected: /Timestep/ },
+        { filename: path.join(directory, 'shared.trd'), text: 'Timestep == 1\n', expected: /Timestep/ },
+        { filename: path.join(directory, 'geometry.tgc'), text: 'Set Grid == 10\n', expected: /Set Grid/ }
+      ];
+
+      for (const sample of samples) {
+        fs.writeFileSync(sample.filename, sample.text, 'utf8');
+        const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(sample.filename));
+        const hovers = await vscode.commands.executeCommand(
+          'vscode.executeHoverProvider', doc.uri, new vscode.Position(0, 3)
+        );
+        const contents = (hovers || []).flatMap(hover => hover.contents)
+          .map(content => typeof content === 'string' ? content : content.value || '')
+          .join('\n');
+        assert.match(contents, sample.expected, 'missing context hover for ' + sample.filename);
+      }
+
+      const untitled = await vscode.workspace.openTextDocument({
+        language: languageId, content: 'Timestep == 1\n'
+      });
+      const hovers = await vscode.commands.executeCommand(
+        'vscode.executeHoverProvider', untitled.uri, new vscode.Position(0, 3)
+      );
+      const contents = (hovers || []).flatMap(hover => hover.contents)
+        .map(content => typeof content === 'string' ? content : content.value || '')
+        .join('\n');
+      assert.match(contents, /Timestep/, 'untitled TUFLOW command lost hover');
+    } finally {
+      fs.rmSync(directory, { recursive: true, force: true });
+    }
+  });
+
   test('curated snippets expand with VS Code editable placeholders', async () => {
     const extension = vscode.extensions.getExtension(extensionId);
     assert.ok(extension);
