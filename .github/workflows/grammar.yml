@@ -63,3 +63,37 @@ jobs:
         run: npm run lint
       - name: Run registration and language-ID tests
         run: npm run test:registration
+      - name: Build QA VSIX from this exact branch (Linux only, not published)
+        if: runner.os == 'Linux'
+        run: npx --yes @vscode/vsce@3.9.2 package --out tuflow-helper-pr17-qa.vsix
+      - name: Verify QA VSIX contains runtime grammar and shared language ID
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import zipfile
+
+          with zipfile.ZipFile("tuflow-helper-pr17-qa.vsix") as z:
+              names = set(z.namelist())
+              required = {
+                  "extension/package.json",
+                  "extension/out/extension.js",
+                  "extension/language-configuration.json",
+                  "extension/syntaxes/tuflow.tmLanguage.json",
+                  "extension/snippets/tuflow.json",
+              }
+              assert not required - names, f"Missing VSIX resources: {required - names}"
+              manifest = json.loads(z.read("extension/package.json"))
+              assert manifest["contributes"]["languages"][0]["id"] == "tuflow"
+              assert manifest["contributes"]["grammars"][0]["language"] == "tuflow"
+              assert manifest["contributes"]["grammars"][0]["scopeName"] == "source.tuflow"
+          PY
+      - name: Retain QA VSIX for Windows co-installation testing
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tuflow-helper-pr17-qa-vsix
+          path: tuflow-helper-pr17-qa.vsix
+          retention-days: 14
+          if-no-files-found: error
