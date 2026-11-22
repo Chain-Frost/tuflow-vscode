@@ -5,7 +5,9 @@
 .gitattributes
 .eslintrc.cjs
 .vscode-test.mjs
+.vscode-test-installed.mjs
 src/**
+docs/**
 test/**
 scripts/**
 node_modules/**

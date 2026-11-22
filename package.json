@@ -109,7 +109,8 @@
     "test": "npm run test:unit && npm run test:extension",
     "test:unit": "node --test test/unit/commands.test.cjs",
     "test:extension": "vscode-test",
-    "package:vsix": "npm run compile && vsce package --no-dependencies --out tuflow-helper.vsix && node scripts/verify-vsix.cjs tuflow-helper.vsix"
+    "package:vsix": "vsce package --no-dependencies --out tuflow-helper.vsix && node scripts/verify-vsix.cjs tuflow-helper.vsix",
+    "test:vsix": "vscode-test --config .vscode-test-installed.mjs"
   },
   "devDependencies": {
     "@types/vscode": "^1.74.0",

@@ -43,6 +43,9 @@ jobs:
       - name: Build and validate VSIX (no publishing)
         if: runner.os == 'Linux'
         run: npm run package:vsix
+      - name: Installed VSIX Extension Host smoke tests (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run test:vsix
       - name: Retain VSIX for manual installation testing
         if: runner.os == 'Linux'
         uses: actions/upload-artifact@v4

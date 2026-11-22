@@ -11,6 +11,13 @@ suite('TUFLOW Helper Extension Host smoke tests', () => {
   test('extension activates and contributes required resources', async () => {
     const extension = vscode.extensions.getExtension(extensionId);
     assert.ok(extension, `extension ${extensionId} should be installed or loaded for development`);
+    if (process.env.TUFLOW_TEST_INSTALLED === '1') {
+      assert.notEqual(
+        path.resolve(extension.extensionPath),
+        path.resolve(__dirname, '../..'),
+        'installed-VSIX test must not load the development checkout'
+      );
+    }
     await extension.activate();
     assert.ok(extension.isActive);
     assert.ok((await vscode.languages.getLanguages()).includes(languageId));

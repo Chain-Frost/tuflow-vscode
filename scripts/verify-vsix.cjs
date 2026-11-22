@@ -66,9 +66,9 @@ const resources = [
 ].filter(Boolean);
 for (const resource of resources) readEntry(packagedPath(resource));
 for (const resource of [
-  'extension/README.md',
-  'extension/CHANGELOG.md',
-  'extension/LICENSE',
+  'extension/readme.md',
+  'extension/changelog.md',
+  'extension/LICENSE.txt',
   'extension/out/commands/index.js'
 ]) readEntry(resource);
 
@@ -80,7 +80,7 @@ for (const section of ['A TCF', 'B ECF', 'C TGC', 'D TBC', 'F TRFC', 'H QCF']) {
 }
 
 for (const name of entries.keys()) {
-  assert.ok(!/^extension\/(src|test|scripts|node_modules|\.github|\.vscode-test)\//.test(name),
+  assert.ok(!/^extension\/(src|test|scripts|docs|node_modules|\.github|\.vscode-test)\//.test(name),
     `unwanted file in VSIX: ${name}`);
   assert.ok(!/\.js\.map$/.test(name), `source map in VSIX: ${name}`);
   assert.ok(!/^extension\/(package-lock\.json|tsconfig\.json|test\.tcf|myDummymodel\.tcf|indentation-test\.tcf)$/.test(name),

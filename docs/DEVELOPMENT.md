@@ -39,7 +39,9 @@ The tests do not invoke TUFLOW.
 reads the packaged manifest and verifies the compiled runtime, language
 configuration, grammar, snippets, icon and documentation are present.
 It rejects test sources, build maps and unrelated development assets, and
-reports the VSIX size.
+reports the VSIX size. A separate `npm run test:vsix` installs that VSIX into
+the VS Code test profile and repeats the Extension Host tests against the
+installed package rather than the development checkout.
 
 The captured documentation under `doc/` is deliberately retained because the
 existing documentation command references these paths. Its removal must be
@@ -60,8 +62,9 @@ All local and CI commands use `npm ci` for reproducibility.
 ## CI
 
 The pull-request and `master` workflows run locked installation, compilation,
-linting and tests on Ubuntu and Windows. Ubuntu also packages and verifies a
-VSIX, retained as a workflow artifact for manual installation. A broken compile,
+linting and tests on Ubuntu and Windows. Ubuntu also packages, audits and
+installs the VSIX for an additional Extension Host smoke test, then retains
+the package as a workflow artifact for optional manual installation. A broken compile,
 unit test, Extension Host test or package check fails the job.
 
 **Packaging is not publishing.** This workflow does not push tags, merge code,
