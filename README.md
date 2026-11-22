@@ -89,6 +89,12 @@ Define Event ==
 Type the following prefixes to trigger snippets:
 - `Read GIS Z Shape` - Inserts the command with parameter options
 
+## Co-installation and migration
+
+TUFLOW Helper uses the VS Code language ID `tuflow` (previously `tuflow-helper`) so its editor assistance can run alongside TUFLOW Path Validator. Existing `files.associations` or language overrides referencing `tuflow-helper` should be removed or changed to `tuflow`. File navigation is handled by seito-openfile; TUFLOW Helper no longer provides the legacy file-opening command.
+
+See [co-installation and smoke-testing guidance](docs/coexistence.md) for details.
+
 ## Known Issues
 
 - Currently, optional additional command keywords (such as the "MAX" in "Read GIS Z Shape MAX") are not supported by the syntax highlighting.

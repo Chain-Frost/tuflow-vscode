@@ -7,7 +7,7 @@ const path = require("path");
 function activate(context) {
     console.log('TUFLOW extension activated');
     // Register completion provider for TUFLOW commands
-    const provider = vscode.languages.registerCompletionItemProvider('tuflow-helper', {
+    const provider = vscode.languages.registerCompletionItemProvider('tuflow', {
         provideCompletionItems(document, position, token, context) {
             const completionItems = [];
             // Get current line text
@@ -85,7 +85,7 @@ function activate(context) {
     }, ' ' // Trigger on space
     );
     // Register hover provider for TUFLOW commands
-    const hoverProvider = vscode.languages.registerHoverProvider('tuflow-helper', {
+    const hoverProvider = vscode.languages.registerHoverProvider('tuflow', {
         provideHover(document, position, token) {
             const range = document.getWordRangeAtPosition(position);
             if (!range) {
@@ -114,7 +114,7 @@ function activate(context) {
         }
     });
     // Register signature help provider
-    const signatureProvider = vscode.languages.registerSignatureHelpProvider('tuflow-helper', {
+    const signatureProvider = vscode.languages.registerSignatureHelpProvider('tuflow', {
         provideSignatureHelp(document, position, token, context) {
             const lineText = document.lineAt(position).text;
             const textBeforeCursor = lineText.substring(0, position.character);
@@ -161,53 +161,6 @@ function activate(context) {
             return null;
         }
     }, ' ', '(', ',');
-    // Register command to open file under cursor
-    const openFileCommand = vscode.commands.registerCommand('tuflow-helper.openFileUnderCursor', () => {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            return;
-        }
-        const document = editor.document;
-        const selection = editor.selection;
-        const text = document.getText(selection);
-        if (text) {
-            // Try to extract a file path from the selected text
-            const filePathMatch = text.match(/(?:'|"|\s|^)([\w\\/\-\.]+\.[\w]+)(?:'|"|\s|$)/);
-            if (filePathMatch) {
-                const filePath = filePathMatch[1];
-                vscode.window.showInformationMessage(`Opening file: ${filePath}`);
-                // Try to open the file
-                vscode.workspace.openTextDocument(filePath).then(doc => {
-                    vscode.window.showTextDocument(doc);
-                }, error => {
-                    // If file doesn't exist, show error message
-                    vscode.window.showErrorMessage(`Could not open file: ${filePath}. Error: ${error.message}`);
-                });
-            }
-            else {
-                vscode.window.showErrorMessage('No valid file path found in selection or under cursor');
-            }
-        }
-        else {
-            // If no text is selected, try to get file path under cursor
-            const position = editor.selection.active;
-            const lineText = document.lineAt(position.line).text;
-            // Extract word under cursor
-            const wordRange = document.getWordRangeAtPosition(position);
-            if (wordRange) {
-                const word = document.getText(wordRange);
-                // Try to open as file
-                vscode.workspace.openTextDocument(word).then(doc => {
-                    vscode.window.showTextDocument(doc);
-                }, error => {
-                    vscode.window.showErrorMessage(`Could not open file: ${word}. Error: ${error.message}`);
-                });
-            }
-            else {
-                vscode.window.showErrorMessage('No text selected or under cursor');
-            }
-        }
-    });
     // Register command to open documentation based on file extension
     const openDocumentationCommand = vscode.commands.registerCommand('tuflow-helper.openDocumentation', () => {
         const editor = vscode.window.activeTextEditor;
@@ -238,7 +191,7 @@ function activate(context) {
             vscode.window.showErrorMessage(`No documentation available for ${fileExtension} files`);
         }
     });
-    context.subscriptions.push(provider, hoverProvider, signatureProvider, openFileCommand, openDocumentationCommand);
+    context.subscriptions.push(provider, hoverProvider, signatureProvider, openDocumentationCommand);
 }
 exports.activate = activate;
 function deactivate() { }

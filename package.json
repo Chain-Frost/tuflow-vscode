@@ -26,13 +26,13 @@
     "Snippets"
   ],
   "activationEvents": [
-    "onLanguage:tuflow-helper"
+    "onLanguage:tuflow"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "languages": [
       {
-        "id": "tuflow-helper",
+        "id": "tuflow",
         "aliases": [
           "TUFLOW",
           "tuflow"
@@ -67,38 +67,24 @@
     ],
     "grammars": [
       {
-        "language": "tuflow-helper",
+        "language": "tuflow",
         "scopeName": "source.tuflow",
         "path": "./syntaxes/tuflow.tmLanguage.json"
       }
     ],
     "snippets": [
       {
-        "language": "tuflow-helper",
+        "language": "tuflow",
         "path": "./snippets/tuflow.json"
       }
     ],
     "commands": [
       {
-        "command": "tuflow-helper.openFileUnderCursor",
-        "title": "Open File Under Cursor",
-        "category": "TUFLOW"
-      },
-      {
         "command": "tuflow-helper.openDocumentation",
         "title": "Open Documentation",
         "category": "TUFLOW"
       }
-    ],
-    "menus": {
-      "editor/context": [
-        {
-          "when": "editorTextFocus && editorLangId == tuflow-helper",
-          "command": "tuflow-helper.openFileUnderCursor",
-          "group": "navigation"
-        }
-      ]
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -106,7 +92,8 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node --test test/language-registration.test.cjs",
+    "test:registration": "node --test test/language-registration.test.cjs"
   },
   "devDependencies": {
     "@types/vscode": "^1.74.0",

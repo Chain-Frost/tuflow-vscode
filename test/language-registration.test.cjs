@@ -1,0 +1,147 @@
+'use strict';
+
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const test = require('node:test');
+const vm = require('node:vm');
+
+const root = path.resolve(__dirname, '..');
+const read = file => fs.readFileSync(path.join(root, file), 'utf8');
+const manifest = JSON.parse(read('package.json'));
+
+const overlappingExtensions = ['.tcf', '.tgc', '.tbc', '.ecf', '.trd', '.qcf', '.tef', '.trfc', '.toc'];
+
+test('language, grammar, snippets, configuration and activation share the tuflow ID', () => {
+    assert.equal(manifest.contributes.languages.length, 1);
+    const language = manifest.contributes.languages[0];
+    assert.equal(language.id, 'tuflow');
+    assert.equal(language.configuration, './language-configuration.json');
+    assert.ok(fs.existsSync(path.join(root, language.configuration)));
+    for (const ext of overlappingExtensions) {
+        assert.ok(language.extensions.includes(ext), 'missing overlapping extension: ' + ext);
+    }
+    assert.ok(manifest.activationEvents.includes('onLanguage:tuflow'));
+    assert.ok(!manifest.activationEvents.includes('onLanguage:tuflow-helper'));
+    assert.ok(manifest.contributes.grammars.some(g => g.language === 'tuflow' && g.scopeName === 'source.tuflow'));
+    assert.ok(manifest.contributes.snippets.some(s => s.language === 'tuflow'));
+    for (const contribution of [...manifest.contributes.grammars, ...manifest.contributes.snippets]) {
+        assert.notEqual(contribution.language, 'tuflow-helper');
+        assert.ok(fs.existsSync(path.join(root, contribution.path)));
+    }
+    assert.equal(JSON.parse(read('syntaxes/tuflow.tmLanguage.json')).scopeName, 'source.tuflow');
+});
+
+test('no duplicate file opening, diagnostic or formatting contributions in Helper', () => {
+    const commands = manifest.contributes.commands.map(c => c.command);
+    assert.deepEqual(commands, ['tuflow-helper.openDocumentation']);
+    assert.ok(!Object.values(manifest.contributes.menus || {}).flat().some(c => c.command.includes('openFileUnderCursor')));
+    for (const file of ['src/extension.ts', 'out/extension.js']) {
+        const text = read(file);
+        assert.doesNotMatch(text, /openFileUnderCursor|openFileCommand|createDiagnosticCollection|registerDocumentFormattingEditProvider/);
+    }
+});
+
+function activateHelperOnly() {
+    const registrations = { completion: [], hover: [], signature: [], commands: [] };
+    const disposable = () => ({ dispose() {} });
+    const makeProvider = type => (language, provider) => {
+        registrations[type].push({ language, provider });
+        return disposable();
+    };
+    const mockVSCode = {
+        languages: {
+            registerCompletionItemProvider: makeProvider('completion'),
+            registerHoverProvider: makeProvider('hover'),
+            registerSignatureHelpProvider: makeProvider('signature'),
+        },
+        commands: {
+            registerCommand(id, command) {
+                registrations.commands.push({ id, command });
+                return disposable();
+            },
+        },
+        CompletionItemKind: { Keyword: 1, File: 2, Value: 3 },
+        CompletionItem: class {
+            constructor(label, kind) { this.label = label; this.kind = kind; }
+        },
+        SnippetString: class { constructor(value) { this.value = value; } },
+        MarkdownString: class {
+            constructor(value = '') { this.value = value; }
+            appendCodeblock(value) { this.value += value; }
+            appendMarkdown(value) { this.value += value; }
+        },
+        Hover: class { constructor(contents) { this.contents = contents; } },
+        SignatureInformation: class {
+            constructor(label, documentation) { this.label = label; this.documentation = documentation; }
+        },
+        ParameterInformation: class {
+            constructor(label, documentation) { this.label = label; this.documentation = documentation; }
+        },
+        SignatureHelp: class {},
+    };
+    const sampleCommand = {
+        name: 'Test',
+        description: 'Fixture command',
+        syntax: 'Test == VALUE',
+        parameters: ['VALUE'],
+        examples: ['Test == 1'],
+    };
+    const commands = {
+        allTuflowCommands: [sampleCommand],
+        tcfCommands: [sampleCommand],
+        tgcCommands: [sampleCommand],
+        tbcCommands: [sampleCommand],
+        ecfCommands: [sampleCommand],
+        trfcCommands: [sampleCommand],
+        qcfCommands: [sampleCommand],
+    };
+    const module = { exports: {} };
+    vm.runInNewContext(read('out/extension.js'), {
+        module,
+        exports: module.exports,
+        require(id) {
+            if (id === 'vscode') return mockVSCode;
+            if (id === './commands') return commands;
+            if (id === 'path') return path;
+            throw Error('unexpected module: ' + id);
+        },
+        console: { log() {} },
+    }, { filename: 'out/extension.js' });
+    const context = { subscriptions: [] };
+    module.exports.activate(context);
+    return { registrations, context };
+}
+
+test('Helper-only activation registers its three providers against tuflow', () => {
+    const { registrations, context } = activateHelperOnly();
+    for (const type of ['completion', 'hover', 'signature']) {
+        assert.equal(registrations[type].length, 1);
+        assert.equal(registrations[type][0].language, 'tuflow');
+    }
+    assert.deepEqual(registrations.commands.map(c => c.id), ['tuflow-helper.openDocumentation']);
+    assert.equal(context.subscriptions.length, 4);
+});
+
+test('completion, hover and signature help are available on overlapping file types', () => {
+    const { registrations } = activateHelperOnly();
+    const complete = registrations.completion[0].provider;
+    const hover = registrations.hover[0].provider;
+    const signature = registrations.signature[0].provider;
+    for (const ext of overlappingExtensions) {
+        const document = {
+            languageId: 'tuflow',
+            fileName: '/model/test' + ext,
+            lineAt() { return { text: 'Test' }; },
+            getWordRangeAtPosition() { return { start: 0, end: 4 }; },
+            getText() { return 'Test'; },
+        };
+        const items = complete.provideCompletionItems(document, { line: 0, character: 4 }, {}, {});
+        assert.ok(items.some(item => item.label === 'Test'), 'completion missing for ' + ext);
+        const info = hover.provideHover(document, { line: 0, character: 2 }, {});
+        assert.ok(info && info.contents, 'hover missing for ' + ext);
+        document.lineAt = () => ({ text: 'Test == ' });
+        const help = signature.provideSignatureHelp(document, { line: 0, character: 8 }, {}, {});
+        assert.ok(help && help.signatures.length === 1, 'signature help missing for ' + ext);
+    }
+});
