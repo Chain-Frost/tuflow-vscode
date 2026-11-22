@@ -522,5 +522,93 @@
         "'an example output'"
       ]
     ]
+  },
+  {
+    "name": "comments hash take precedence over commented-out command",
+    "line": "# Read GIS Z Shape == bogus.shp",
+    "expected": [
+      [
+        "comment.line.number-sign.tuflow",
+        "# Read GIS Z Shape == bogus.shp"
+      ]
+    ]
+  },
+  {
+    "name": "inline hash comment after numeric value",
+    "line": "Cell Size == -1.5 # numeric and END IF comment",
+    "expected": [
+      [
+        "meta.command.header.tuflow",
+        "Cell Size"
+      ],
+      [
+        "support.function.tuflow",
+        "Cell Size"
+      ],
+      [
+        "keyword.operator.assignment.tuflow",
+        "=="
+      ],
+      [
+        "constant.numeric.tuflow",
+        "-1.5"
+      ],
+      [
+        "comment.line.number-sign.tuflow",
+        "# numeric and END IF comment"
+      ]
+    ]
+  },
+  {
+    "name": "quoted path protects hash before inline hash comment",
+    "line": "Read GIS Z Line == \"C:\\model#archive\\survey.shp\" # explanation",
+    "expected": [
+      [
+        "meta.command.header.tuflow",
+        "Read GIS Z Line"
+      ],
+      [
+        "support.function.tuflow",
+        "Read GIS Z Line"
+      ],
+      [
+        "keyword.operator.assignment.tuflow",
+        "=="
+      ],
+      [
+        "string.quoted.double.tuflow",
+        "\"C:\\model#archive\\survey.shp\""
+      ],
+      [
+        "comment.line.number-sign.tuflow",
+        "# explanation"
+      ]
+    ]
+  },
+  {
+    "name": "inline hash comment after path",
+    "line": "Read GIS Z Shape == ~\\model\\terrain.tif # valid comment",
+    "expected": [
+      [
+        "meta.command.header.tuflow",
+        "Read GIS Z Shape"
+      ],
+      [
+        "support.function.tuflow",
+        "Read GIS Z Shape"
+      ],
+      [
+        "keyword.operator.assignment.tuflow",
+        "=="
+      ],
+      [
+        "string.unquoted.path.tuflow",
+        "~\\model\\terrain.tif"
+      ],
+      [
+        "comment.line.number-sign.tuflow",
+        "# valid comment"
+      ]
+    ]
   }
 ]

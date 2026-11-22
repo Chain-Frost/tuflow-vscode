@@ -46,7 +46,7 @@ test('TextMate lexer produces fixture scopes and keeps unknown commands neutral'
             const scopes = scopesAt(tokens, at + (/^\s*/.exec(text)[0].length));
             assert.ok(scopes.includes(scope), `${name}: ${JSON.stringify({scope, text, scopes, tokens})}`);
         }
-        if (name.startsWith('unknown') || name.startsWith('incomplete')) {
+        if (name.startsWith('unknown') || name.startsWith('incomplete') || name.startsWith('comments')) {
             assert.ok(!tokens.some(t => t.scopes.includes('support.function.tuflow')),
                 `${name}: unknown command was classified as recognised`);
         }
@@ -92,4 +92,34 @@ test('unterminated quoted values end at the current line', async () => {
         assert.ok(scopesAt(line2.tokens, second.indexOf('!')).includes('comment.line.exclamation.tuflow'));
         assert.ok(!scopesAt(line2.tokens, second.indexOf('Cell Size')).includes(quotedScope));
     }
+});
+
+test('hash comments and quoted hashes preserve TextMate scopes across lines', async () => {
+    const grammar = await loadGrammar();
+    const lines = [
+        '# Read GIS Z Shape == ignored.shp',
+        'Cell Size == -1.5 # End If and 10 are comment text',
+        'Read GIS Z Line == "C:\\model#archive\\survey.shp" # after quote',
+        'Cell Size == 4.5 ! existing comment syntax'
+    ];
+    let stack = vsctm.INITIAL;
+    for (const line of lines) {
+        const result = grammar.tokenizeLine(line, stack);
+        stack = result.ruleStack;
+        const markerAt = line.includes(' # ') ? line.lastIndexOf('#') : line.startsWith('#') ? 0 : line.lastIndexOf('!');
+        const scope = line[markerAt] === '#' ? 'comment.line.number-sign.tuflow' : 'comment.line.exclamation.tuflow';
+        assert.ok(scopesAt(result.tokens, markerAt).includes(scope), 'missing comment scope: ' + line);
+        if (line.startsWith('#')) {
+            assert.ok(!result.tokens.some(t => t.scopes.includes('support.function.tuflow')),
+                'commented-out Read GIS must not be recognised as a command');
+        }
+        if (line.includes('#archive')) {
+            const index = line.indexOf('#archive');
+            assert.ok(scopesAt(result.tokens, index).includes('string.quoted.double.tuflow'));
+            assert.ok(!scopesAt(result.tokens, index).includes('comment.line.number-sign.tuflow'));
+        }
+    }
+    const after = 'Read GIS Z Shape == elevations.shp';
+    const tokens = grammar.tokenizeLine(after, stack).tokens;
+    assert.ok(scopesAt(tokens, after.indexOf('Read GIS Z Shape')).includes('support.function.tuflow'));
 });
