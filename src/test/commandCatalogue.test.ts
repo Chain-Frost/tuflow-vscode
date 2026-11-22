@@ -168,6 +168,19 @@ test('TCF hours and output intervals are not misrepresented as clock times', () 
     assert.equal(lookupCommandsForFile('.tcf', 'Set Code == HPC').length, 0);
 });
 
+test('output token lists do not masquerade as free-text file paths', () => {
+    for (const name of ['Map Output Data Types', 'Map Output Format',
+        'Output Files EXCLUDE', 'TIF Map Output Data Types']) {
+        const command = lookupCommandsForFile('.tcf', name + ' == example')[0];
+        assert.ok(command, name);
+        assert.equal(command.valueKind, 'token-list', name);
+        assert.notEqual(command.valueKind, 'file-path', name);
+        assert.notEqual(command.valueKind, 'free-text', name);
+    }
+    assert.equal(lookupCommandsForFile('.tcf', 'BC Database == file.csv')[0].valueKind,
+        'file-path');
+});
+
 test('TGC raster guidance, vector Z Shapes and left-hand modifier groups', () => {
     const shape = lookupCommandsForFile('.tgc', 'Read GIS Z Shape == model.shp')[0];
     assert.ok(shape.safeExamples.every(x => !/\.(?:tif|asc)\b/i.test(x)));
