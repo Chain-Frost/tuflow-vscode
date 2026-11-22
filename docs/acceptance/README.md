@@ -22,6 +22,28 @@ Run the fixture consistency test (no npm dependencies required):
 
     node test/acceptance/check-fixtures.mjs
 
+## Automated assertions and hosted VS Code tests
+
+`test/acceptance/assertions.cjs` provides strict, testable checks for Validator
+`TPV001` / `TPV002` diagnostic source, code and **all expected missing paths**.
+A root-only stage opens the TCF before independently opening its included TRD;
+this ensures a nested missing reference cannot pass solely because the editor
+opened the child document. Under the current Validator's source-TCF-directory
+rule, the nested fixture references `include/leaf.trd`.
+
+Use `node --test test/acceptance/assertions.test.cjs test/acceptance/compare-reports.test.cjs`
+to test these invariants without VS Code. The Linux/Windows fixture CI executes
+these tests as well as fixture integrity checks.
+
+`.github/workflows/acceptance-host.yml` exercises **real VS Code Extension
+Host** profiles on GitHub-hosted Linux and Windows using the pinned Helper #12
+and Validator main source SHAs recorded in the workflow, producing disposable
+source-built VSIX files and per-profile JSON artifacts. Known pre-integration
+Helper completion/hover failures are retained as failures in JSON, not treated
+as passed. This is a **test of the harness against a known baseline**, not
+acceptance of the complete #1–#8 feature stack or a substitute for real model
+shares and manual UI verification.
+
 ## Profiles
 
 Use an isolated VS Code user-data and extensions directory **for every profile**; never reuse a directory between cases.
