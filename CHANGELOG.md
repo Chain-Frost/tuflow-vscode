@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Pull-request CI for Linux and Windows, pure-logic tests and Extension Host smoke tests
+- Reproducible local build, lint, test and VSIX packaging commands
+- VSIX content audit preserving bundled TUFLOW documentation
+
+### Fixed
+
+- Repository links, development instructions and file type descriptions
+
+## [0.8.2] - date not recorded
+
+- Version indicated by the existing package manifest; historical release changes were not recorded.
+
 ## [0.8.1] - 2023-04-05
 
 ### Added
