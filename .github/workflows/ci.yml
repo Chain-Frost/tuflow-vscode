@@ -32,14 +32,12 @@ jobs:
         run: npm run compile
       - name: Lint
         run: npm run lint
-      - name: Pure logic tests
-        run: npm run test:unit
-      - name: Extension Host smoke tests (Linux)
+      - name: Full test command (Linux)
         if: runner.os == 'Linux'
-        run: xvfb-run -a npm run test:extension
-      - name: Extension Host smoke tests (Windows)
+        run: xvfb-run -a npm test
+      - name: Full test command (Windows)
         if: runner.os == 'Windows'
-        run: npm run test:extension
+        run: npm test
       - name: Build and validate VSIX (no publishing)
         if: runner.os == 'Linux'
         run: npm run package:vsix
