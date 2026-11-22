@@ -486,5 +486,41 @@
         "-1"
       ]
     ]
+  },
+  {
+    "name": "apostrophe inside unquoted folder value",
+    "line": "Output Folder == results/O'Brien ! preserved comment",
+    "expected": [
+      [
+        "meta.command.header.tuflow",
+        "Output Folder"
+      ],
+      [
+        "keyword.operator.assignment.tuflow",
+        "=="
+      ],
+      [
+        "comment.line.exclamation.tuflow",
+        "! preserved comment"
+      ]
+    ]
+  },
+  {
+    "name": "adjacent single-quoted value after equals",
+    "line": "Output Folder =='an example output'",
+    "expected": [
+      [
+        "meta.command.header.tuflow",
+        "Output Folder"
+      ],
+      [
+        "keyword.operator.assignment.tuflow",
+        "=="
+      ],
+      [
+        "string.quoted.single.tuflow",
+        "'an example output'"
+      ]
+    ]
   }
 ]

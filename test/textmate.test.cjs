@@ -62,3 +62,34 @@ test('quote protection and comment precedence survive TextMate tokenisation', as
     assert.ok(scopesAt(tokens, line.indexOf('! comment')).includes('comment.line.exclamation.tuflow'));
     assert.ok(!scopesAt(tokens, line.lastIndexOf('==')).includes('keyword.operator.assignment.tuflow'));
 });
+
+test('unquoted apostrophes do not swallow subsequent commands or comments', async () => {
+    const grammar = await loadGrammar();
+    const first = "Output Folder == results/O'Brien ! a normal comment";
+    const line1 = grammar.tokenizeLine(first, vsctm.INITIAL);
+    assert.ok(!scopesAt(line1.tokens, first.indexOf("'")).includes('string.quoted.single.tuflow'));
+    assert.ok(scopesAt(line1.tokens, first.indexOf('!')).includes('comment.line.exclamation.tuflow'));
+
+    const second = 'Cell Size == -2.5 ! next command';
+    const line2 = grammar.tokenizeLine(second, line1.ruleStack);
+    assert.ok(scopesAt(line2.tokens, second.indexOf('Cell Size')).includes('support.function.tuflow'));
+    assert.ok(scopesAt(line2.tokens, second.indexOf('-2.5')).includes('constant.numeric.tuflow'));
+    assert.ok(scopesAt(line2.tokens, second.indexOf('!')).includes('comment.line.exclamation.tuflow'));
+});
+
+test('unterminated quoted values end at the current line', async () => {
+    const grammar = await loadGrammar();
+    for (const quote of ["'", '"']) {
+        const first = `Output Folder == ${quote}unfinished filename`;
+        const line1 = grammar.tokenizeLine(first, vsctm.INITIAL);
+        const quotedScope = quote === "'" ? 'string.quoted.single.tuflow' : 'string.quoted.double.tuflow';
+        assert.ok(scopesAt(line1.tokens, first.indexOf('unfinished')).includes(quotedScope));
+
+        const second = 'Cell Size == 10 ! must remain a comment';
+        const line2 = grammar.tokenizeLine(second, line1.ruleStack);
+        assert.ok(scopesAt(line2.tokens, second.indexOf('Cell Size')).includes('support.function.tuflow'));
+        assert.ok(scopesAt(line2.tokens, second.indexOf('10')).includes('constant.numeric.tuflow'));
+        assert.ok(scopesAt(line2.tokens, second.indexOf('!')).includes('comment.line.exclamation.tuflow'));
+        assert.ok(!scopesAt(line2.tokens, second.indexOf('Cell Size')).includes(quotedScope));
+    }
+});

@@ -44,6 +44,13 @@ function firstMatch(group, source) {
 function outsideQuoted(line, until) {
     const comments = [];
     const quotes = [];
+    const quoteOpeners = grammar.repository['quoted-strings'].patterns.map(rule => jsRegex(rule.begin, true));
+    const canOpenQuote = (char, position) => {
+        const index = char === '"' ? 0 : 1;
+        const pattern = quoteOpeners[index];
+        pattern.lastIndex = position;
+        return pattern.exec(line)?.index === position;
+    };
     let quote = null;
     let quotedAt = -1;
     for (let i = 0; i < until; i++) {
@@ -54,7 +61,7 @@ function outsideQuoted(line, until) {
                 quotes.push({ start: quotedAt, end: i + 1, quote });
                 quote = null;
             }
-        } else if (char === '"' || char === "'") {
+        } else if ((char === '"' || char === "'") && canOpenQuote(char, i)) {
             quote = char;
             quotedAt = i;
         } else if (char === '!') {

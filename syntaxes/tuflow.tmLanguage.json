@@ -102,7 +102,7 @@
         {
           "name": "string.quoted.double.tuflow",
           "begin": "\"",
-          "end": "\"",
+          "end": "\"|(?=$)",
           "patterns": [
             {
               "include": "#placeholders"
@@ -111,8 +111,8 @@
         },
         {
           "name": "string.quoted.single.tuflow",
-          "begin": "'",
-          "end": "'",
+          "begin": "(?<!\\S)'|(?<===)'",
+          "end": "'|(?=$)",
           "patterns": [
             {
               "include": "#placeholders"
