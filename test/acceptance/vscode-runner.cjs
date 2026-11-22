@@ -100,6 +100,7 @@ module.exports.run = async function run() {
       logicalCpus: os.cpus().length,
       machineMemoryBytes: os.totalmem(),
       extensionHostPid: process.pid,
+      invocationId: process.env.TUFLOW_ACCEPT_INVOCATION || null,
       configuredRepeats: process.env.TUFLOW_ACCEPT_REPEATS || '12',
       configuredSyntheticLines: process.env.TUFLOW_ACCEPT_LINES || '10000',
       configuredDiagnosticSettleMs: process.env.TUFLOW_ACCEPT_SETTLE_MS || '1800',
