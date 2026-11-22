@@ -1,0 +1,29 @@
+name: Grammar fixtures
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/grammar.yml'
+      - 'syntaxes/tuflow.tmLanguage.json'
+      - 'language-configuration.json'
+      - 'test/grammar.test.cjs'
+      - 'test/fixtures/grammar-cases.json'
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/grammar.yml'
+      - 'syntaxes/tuflow.tmLanguage.json'
+      - 'language-configuration.json'
+      - 'test/grammar.test.cjs'
+      - 'test/fixtures/grammar-cases.json'
+
+jobs:
+  grammar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check grammar and indentation fixtures
+        run: node --test test/grammar.test.cjs
