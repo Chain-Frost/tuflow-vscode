@@ -177,7 +177,7 @@ function fixture(name: string, category: CommandDefinition['category'], id = 'ex
 
 
 const expectedAudited = {
-    TCF: ["Start Time","End Time","Timestep","Cell Size","Map Output Interval","Time Series Output Interval","Start Map Output","End Map Output","Geometry Control File","BC Control File","ESTRY Control File","Event File","Quadtree Control File","Rainfall Control File","BC Database","Read Materials File","Read Soils File","Read GIS PO","Read GIS IWL","Set IWL","Solution Scheme","Hardware","GIS Format","GPKG Projection","SHP Projection","Output Folder","Log Folder","Map Output Data Types","Map Output Format","Time Series Output Format","Timestep Maximum","Read File","Write Check Files","Output Files EXCLUDE","Output Files INCLUDE","XMDF Map Output Interval","TIF Map Output Data Types"],
+    TCF: ["Start Time","End Time","Timestep","Cell Size","Map Output Interval","Time Series Output Interval","Start Map Output","End Map Output","Geometry Control File","BC Control File","ESTRY Control File","Event File","Quadtree Control File","Rainfall Control File","BC Database","Read Materials File","Read Soils File","Read GIS PO","Read GIS IWL","Set IWL","Solution Scheme","Hardware","GIS Format","GPKG Projection","SHP Projection","Output Folder","Log Folder","Map Output Data Types","Map Output Format","Time Series Output Format","Timestep Maximum","Read File","Write Check Files","Write Check Files EXCLUDE","Write Check Files INCLUDE","Output Files EXCLUDE","Output Files INCLUDE","XMDF Map Output Interval","TIF Map Output Data Types"],
     TGC: ["Cell Size","Grid Size (N,M)","Grid Size (X,Y)","Origin","Orientation","Orientation Angle","Read GIS Location","Read Grid Location","Read GIS Code","Set Code","Set Code and Clean Zpt","Set Zpt","Read Grid Zpts","Read GIS Z Shape","Read GIS Mat","Read Grid Mat","Set Mat","Read GIS Soil","Read Grid Soil","Read GIS IWL","Read Grid IWL","Set IWL","Read GIS FLC","Read GIS FLC/L","Read GIS SRF","Read GIS WrF","Read GIS Layered FC Shape","Read GIS Variable Z Shape","Read TIN Zpts","Create TIN Zpts","Read File"]
 } as const;
 
@@ -236,6 +236,29 @@ test('output token lists do not masquerade as free-text file paths', () => {
     }
     assert.equal(lookupCommandsForFile('.tcf', 'BC Database == file.csv')[0].valueKind,
         'file-path');
+});
+
+test('Write Check Files variants have different operand semantics', () => {
+    const folder = lookupCommandsForFile('.tcf', 'Write Check Files == ..\\check\\');
+    assert.equal(folder.length, 1);
+    assert.equal(folder[0].valueKind, 'file-path');
+    assert.deepEqual(folder[0].safeExamples, ['Write Check Files == ..\\check\\']);
+
+    for (const [variant, example] of [
+        ['EXCLUDE', 'Write Check Files EXCLUDE == zpt uvpt'],
+        ['INCLUDE', 'Write Check Files INCLUDE == DEM_Z']
+    ]) {
+        const matching = lookupCommandsForFile('.tcf', example);
+        assert.equal(matching.length, 1, example);
+        assert.equal(matching[0].canonicalName, 'Write Check Files ' + variant);
+        assert.equal(matching[0].valueKind, 'token-list');
+        assert.equal(matching[0].syntax, 'Write Check Files ' + variant + ' == <prefix_list>');
+        assert.deepEqual(matching[0].safeExamples, [example]);
+    }
+    // A misplaced folder path must not become a recommended value for suffix variants.
+    assert.equal(getCommandsForFile('.tcf').filter(
+        command => command.name.startsWith('Write Check Files')
+    ).length, 3);
 });
 
 test('TGC raster guidance, vector Z Shapes and left-hand modifier groups', () => {
