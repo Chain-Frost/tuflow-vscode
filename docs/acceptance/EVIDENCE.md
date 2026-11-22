@@ -57,3 +57,64 @@ The acceptance branch now uses exact Validator source `TUFLOW Path Validator` an
 Tests in `assertions.test.cjs` and `compare-reports.test.cjs` specifically exercise these false-positive conditions on both CI platforms.
 
 The review must be repeated on the resulting head after CI; an earlier review receipt with findings is **not an approval**.
+
+
+## 2026-11-22: independent Linux and Windows Extension Host evidence
+
+A dedicated, reproducible workflow now packages the pinned Helper #12 and
+Validator main source SHAs into separate VSIX artifacts and executes all four
+profiles on **both Linux and native Windows GitHub-hosted runners**.
+
+- [Workflow run 45041718254](https://github.com/Chain-Frost/tuflow-vscode/actions/runs/45041718254), artifact names
+  `tuflow-acceptance-ubuntu-latest-pinned-baseline` and
+  `tuflow-acceptance-windows-latest-pinned-baseline` (five JSON reports per OS).
+- Helper `ec6ac6b774f119320d2f623b012f91c2d0215057`,
+  Validator `4a0282e93b979345374076fb0adc60c7faf6af99`,
+  VS Code **1.147.0**, Node 22 for CI setup.
+- All four profiles ran and produced JSON on each OS. Validator-only had
+  **zero failed assertions**. Helper-only, combined and full each reported
+  the **same four known pre-integration Helper failures** listed above.
+  No additional unexpected harness failures were observed.
+- The new **root-only recursive-include** check passed on both OSs:
+  the nested TRD was not editor-open; the parent had a TPV002 child summary;
+  the nested missing reference had TPV001; and the existing leaf reference
+  caused no TPV001. Two GIS input paths each generated their own TPV001.
+- Full profile installed and activated seito-openfile 2.3.3 and Error Lens
+  3.30.0. Installation/activation does **not** establish cursor-opening or
+  visible decorations; those require a real UI inspection.
+
+### Illustrative timing observations (p50 / p95 ms)
+
+| Measured VS Code provider | Linux combined | Windows combined | Linux full | Windows full |
+|---|---:|---:|---:|---:|
+| Completion | 3.37 / 4.85 | 3.86 / 4.00 | 2.71 / 3.12 | 3.87 / 4.70 |
+| Hover | 0.63 / 0.83 | 1.67 / 1.75 | 0.57 / 0.63 | 1.78 / 2.09 |
+
+These are **five-sample exploratory measurements**, not a statistically
+representative network-drive benchmark or baseline/post-feature comparison.
+The initial hosted run preopened `model.tcf` in VS Code command-line arguments,
+so its `rootFirstOpen` timing cannot be described as a cold file open.
+The driver has subsequently been corrected to omit that preopen, and the
+comparator now reports first-open versus subsequent warm reopen separately.
+
+No actual mapped-drive/UNC model was available in GitHub-hosted runners;
+`network-fixture` remains **blocked**. Syntax-theme inspection, snippet
+expansion, cursor file opening, Error Lens decorations and opt-in formatting
+remain manual/UI acceptance requirements.
+
+## 2026-11-22: disposable feature-stack merge audit
+
+[GitHub Actions run 45041947578](https://github.com/Chain-Frost/tuflow-vscode/actions/runs/45041947578)
+attempted to combine the current feature heads in an isolated runner.
+No remote branch or default branch was modified.
+
+- Editor-services PR #19 (including #13/#14) merged cleanly.
+- TCF/TGC command audit PR #18 conflicted in
+  `.github/workflows/command-catalogue.yml` and
+  `src/test/commandCatalogue.test.ts`.
+- Grammar PR #17 conflicted in `src/extension.ts`.
+- Documentation/snippets PR #15 conflicted in `src/extension.ts`.
+
+This is a **merge-composition diagnostic**, not approval of partially
+integrated code. Findings have been linked to the owning PRs; a complete
+#1–#8 candidate has **not** been compiled or end-to-end tested.
