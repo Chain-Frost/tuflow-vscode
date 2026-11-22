@@ -96,6 +96,11 @@
           "when": "editorTextFocus && editorLangId == tuflow-helper",
           "command": "tuflow-helper.openFileUnderCursor",
           "group": "navigation"
+        },
+        {
+          "when": "editorTextFocus && editorLangId == tuflow-helper",
+          "command": "tuflow-helper.openDocumentation",
+          "group": "navigation@2"
         }
       ]
     }

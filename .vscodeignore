@@ -23,3 +23,5 @@ urbs_quickstart.md
 vsc-extension-quickstart.md
 example_files/**
 *.vsix
+
+doc/**
