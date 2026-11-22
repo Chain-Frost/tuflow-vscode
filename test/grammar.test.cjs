@@ -64,7 +64,7 @@ function outsideQuoted(line, until) {
         } else if ((char === '"' || char === "'") && canOpenQuote(char, i)) {
             quote = char;
             quotedAt = i;
-        } else if (char === '!') {
+        } else if (char === '!' || char === '#') {
             comments.push(i);
             break;
         }
@@ -148,9 +148,12 @@ function grammarProbe(line) {
         }
     }
     if (commentAt < line.length) {
-        const rule = matchRules('comments')[0];
-        const comment = jsRegex(rule.match).exec(line.slice(commentAt));
-        if (comment) add(rule.name, comment[0], commentAt);
+        const fragment = line.slice(commentAt);
+        const rule = matchRules('comments').find(item => jsRegex(item.match).test(fragment));
+        if (rule) {
+            const comment = jsRegex(rule.match).exec(fragment);
+            if (comment) add(rule.name, comment[0], commentAt);
+        }
     }
     return tokens.sort((a, b) => a.start - b.start || b.end - a.end || a.scope.localeCompare(b.scope))
         .map(({ scope, text }) => [scope, text]);
@@ -196,7 +199,7 @@ test('indentation: only conditional blocks, not scenario/event declarations', ()
     assert.equal(config.indentationRules.decreaseIndentPattern.flags, 'i');
     assert.ok(!config.indentationRules.increaseIndentPattern.pattern.includes('(?i)'));
     assert.ok(!config.indentationRules.decreaseIndentPattern.pattern.includes('(?i)'));
-    for (const line of ['If Scenario == Flood', 'IF Event == 01p', 'Else If Scenario == Standard', 'Else', 'if (condition == ON) then']) {
+    for (const line of ['If Scenario == Flood', 'IF Event == 01p', 'Else If Scenario == Standard', 'Else', 'if (condition == ON) then', 'If Scenario == Flood # End If is commented']) {
         assert.ok(increase.test(line), `must increase: ${line}`);
     }
     for (const line of ['Scenario == Flood', 'Event == 01p', 'Start == AUTO', 'End If', 'Read GIS Z Shape == dem.shp']) {
@@ -212,6 +215,10 @@ test('on-enter comment continuation only applies to comment-only lines', () => {
     assert.ok(!rule.test('Cell Size == 10 ! inline comment'));
     assert.ok(!rule.test('Output == "file!name"'));
     assert.equal(config.onEnterRules[0].action.appendText, '! ');
+    const hashRule = vscodeConfigRegex(config.onEnterRules[1].beforeText);
+    assert.ok(hashRule.test('  # Comment'));
+    assert.ok(!hashRule.test('Read GIS Z Shape == dem.shp # inline'));
+    assert.equal(config.onEnterRules[1].action.appendText, '# ');
     for (const preference of ['editor.tabSize', 'editor.insertSpaces', 'editor.detectIndentation']) {
         assert.ok(!(preference in config), `remove invalid language config property ${preference}`);
     }
