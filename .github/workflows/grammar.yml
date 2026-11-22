@@ -7,7 +7,7 @@ on:
       - 'syntaxes/tuflow.tmLanguage.json'
       - 'language-configuration.json'
       - 'test/grammar.test.cjs'
-      - 'test/textmate.test.cjs'
+      - 'test/textmate.check.cjs'
       - 'test/fixtures/grammar-cases.json'
       - 'test/language-registration.test.cjs'
       - 'src/**'
@@ -20,7 +20,7 @@ on:
       - 'syntaxes/tuflow.tmLanguage.json'
       - 'language-configuration.json'
       - 'test/grammar.test.cjs'
-      - 'test/textmate.test.cjs'
+      - 'test/textmate.check.cjs'
       - 'test/fixtures/grammar-cases.json'
       - 'test/language-registration.test.cjs'
       - 'src/**'
@@ -40,7 +40,7 @@ jobs:
       - name: Install isolated TextMate tokenizer test libraries
         run: npm install --no-save --package-lock=false --prefix .grammar-test-deps vscode-textmate@9.3.2 vscode-oniguruma@2.0.1
       - name: Verify TextMate and Oniguruma tokenisation
-        run: NODE_PATH="$PWD/.grammar-test-deps/node_modules" node --test test/textmate.test.cjs
+        run: NODE_PATH="$PWD/.grammar-test-deps/node_modules" node --test test/textmate.check.cjs
 
   helper-regression:
     name: Helper build, lint and registration (${{ matrix.os }})
@@ -63,6 +63,12 @@ jobs:
         run: npm run lint
       - name: Run registration and language-ID tests
         run: npm run test:registration
+      - name: Full Helper unit and VS Code Extension Host suite (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm test
+      - name: Full Helper unit and VS Code Extension Host suite (Windows)
+        if: runner.os == 'Windows'
+        run: npm test
       - name: Build QA VSIX from this exact branch (Linux only, not published)
         if: runner.os == 'Linux'
         run: npx --yes @vscode/vsce@3.9.2 package --out tuflow-helper-pr17-qa.vsix

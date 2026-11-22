@@ -37,9 +37,9 @@ checks. It translates the leading Oniguruma `(?i)` switch for Node's regex
 engine; the grammar itself remains Oniguruma-compatible.
 
 CI also installs pinned, **test-only** `vscode-textmate` and `vscode-oniguruma`
-packages into an isolated directory and runs `test/textmate.test.cjs` against
+packages into an isolated directory and runs `test/textmate.check.cjs` against
 all snapshot scopes using the actual VS Code tokeniser and Oniguruma WASM.
-These dependencies are not added to the extension or its package lockfile.
+These dependencies are not added to the extension or its package lockfile. The file uses the `.check.cjs` suffix so the parent repository's generic `npm test` runner (which only auto-discovers `.test.cjs` and `.spec.cjs`) does not attempt to run this isolated-dependency suite. CI runs it explicitly instead.
 
 To inspect regenerated snapshots locally, run
 `UPDATE_GRAMMAR_SNAPSHOTS=1 node --test test/grammar.test.cjs`, then inspect
