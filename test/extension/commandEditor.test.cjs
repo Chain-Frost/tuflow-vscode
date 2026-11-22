@@ -60,6 +60,25 @@ suite('TUFLOW Helper command-aware editor integration (#6)', () => {
             '  Read GIS Z Shape  == gis/shape.shp');
     });
 
+    test('space-triggered completion ranges include the VS Code cursor', async () => {
+        const line = 'Read GIS ';
+        const document = await documentWithExtension('.tgc', line);
+        const choices = await completions(document, line.length);
+        const chosen = choices.find(item => item.label === 'Read GIS Z Shape');
+        assert.ok(chosen);
+        const range = chosen.range.replacing || chosen.range;
+        assert.ok(range.start.character <= line.length);
+        assert.ok(range.end.character >= line.length);
+        assert.equal(replacementText(line, chosen), 'Read GIS Z Shape == ');
+    });
+
+    test('filename placeholder never overwrites an existing path', async () => {
+        const line = 'BC Database == old.csv';
+        const document = await documentWithExtension('.tbc', line);
+        const items = await completions(document, line.indexOf('old.csv'));
+        assert.ok(!items.some(item => item.label === 'file path'));
+    });
+
     test('source-aware hover covers the whole multiword command and suffix', async () => {
         const line = 'Read GIS Z Shape MAX == gis/shape.shp ! later';
         const document = await documentWithExtension('.tgc', line);
