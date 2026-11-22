@@ -24,7 +24,10 @@ async function withControlFile(suffix, text, fn) {
 async function completions(doc, at) {
   const results = await vscode.commands.executeCommand('vscode.executeCompletionItemProvider',
     doc.uri, new vscode.Position(0, at));
-  return results?.items.map(x => typeof x.label === 'string' ? x.label : x.label.label) ?? [];
+  // Exclude the pre-existing language snippet (same label as a TGC command).
+  // Issue #3 owns registry completion items, not contributed snippet behaviour.
+  return results?.items.filter(x => x.kind === vscode.CompletionItemKind.Keyword)
+    .map(x => typeof x.label === 'string' ? x.label : x.label.label) ?? [];
 }
 async function hover(doc, at) {
   return await vscode.commands.executeCommand('vscode.executeHoverProvider',
