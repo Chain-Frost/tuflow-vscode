@@ -137,12 +137,17 @@ module.exports.run = async function run() {
     // through the normal onDidOpenTextDocument path for nested.trd.
     const rootPath = path.join(FIXTURES, 'model.tcf');
     const rootUri = vscode.Uri.file(rootPath);
+    const rootAlreadyOpen = vscode.workspace.textDocuments.some(
+      doc => doc.uri.toString() === rootUri.toString());
     const childPath = path.join(FIXTURES, 'include', 'nested.trd');
     const childUri = vscode.Uri.file(childPath);
     const rootStarted = performance.now();
     const rootDoc = await vscode.workspace.openTextDocument(rootUri);
     await vscode.window.showTextDocument(rootDoc, { preview: false });
-    report.metrics.rootFirstOpen = { openAndShowMs: round(performance.now() - rootStarted) };
+    report.metrics.rootFirstOpen = {
+      openAndShowMs: round(performance.now() - rootStarted),
+      alreadyOpenBeforeMeasurement: rootAlreadyOpen
+    };
     if (expected.validator) {
       const rootCase = MATRIX.cases.find(item => item.id === 'tcf-existing-trd');
       const missingCase = MATRIX.cases.find(item => item.id === 'trd-missing');
