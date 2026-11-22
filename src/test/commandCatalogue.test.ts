@@ -138,7 +138,7 @@ test('TCF and TGC examples resolve against the audited registry', () => {
         const commands = getCommandsForFile('.' + category.toLowerCase());
         for (const command of commands) {
             assert.equal(command.provenance.auditStatus, 'verified');
-            assert.match(command.provenance.url, /manual\\/2026\\.3\\//);
+            assert.ok(command.provenance.url.includes('/manual/2026.3/'));
             assert.ok(command.provenance.section.includes('Appendix'));
             assert.ok(command.safeExamples.length > 0, command.name);
             assert.ok(command.syntax?.startsWith(command.name + ' == '));
@@ -159,7 +159,7 @@ test('TCF hours and output intervals are not misrepresented as clock times', () 
         const matches = lookupCommandsForFile('.tcf', name + ' == 0');
         assert.equal(matches.length, 1);
         assert.match(matches[0].syntax ?? '', /time_in_hours/);
-        assert.ok(matches[0].safeExamples.every(x => !/\\d+:\\d+/.test(x)));
+        assert.ok(matches[0].safeExamples.every(x => !/\d+:\d+/.test(x)));
     }
     assert.match(lookupCommandsForFile('.tcf', 'Map Output Interval == 900')[0].syntax ?? '',
         /time_in_seconds/);
@@ -170,7 +170,7 @@ test('TCF hours and output intervals are not misrepresented as clock times', () 
 
 test('TGC raster guidance, vector Z Shapes and left-hand modifier groups', () => {
     const shape = lookupCommandsForFile('.tgc', 'Read GIS Z Shape == model.shp')[0];
-    assert.ok(shape.safeExamples.every(x => !/\\.(?:tif|asc)\\b/i.test(x)));
+    assert.ok(shape.safeExamples.every(x => !/\.(?:tif|asc)\b/i.test(x)));
     const grid = lookupCommandsForFile('.tgc', 'Read Grid Zpts == model.tif')[0];
     assert.ok(grid.safeExamples.some(x => x.endsWith('.tif')));
     assert.ok(grid.safeExamples.some(x => x.endsWith('.asc')));
