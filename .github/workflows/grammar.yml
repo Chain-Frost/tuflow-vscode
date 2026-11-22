@@ -69,18 +69,36 @@ jobs:
       - name: Full Helper unit and VS Code Extension Host suite (Windows)
         if: runner.os == 'Windows'
         run: npm test
-      - name: Build QA VSIX from this exact branch (Linux only, not published)
-        if: runner.os == 'Linux'
-        run: npx --yes @vscode/vsce@3.9.2 package --out tuflow-helper-pr17-qa.vsix
-      - name: Verify QA VSIX contains runtime grammar and shared language ID
-        if: runner.os == 'Linux'
+
+  qa-vsix:
+    name: Package and inspect exact PR-head VSIX
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head, not GitHub's synthetic PR merge
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Verify exact source SHA
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          echo "QA VSIX source: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Package VSIX with repository's verification script (no publication)
+        run: npm run package:vsix
+      - name: Verify packaged shared language and grammar resources
         shell: bash
         run: |
           python3 - <<'PY'
           import json
           import zipfile
 
-          with zipfile.ZipFile("tuflow-helper-pr17-qa.vsix") as z:
+          with zipfile.ZipFile("tuflow-helper.vsix") as z:
               names = set(z.namelist())
               required = {
                   "extension/package.json",
@@ -95,11 +113,11 @@ jobs:
               assert manifest["contributes"]["grammars"][0]["language"] == "tuflow"
               assert manifest["contributes"]["grammars"][0]["scopeName"] == "source.tuflow"
           PY
-      - name: Retain QA VSIX for Windows co-installation testing
-        if: runner.os == 'Linux'
+          sha256sum tuflow-helper.vsix | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Retain exact-head QA VSIX for local Windows co-install tests
         uses: actions/upload-artifact@v4
         with:
           name: tuflow-helper-pr17-qa-vsix
-          path: tuflow-helper-pr17-qa.vsix
+          path: tuflow-helper.vsix
           retention-days: 14
           if-no-files-found: error
