@@ -250,9 +250,22 @@ module.exports.run = async function run() {
       const inlinePosition = new vscode.Position(atLine(inlineDocument, inline.line), inline.line.length);
       const inlineItems = itemsOf(await vscode.commands.executeCommand('vscode.executeCompletionItemProvider', inlineDocument.uri, inlinePosition));
       const universal = new Set(['ALL', 'NONE', 'AUTO', 'MANUAL', 'ON', 'OFF', 'TRUE', 'FALSE', 'YES', 'NO']);
-      const leakedValues = inlineItems.map(itemName).filter(name => universal.has(name.toUpperCase()));
-      check('no-generic-completions-in-comment', leakedValues.length ? 'fail' : 'pass',
-        { leakedValues, completionCount: inlineItems.length });
+      // Probe a true command position to identify Helper command labels.
+      // This avoids flagging unrelated editor suggestions in the comment.
+      const commandStart = new vscode.Position(atLine(completionDocument, completionProbe.line), 0);
+      const commandItems = itemsOf(await vscode.commands.executeCommand(
+        'vscode.executeCompletionItemProvider', completionDocument.uri, commandStart));
+      const knownCommands = new Set([
+        ...completions.filter(item => item.kind === vscode.CompletionItemKind.Keyword).map(itemName),
+        ...commandItems.filter(item => item.kind === vscode.CompletionItemKind.Keyword).map(itemName),
+        'Read GIS Z Shape'
+      ]);
+      const leakedSuggestions = leakedCommentCompletions(
+        inlineItems, knownCommands, universal,
+        vscode.CompletionItemKind.Keyword, vscode.CompletionItemKind.File
+      );
+      check('no-generic-completions-in-comment', leakedSuggestions.length ? 'fail' : 'pass',
+        { leakedSuggestions, knownCommandCount: knownCommands.size, completionCount: inlineItems.length });
 
       const valuePosition = new vscode.Position(line, probe.line.indexOf('==') + 3);
       const valueItems = itemsOf(await vscode.commands.executeCommand('vscode.executeCompletionItemProvider', document.uri, valuePosition));
