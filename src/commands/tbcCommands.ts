@@ -3,15 +3,7 @@
  * TUFLOW Boundary Condition commands for boundary setup
  */
 
-export interface TuflowCommand {
-    name: string;
-    description: string;
-    category: string;
-    parameters?: string[];
-    examples?: string[];
-    syntax?: string;
-    notes?: string;
-}
+import type { TuflowCommand } from './types';
 
 export const tbcCommands: TuflowCommand[] = [
     {
