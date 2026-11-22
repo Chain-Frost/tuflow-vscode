@@ -59,13 +59,24 @@ for (const key of ['completion', 'hover', 'largeFileCompletion']) {
       format(b, ' ms/call') + ' | ' + change(a, b) + ' |');
   }
 }
-for (const key of ['documentOpen', 'largeFile', 'networkFile']) {
+for (const key of ['rootFirstOpen', 'documentOpen', 'largeFile', 'networkFile']) {
   const a = key === 'documentOpen' ? base.metrics.documentOpen && base.metrics.documentOpen['model.tcf']?.openAndShowMs
     : base.metrics[key]?.openAndShowMs;
   const b = key === 'documentOpen' ? after.metrics.documentOpen && after.metrics.documentOpen['model.tcf']?.openAndShowMs
     : after.metrics[key]?.openAndShowMs;
-  console.log('| ' + key + ' open/show | ' + format(a, ' ms') + ' | ' + format(b, ' ms') +
+  const label = key === 'rootFirstOpen' ? 'root first open/show'
+    : key === 'documentOpen' ? 'root subsequent open/show' : key + ' open/show';
+  console.log('| ' + label + ' | ' + format(a, ' ms') + ' | ' + format(b, ' ms') +
     ' | ' + change(a, b) + ' |');
+}
+const firstBase = base.metrics.rootFirstOpen?.alreadyOpenBeforeMeasurement;
+const firstAfter = after.metrics.rootFirstOpen?.alreadyOpenBeforeMeasurement;
+if (firstBase !== undefined || firstAfter !== undefined) {
+  console.log('Root already editor-open before first measured operation: baseline=' +
+    String(firstBase) + ', after=' + String(firstAfter));
+  if (firstBase !== firstAfter) {
+    console.log('**Warning:** Root first-open figures are not directly comparable because their initial editor-open states differ.');
+  }
 }
 console.log('');
 console.log('Check totals: baseline ' + JSON.stringify(base.summary) + ' ; after ' + JSON.stringify(after.summary));
