@@ -55,7 +55,16 @@ function leakedCommentCompletions(items, commandLabels, universalLabels, keyword
   }).map(item => typeof item.label === 'string' ? item.label : item.label?.label || '');
 }
 
+function isFreshInvocationReport(report, invocationId) {
+  return typeof invocationId === 'string' && invocationId.length > 0 &&
+    Boolean(report && report.environment?.invocationId === invocationId &&
+      typeof report.finishedAt === 'string' &&
+      report.finishedAt.length > 0 &&
+      Array.isArray(report.checks) && report.summary &&
+      typeof report.summary.fail === 'number');
+}
+
 module.exports = {
   diagnosticCode, expectedMissingPaths, missingPathDiagnostics,
-  childSummaryDiagnostics, leakedCommentCompletions
+  childSummaryDiagnostics, leakedCommentCompletions, isFreshInvocationReport
 };
