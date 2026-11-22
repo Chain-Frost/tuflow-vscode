@@ -22,7 +22,6 @@ TUFLOW Helper focuses on control-file syntax highlighting and command-editing as
 - **[Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens)** — optionally displays VS Code diagnostics directly beside the relevant lines, including those produced by TUFLOW Path Validator. It displays diagnostics; it does not perform TUFLOW validation itself.
 
 These extensions are independent installations. TUFLOW Path Validator owns file-reference diagnostics, seito-openfile owns file opening, and TUFLOW Helper owns editor assistance. Both TUFLOW extensions use the VS Code language ID `tuflow`; see the [co-installation guide](docs/coexistence.md) for migration and smoke tests.
-
 ## Supported File Types
 
 - `.tcf` - TUFLOW Control Files
@@ -39,9 +38,9 @@ These extensions are independent installations. TUFLOW Path Validator owns file-
 - `.elf` - TUFLOW Log Filter Files
 - `.tlf` - TUFLOW Log Filter Files
 - `.trfcf` - TUFLOW Read File Check Files
-- `.trfc` - TUFLOW Read File Check Files
-- `.toc` - TUFLOW Output Control Files
-- `.qcf` - Query Control Files
+- `.trfc` - TUFLOW Rainfall Control Files
+- `.toc` - TUFLOW Operations Control Files (1D structure operating rules)
+- `.qcf` - TUFLOW Quadtree Control Files
 - `.fvc` - Flexible Volume Control Files
 - `.fvm` - Flexible Volume Mesh Files
 - `.fvsed` - Flexible Volume Sediment Files
@@ -101,21 +100,25 @@ See [co-installation and smoke-testing guidance](docs/coexistence.md) for detail
 
 ## Requirements
 
-- [Node.js](https://nodejs.org/) version 14 or higher
+- [Node.js](https://nodejs.org/) version 22 or higher (development tooling)
 - npm (comes with Node.js)
 
 ## Development
 
-To compile the extension:
+From a fresh clone, install dependencies, compile, lint and run unit plus VS Code Extension Host tests:
 ```bash
+npm ci
 npm run compile
+npm run lint
+npm test
 ```
 
-To package the extension:
+To build and audit a local VSIX (without publishing it):
 ```bash
-npm run package
-npx vsce package -o tuflow-helper.vsix
+npm run package:vsix
 ```
+
+On headless Linux, run the Extension Host tests with `xvfb-run -a npm test`. See [developer and CI instructions](docs/DEVELOPMENT.md) for packaging and manual installation checks.
 
 To watch for changes and compile automatically:
 ```bash
@@ -123,6 +126,10 @@ npm run watch
 ```
 
 ## Release Notes
+
+### 0.8.2
+
+- Current package version; earlier changes were not recorded in the changelog.
 
 ### 0.8.1
 

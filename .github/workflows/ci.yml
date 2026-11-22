@@ -1,0 +1,53 @@
+name: Extension CI
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Compile, lint and tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Compile
+        run: npm run compile
+      - name: Lint
+        run: npm run lint
+      - name: Full test command (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm test
+      - name: Full test command (Windows)
+        if: runner.os == 'Windows'
+        run: npm test
+      - name: Build and validate VSIX (no publishing)
+        if: runner.os == 'Linux'
+        run: npm run package:vsix
+      - name: Installed VSIX Extension Host smoke tests (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run test:vsix
+      - name: Retain VSIX for manual installation testing
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tuflow-helper-vsix
+          path: tuflow-helper.vsix
+          if-no-files-found: error
