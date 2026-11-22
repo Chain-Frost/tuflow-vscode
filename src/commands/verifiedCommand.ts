@@ -31,7 +31,7 @@ const valueKinds: Readonly<Record<AuditedValueKind, CommandValueKind>> = {
     'distance-pair': 'number-pair', 'coordinate-pair': 'number-pair',
     file: 'file-path', folder: 'file-path', 'gis-layer': 'file-path', grid: 'file-path',
     'numeric-or-enum': 'number-or-keyword', 'seconds-or-auto': 'number-or-keyword',
-    enum: 'keyword', 'enum-list': 'free-text', tokens: 'free-text'
+    enum: 'keyword', 'enum-list': 'token-list', tokens: 'token-list'
 };
 
 /** Create a verified entry with contextual identity and official provenance. */
