@@ -56,6 +56,30 @@ test('partly typed command replaces only the command text and keeps indentation'
     assert.equal(apply(line, candidate), '  Read GIS Z Shape == ');
 });
 
+test('space-triggered completion ranges contain the cursor and preserve delimiter layout', () => {
+    const pending = 'Read GIS ';
+    const cursor = pending.length;
+    const item = planCompletions('.tgc', pending, cursor)
+        .find(plan => plan.label === 'Read GIS Z Shape');
+    assert.ok(item);
+    assert.ok(item.range.start <= cursor && item.range.end >= cursor);
+    assert.equal(item.range.end, cursor);
+    assert.equal(apply(pending, item), 'Read GIS Z Shape == ');
+
+    const hasDelimiter = 'Read GIS Z Sh   == gis/zones.shp ! note';
+    const beforeDelimiter = hasDelimiter.indexOf('==');
+    const existing = planCompletions('.tgc', hasDelimiter, beforeDelimiter)
+        .find(plan => plan.label === 'Read GIS Z Shape');
+    assert.ok(existing);
+    assert.ok(existing.range.end >= beforeDelimiter);
+    assert.equal(apply(hasDelimiter, existing),
+        'Read GIS Z Shape == gis/zones.shp ! note');
+
+    // A completion request between the two equals signs must not fabricate
+    // a replacement range that fails to cover the cursor.
+    assert.deepEqual(planCompletions('.tgc', hasDelimiter, beforeDelimiter + 1), []);
+});
+
 test('existing delimiter, value and comment survive completing the left side', () => {
     const line = 'Read GIS Z Sh   == gis/test.shp  ! reference';
     const cursor = line.indexOf('Sh') + 2;
@@ -141,6 +165,10 @@ test('file placeholders require an audited file kind and empty value', () => {
     assert.equal(values[0].insertText, '$' + '{1:filename}');
     const existing = 'BC Database == rainfall/bc.csv';
     assert.deepEqual(planCompletions('.tbc', existing, existing.length), []);
+    const existingAtStart = 'BC Database == old.csv';
+    const startOfExistingPath = existingAtStart.indexOf('old.csv');
+    assert.deepEqual(planCompletions('.tbc', existingAtStart, startOfExistingPath), []);
+    assert.deepEqual(planCompletions('.tbc', existingAtStart, startOfExistingPath + 2), []);
     const numeric = 'Global Rainfall Initial Loss == ';
     assert.deepEqual(planCompletions('.tbc', numeric, numeric.length), []);
     const freeText = 'BC Event Name == ';
