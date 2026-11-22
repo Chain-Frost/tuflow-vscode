@@ -41,3 +41,19 @@ Details are in [the PR #12 evidence comment](https://github.com/Chain-Frost/tufl
 - [ ] Record and assign observed regressions to their owning PRs; retain the issue open.
 
 No merge, issue closure, release or publication is implied by this evidence.
+
+
+## Independent review of PR #16
+
+Codex completed a review of the original acceptance runner at `3f68375b448ce26bf9d369fda9f3b3e05049ba27` and identified **four valid harness defects** (not production TUFLOW defects). These are the remediation targets:
+
+1. Positives were satisfied by unrelated diagnostics, including incomplete two-file path lists.
+2. Recursion was not tested independently of editor-opening the nested TRD.
+3. Inline-comment completion checks missed command labels that were not universal values.
+4. Total CPU durations were compared without accounting for differing sample counts.
+
+The acceptance branch now uses exact Validator source `TUFLOW Path Validator` and code `TPV001` with a complete expected-path multiset, checks `TPV002` parent summaries and `TPV001` nested references **before the TRD is opened independently**, includes command-completion leakage checks and compares CPU milliseconds **per measured call**. The nested TRD's existing reference was changed to `include/leaf.trd`, because the Validator's include traversal resolves it against the source TCF directory, not the TRD directory. The indexed case ID is unchanged.
+
+Tests in `assertions.test.cjs` and `compare-reports.test.cjs` specifically exercise these false-positive conditions on both CI platforms.
+
+The review must be repeated on the resulting head after CI; an earlier review receipt with findings is **not an approval**.
