@@ -7,6 +7,10 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { performance } = require('node:perf_hooks');
+const {
+  diagnosticCode, expectedMissingPaths, missingPathDiagnostics,
+  childSummaryDiagnostics, leakedCommentCompletions
+} = require('./assertions.cjs');
 
 const FIXTURES = path.join(__dirname, 'fixtures');
 const MATRIX = JSON.parse(fs.readFileSync(path.join(FIXTURES, 'matrix.json'), 'utf8'));
@@ -127,6 +131,61 @@ module.exports.run = async function run() {
       check('extension-' + role, Boolean(ext) === expected[role] ? 'pass' : 'fail',
         { expectedPresent: expected[role], actualPresent: Boolean(ext), id: ext && ext.id });
     }
+
+    // Crucial: only the root TCF is editor-open. Child diagnostics must be
+    // reached through the Validator's recursive include traversal, not
+    // through the normal onDidOpenTextDocument path for nested.trd.
+    const rootPath = path.join(FIXTURES, 'model.tcf');
+    const rootUri = vscode.Uri.file(rootPath);
+    const childPath = path.join(FIXTURES, 'include', 'nested.trd');
+    const childUri = vscode.Uri.file(childPath);
+    const rootStarted = performance.now();
+    const rootDoc = await vscode.workspace.openTextDocument(rootUri);
+    await vscode.window.showTextDocument(rootDoc, { preview: false });
+    report.metrics.rootFirstOpen = { openAndShowMs: round(performance.now() - rootStarted) };
+    if (expected.validator) {
+      const rootCase = MATRIX.cases.find(item => item.id === 'tcf-existing-trd');
+      const missingCase = MATRIX.cases.find(item => item.id === 'trd-missing');
+      const presentCase = MATRIX.cases.find(item => item.id === 'trd-existing');
+      const childLines = fs.readFileSync(childPath, 'utf8').split(/\r?\n/);
+      function uniqueChildLine(sourceLine) {
+        const locations = childLines.flatMap((value, index) => value === sourceLine ? [index + 1] : []);
+        if (locations.length !== 1) throw new Error('Non-unique child fixture line: ' + sourceLine);
+        return locations[0];
+      }
+      const parentLine = atLine(rootDoc, rootCase.line) + 1;
+      const missingLine = uniqueChildLine(missingCase.line);
+      const presentLine = uniqueChildLine(presentCase.line);
+      const wasChildOpened = () => vscode.workspace.textDocuments.some(doc => doc.uri.toString() === childUri.toString());
+      const snapshot = (uri, file) => vscode.languages.getDiagnostics(uri).map(diag => ({
+        file, line: diag.range.start.line + 1, source: diag.source || null,
+        code: diagnosticCode(diag), message: diag.message
+      }));
+      let parentIssues = [], childIssues = [];
+      for (let attempt = 0; attempt < 40; attempt++) {
+        parentIssues = snapshot(rootUri, 'model.tcf');
+        childIssues = snapshot(childUri, 'include/nested.trd');
+        if (childSummaryDiagnostics(parentIssues, 'model.tcf', parentLine, 'nested.trd').length &&
+            expectedMissingPaths(childIssues, 'include/nested.trd', missingLine,
+              ['missing_nested.trd']).pass) break;
+        await pause(250);
+      }
+      const isUnopened = !wasChildOpened();
+      check('root-only-child-not-editor-open', isUnopened ? 'pass' : 'fail',
+        { childUri: childUri.toString(), childOpened: !isUnopened });
+      const summaries = childSummaryDiagnostics(parentIssues, 'model.tcf', parentLine, 'nested.trd');
+      check('recursive-root-child-summary', summaries.length === 1 ? 'pass' : 'fail',
+        { expectedCode: 'TPV002', actual: summaries.map(d => d.message) });
+      const missingChild = expectedMissingPaths(childIssues, 'include/nested.trd',
+        missingLine, ['missing_nested.trd']);
+      check('recursive-root-missing-child', missingChild.pass ? 'pass' : 'fail', missingChild);
+      const presentChild = expectedMissingPaths(childIssues, 'include/nested.trd',
+        presentLine, []);
+      const presentFile = path.join(FIXTURES, 'include', 'leaf.trd');
+      check('recursive-root-present-child', fs.existsSync(presentFile) && presentChild.pass ? 'pass' : 'fail',
+        { fileExists: fs.existsSync(presentFile), reference: presentCase.line, ...presentChild });
+    }
+
     const filenames = [...new Set(MATRIX.cases.map(item => item.file))];
     for (const name of filenames) {
       const start = performance.now();
@@ -213,6 +272,7 @@ module.exports.run = async function run() {
           end: diag.range.end.character,
           severity: diag.severity,
           source: diag.source || null,
+          code: diagnosticCode(diag),
           message: diag.message
         };
         problems.push(item);
@@ -235,15 +295,25 @@ module.exports.run = async function run() {
       return problems.filter(problem => problem.file === entry.file && problem.line === index);
     };
     if (expected.validator) {
-      for (const id of ['tcf-missing-trd', 'tbc-missing-gis', 'tgc-gpkg', 'tgc-list']) {
+      const expectedPathCases = {
+        'tcf-missing-trd': ['include/missing.trd'],
+        'tbc-missing-gis': ['gis/absent_bc.shp'],
+        'tgc-gpkg': ['gis/absent_terrain.gpkg'],
+        'tgc-list': ['../gis/absent_a.shp', '../gis/absent_b.shp']
+      };
+      for (const [id, expectedPaths] of Object.entries(expectedPathCases)) {
+        const fixture = MATRIX.cases.find(c => c.id === id);
         const diagnostics = hasProblemOn(id);
-        check('validator-' + id, diagnostics.length ? 'pass' : 'fail',
-          { count: diagnostics.length, sources: diagnostics.map(entry => entry.source) });
+        const result = expectedMissingPaths(diagnostics, fixture.file,
+          atLine(docs[fixture.file], fixture.line) + 1, expectedPaths);
+        check('validator-' + id, result.pass ? 'pass' : 'fail', result);
       }
       for (const id of ['tcf-macro', 'tbc-suppressed', 'tgc-macro-layer', 'tcf-unknown']) {
+        const fixture = MATRIX.cases.find(c => c.id === id);
         const diagnostics = hasProblemOn(id);
-        check('validator-' + id + '-ignored', diagnostics.length ? 'fail' : 'pass',
-          { count: diagnostics.length });
+        const result = expectedMissingPaths(diagnostics, fixture.file,
+          atLine(docs[fixture.file], fixture.line) + 1, []);
+        check('validator-' + id + '-ignored', result.pass ? 'pass' : 'fail', result);
       }
     } else {
       check('helper-alone-no-problems', problems.length === 0 ? 'pass' : 'fail', { count: problems.length });
