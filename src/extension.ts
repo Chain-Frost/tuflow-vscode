@@ -93,4 +93,4 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(...editorServices, openFileCommand, openDocumentationCommand);
 }
 
-export function deactivate() {}
+export function deactivate() { /* Subscriptions are disposed by VS Code. */ }
