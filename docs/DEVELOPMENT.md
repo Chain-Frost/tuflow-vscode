@@ -63,12 +63,22 @@ VS Code testing and packaging tools are pinned as development dependencies
 in `package.json` and resolved from the committed `package-lock.json`.
 All local and CI commands use `npm ci` for reproducibility.
 
+### Failure-propagation verification
+
+`npm run test:fail-closed` temporarily adds a deliberately invalid TypeScript
+source and a deliberately failing Node unit test. It confirms that the normal
+`npm run compile` and `npm run test:unit` commands return failure and report
+the injected error. Temporary source, test and compiled files are removed in
+`finally` blocks. CI runs this verification on Linux and Windows before the
+normal full test suite; a failure in detection or cleanup fails the job.
+
 ## CI
 
 The pull-request and `master` workflows run locked installation, compilation,
-linting and tests on Ubuntu and Windows. Ubuntu also packages, audits and
-installs the VSIX for an additional Extension Host smoke test, then retains
-the package as a workflow artifact for optional manual installation. A broken compile,
+linting, failure-propagation checks and tests on Ubuntu and Windows. **Both
+platforms** package and audit a VSIX and run an additional Extension Host smoke
+test against the installed package. Ubuntu retains its VSIX as a workflow
+artifact for optional manual installation. A broken compile,
 unit test, Extension Host test or package check fails the job.
 
 **Packaging is not publishing.** This workflow does not push tags, merge code,
