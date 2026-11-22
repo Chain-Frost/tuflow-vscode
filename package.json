@@ -9,14 +9,14 @@
     "color": "#2c3e50",
     "theme": "dark"
   },
-  "homepage": "https://github.com/lmillard79/tuflow-vscode/blob/main/README.md",
+  "homepage": "https://github.com/Chain-Frost/tuflow-vscode/blob/master/README.md",
   "bugs": {
-    "url": "https://github.com/lmillard79/tuflow-vscode/issues"
+    "url": "https://github.com/Chain-Frost/tuflow-vscode/issues"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lmillard79/tuflow-vscode.git"
+    "url": "https://github.com/Chain-Frost/tuflow-vscode.git"
   },
   "engines": {
     "vscode": "^1.74.0"
@@ -104,9 +104,12 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
+    "lint": "eslint \"src/**/*.ts\"",
     "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "npm run test:unit && npm run test:extension",
+    "test:unit": "node --test test/unit/commands.test.cjs",
+    "test:extension": "npm exec --yes --package=@vscode/test-cli@0.0.15 -- vscode-test",
+    "package:vsix": "npm run compile && npm exec --yes --package=@vscode/vsce@3.7.1 -- vsce package --no-dependencies --out tuflow-helper.vsix && node scripts/verify-vsix.cjs tuflow-helper.vsix"
   },
   "devDependencies": {
     "@types/vscode": "^1.74.0",
