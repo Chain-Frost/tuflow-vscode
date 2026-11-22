@@ -1,0 +1,49 @@
+name: Issue 3 source and installed VSIX acceptance
+
+on:
+  pull_request:
+    branches: [agent-c/issue-3-command-catalogue-parser]
+
+permissions:
+  contents: read
+
+jobs:
+  editor:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run compile
+      - run: npm run lint
+      - run: npm run test:unit
+      - name: Real VS Code Extension Host (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run test:extension
+      - name: Real VS Code Extension Host (Windows)
+        if: runner.os == 'Windows'
+        run: npm run test:extension
+      - run: npm run package:vsix
+      - name: Installed VSIX Extension Host (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run test:vsix
+      - name: Installed VSIX Extension Host (Windows)
+        if: runner.os == 'Windows'
+        run: npm run test:vsix
+      - name: VSIX SHA-256
+        run: node -e "const fs=require('fs');const crypto=require('crypto');console.log('VSIX SHA-256:',crypto.createHash('sha256').update(fs.readFileSync('tuflow-helper.vsix')).digest('hex'))"
+      - name: Preserve VSIX for audit
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue3-editor-acceptance-vsix
+          path: tuflow-helper.vsix
+          if-no-files-found: error
