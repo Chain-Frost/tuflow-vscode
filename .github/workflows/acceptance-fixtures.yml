@@ -27,5 +27,6 @@ jobs:
       - name: Check acceptance script syntax
         run: |
           node --check test/acceptance/vscode-runner.cjs
+          node --check test/acceptance/run-host.cjs
           node --check test/acceptance/assertions.cjs
           node --check test/acceptance/compare-reports.mjs
