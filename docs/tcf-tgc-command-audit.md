@@ -14,7 +14,7 @@ This is a **release-specific audit of 2026.3**, not a claim that commands absent
 
 ## Original catalogue inventory
 
-Original: **19 TCF** and **32 TGC** entries. Current suggestions: **37 TCF** and **31 TGC** definitions (with optional suffix groups). Some verified entries are new; unsupported and legacy entries are quarantined.
+Original: **19 TCF** and **32 TGC** entries. Current suggestions: **39 TCF** and **31 TGC** definitions (with optional suffix groups). Some verified entries are new; unsupported and legacy entries are quarantined.
 
 | Original name | Context | Status in new autocomplete | Audit disposition |
 | --- | --- | --- | --- |
@@ -73,13 +73,13 @@ Original: **19 TCF** and **32 TGC** entries. Current suggestions: **37 TCF** and
 ## Corrections made
 
 - Time commands `Start Time` and `End Time` take numerical **simulation hours** (including fractional/negative hours), not `HH:MM:SS`. Output intervals and timesteps are **seconds**.
-- `Read GIS Z Shape` uses **vector** 2d_zsh GIS features; raster TIF/ASC elevations use `Read Grid Zpts`. Documented left-hand modifiers (`RIDGE`, `GULLY`, `ADD`, `MAX`, `MIN`, `XF ...`) are represented as optional registry suffix groups rather than duplicate commands.
+- `Read GIS Z Shape` uses **vector** 2d_zsh GIS features; raster TIF/ASC elevations use `Read Grid Zpts`. Documented left-hand modifiers (`RIDGE`, `GULLY`, `ADD`, `MAX`, `MIN`, `XF ...`) are represented as optional registry suffix groups rather than duplicate commands. Check-file INCLUDE/EXCLUDE variants are kept separate because their operand type differs from the base command.
 - `Read GIS Layered FC Shape` uses 2d_lfcsh layers, not the older 2d_fcsh layer.
 - `Set Mat == 1` in TGC assigns a material ID; roughness is defined using the separate TCF `Read Materials File` command.
 - `Solution Scheme == HPC` is the TCF solver selector; TGC `Set Code` assigns cell codes.
 - The TCF boundary database is a `.csv`, not a TBC/TMF control file.
 - TBC boundary and 1D network entries incorrectly listed in TGC are not suggested; the Agent E control-file audit owns those other contexts.
-- `Write Check Files ALL/NONE` and `Output Files ALL/NONE` are documented commands **without `==`**; Agent C's provider currently always inserts ` == `, so these standalone commands are not added as broken completions. Provider improvements belong to a separate issue.
+- `Write Check Files == <file_prefix>` sets an output folder or check-file prefix. The documented `Write Check Files INCLUDE/EXCLUDE == <prefix_list>` forms instead take space-delimited check-layer prefixes. They are separate audited catalogue entries with `token-list` metadata, preventing incorrect file-path suggestions. `Write Check Files ALL/NONE` and `Output Files ALL/NONE` are documented commands **without `==`**; the current provider always inserts ` == `, so these standalone commands are not added as broken completions. Provider improvements belong to a separate issue.
 - Both original entries and new suggestions are covered in the table above. New suggestions also carry the manual version and source URL in their metadata.
 
 ## Suggested command example policy
