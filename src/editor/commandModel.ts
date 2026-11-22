@@ -97,12 +97,18 @@ export function planCompletions(
     const inValue = equals !== null && cursor >= equals.range.end.character;
     if (!inValue) {
         const left = parsed.leftHand;
-        // If the delimiter is present, replace only the left hand side.
-        // If absent, never replace the inline comment or indentation.
+        // VS Code requires a completion replacement range to contain the cursor.
+        // The parser trims trailing whitespace, so extend through a space trigger
+        // without consuming the existing delimiter, value or inline comment.
+        if ((left && cursor < left.range.start.character) ||
+            (equals && cursor > equals.range.start.character &&
+                cursor < equals.range.end.character)) return [];
         const start = left?.range.start.character ?? cursor;
-        const end = left?.range.end.character ?? cursor;
-        const prefix = line.slice(start, Math.min(cursor, end));
+        const leftEnd = left?.range.end.character ?? cursor;
+        const end = Math.max(leftEnd, cursor);
+        const prefix = line.slice(start, Math.min(cursor, leftEnd));
         const range = replaceRange(lineNumber, start, end);
+        const needsGapBeforeEquals = equals !== null && end >= equals.range.start.character;
         const plans: CompletionPlan[] = [];
         const seen = new Set<string>();
         for (const command of entries) {
@@ -113,7 +119,7 @@ export function planCompletions(
                 seen.add(key);
                 plans.push({
                     label: name, kind: 'command',
-                    insertText: name + (equals ? '' : ' == '),
+                    insertText: name + (equals ? (needsGapBeforeEquals ? ' ' : '') : ' == '),
                     range, description: command.description,
                     documentation: documentationForCommand(command)
                 });
@@ -148,7 +154,7 @@ export function planCompletions(
         }
         // A filename placeholder is appropriate only when the typed registry
         // specifically identifies a file argument, and the value is still empty.
-        if (command.valueKind === 'file-path' && prefix.trim().length === 0 &&
+        if (command.valueKind === 'file-path' && value === null &&
             !seen.has('file-path')) {
             seen.add('file-path');
             plans.push({
