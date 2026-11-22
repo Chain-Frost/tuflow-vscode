@@ -16,7 +16,7 @@ No solver, QGIS, GDAL, formatter or file-opening implementation is introduced.
 
 The files in [test/acceptance/fixtures](../../test/acceptance/fixtures) cover **45 individually indexed cases** in TCF, TGC, TBC, ECF, TEF, TRD and QCF. Each case is identified by the exact source line and an explicit intent in [matrix.json](../../test/acceptance/fixtures/matrix.json).
 
-Coverage includes existing and missing relative references, nested TRD files, ignored references, unknown, incomplete and malformed-delimiter command lines, conditional directives, inline comments, decimal/scientific values, unresolved macro placeholders, Windows UNC-style references, file lists and GeoPackage `>>` selectors. Cases marked `incomplete` or `unknown` are *not* blanket errors: Helper must not reject them. Some QCF/TEF inputs are deliberately **syntax-only probes**, not claims of a verified TUFLOW command.
+Coverage includes existing and missing relative references, nested TRD files (resolved from the source TCF directory), ignored references, unknown, incomplete and malformed-delimiter command lines, conditional directives, inline comments, decimal/scientific values, unresolved macro placeholders, Windows UNC-style references, file lists and GeoPackage `>>` selectors. Cases marked `incomplete` or `unknown` are *not* blanket errors: Helper must not reject them. Some QCF/TEF inputs are deliberately **syntax-only probes**, not claims of a verified TUFLOW command.
 
 Run the fixture consistency test (no npm dependencies required):
 
