@@ -23,6 +23,15 @@ async function documentWithExtension(extension, content) {
     return document;
 }
 
+// VS Code merges Helper completions with built-in word/snippet providers.
+function isHelperCompletion(item) {
+    const documentation = item.documentation;
+    const markdown = typeof documentation === 'string' ? documentation
+        : documentation && typeof documentation.value === 'string'
+            ? documentation.value : '';
+    return markdown.includes('[Official TUFLOW documentation]');
+}
+
 async function completions(document, column) {
     const result = await vscode.commands.executeCommand(
         'vscode.executeCompletionItemProvider', document.uri, new vscode.Position(0, column)
@@ -139,8 +148,8 @@ suite('TUFLOW Helper command-aware editor integration (#6)', () => {
         const hashComment = 'RF Grid Format == # TIF is only a comment';
         const hashDocument = await documentWithExtension('.trfc', hashComment);
         const hashOptions = await completions(hashDocument, hashComment.length);
-        assert.ok(!hashOptions.some(item => ['ASC', 'FLT', 'NC', 'TIF'].includes(item.label)),
-            'rainfall format values must be suppressed inside # comments');
+        assert.ok(!hashOptions.some(item => isHelperCompletion(item)),
+            'Helper completions must be suppressed inside # comments');
         const syntaxOnly = await documentWithExtension('.tef', 'RF Grid');
         const unrelated = (await completions(syntaxOnly, 'RF Grid'.length))
             .filter(item => item.label === 'RF Grid Format');
