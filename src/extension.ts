@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { allTuflowCommands, getCommandsForFile, lookupCommandsForFile, parseTuflowLine } from './commands';
+import { getCommandsForFile, lookupCommandsForFile, parseTuflowLine } from './commands';
 import * as path from 'path';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -29,10 +29,8 @@ export function activate(context: vscode.ExtensionContext) {
                 const afterDelimiter = parsedLine.delimiter !== null &&
                     position.character >= parsedLine.delimiter.range.end.character;
                 if (!afterDelimiter) {
-                    // Unknown extension retains the legacy completion fallback;
-                    // contextual lookup/hover never uses that ambiguous fallback.
-                    const relevant = getCommandsForFile(fileExtension);
-                    const filteredCommands = relevant.length ? relevant : allTuflowCommands;
+                    // Syntax-only extensions deliberately have no command catalogue.
+                    const filteredCommands = getCommandsForFile(fileExtension);
                     const seen = new Set<string>();
 
                     for (const cmd of filteredCommands) {
@@ -66,23 +64,14 @@ export function activate(context: vscode.ExtensionContext) {
                     const candidates = lookupCommandsForFile(fileExtension, parsedLine);
                     // Use documented options in preference to generic guesses.
                     const options = [...new Set(candidates.flatMap(cmd => cmd.allowedValues ?? []))];
-                    const expectsPath = candidates.length === 0 ||
-                        candidates.some(cmd =>
-                            cmd.valueKind === 'unknown' ||
-                            cmd.valueKind === 'file-path' ||
-                            cmd.valueKind === 'free-text');
+                    const expectsPath = candidates.some(cmd => cmd.valueKind === 'file-path');
                     if (expectsPath) {
                         const fileItem = new vscode.CompletionItem('file path', vscode.CompletionItemKind.File);
                         fileItem.insertText = new vscode.SnippetString('$' + '{1:filename}');
                         completionItems.push(fileItem);
                     }
 
-                    const suggestedValues = options.length > 0
-                        ? options
-                        : (candidates.some(cmd => cmd.valueKind !== 'unknown')
-                            ? []
-                            : ['ALL', 'NONE', 'AUTO', 'MANUAL', 'ON', 'OFF',
-                                'TRUE', 'FALSE', 'YES', 'NO', '0', '1']);
+                    const suggestedValues = options;
                     for (const value of suggestedValues) {
                         const item = new vscode.CompletionItem(value, vscode.CompletionItemKind.Value);
                         item.insertText = value;

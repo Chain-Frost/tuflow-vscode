@@ -150,12 +150,23 @@ test('provenance and verified metadata do not silently certify legacy fields', (
     for (const command of allTuflowCommands) {
         assert.match(command.provenance.url, /^https:\/\/docs\.tuflow\.com\//);
         assert.match(command.provenance.section, /Appendix/);
-        assert.equal(command.provenance.auditStatus, 'needs-audit');
+        assert.equal(command.provenance.auditStatus,
+            ['TBC', 'ECF', 'TRFC', 'QCF'].includes(command.category) ? 'verified' : 'needs-audit');
         assert.ok(command.canonicalName.length > 0);
     }
     const format = lookupCommandsForFile('.trfc', 'RF Grid Format == TIF')[0];
     assert.deepEqual(format.allowedValues, ['ASC', 'FLT', 'NC', 'TIF']);
-    assert.deepEqual(format.safeExamples, ['RF Grid Format == TIF']);
+    assert.ok(format.safeExamples.includes('RF Grid Format == TIF'));
+    // A documented single-value keyword is not a multi-argument signature.
+    assert.equal(format.parameters, undefined);
+    assert.deepEqual(
+        lookupCommandsForFile('.trfc', 'RF Grid Origin == 1, 2')[0].parameters,
+        ['<OX>', '<OY>']
+    );
+    assert.deepEqual(
+        lookupCommandsForFile('.ecf', 'BC Event Name == RAIN')[0].parameters,
+        ['<bc_event_name>']
+    );
     const uncertain = lookupCommandsForFile('.tcf', 'Define Source == something')[0];
     assert.equal(uncertain.valueKind, 'unknown');
     assert.equal(uncertain.allowedValues, undefined);
