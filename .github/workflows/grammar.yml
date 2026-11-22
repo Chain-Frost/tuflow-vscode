@@ -7,6 +7,7 @@ on:
       - 'syntaxes/tuflow.tmLanguage.json'
       - 'language-configuration.json'
       - 'test/grammar.test.cjs'
+      - 'test/textmate.test.cjs'
       - 'test/fixtures/grammar-cases.json'
   push:
     branches: [master]
@@ -15,6 +16,7 @@ on:
       - 'syntaxes/tuflow.tmLanguage.json'
       - 'language-configuration.json'
       - 'test/grammar.test.cjs'
+      - 'test/textmate.test.cjs'
       - 'test/fixtures/grammar-cases.json'
 
 jobs:
@@ -27,3 +29,7 @@ jobs:
           node-version: '22'
       - name: Check grammar and indentation fixtures
         run: node --test test/grammar.test.cjs
+      - name: Install isolated TextMate tokenizer test libraries
+        run: npm install --no-save --package-lock=false --prefix .grammar-test-deps vscode-textmate@9.3.2 vscode-oniguruma@2.0.1
+      - name: Verify TextMate and Oniguruma tokenisation
+        run: NODE_PATH="$PWD/.grammar-test-deps/node_modules" node --test test/textmate.test.cjs

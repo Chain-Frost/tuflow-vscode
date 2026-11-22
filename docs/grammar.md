@@ -36,6 +36,11 @@ a complete TextMate engine or a substitute for Extension Development Host
 checks. It translates the leading Oniguruma `(?i)` switch for Node's regex
 engine; the grammar itself remains Oniguruma-compatible.
 
+CI also installs pinned, **test-only** `vscode-textmate` and `vscode-oniguruma`
+packages into an isolated directory and runs `test/textmate.test.cjs` against
+all snapshot scopes using the actual VS Code tokeniser and Oniguruma WASM.
+These dependencies are not added to the extension or its package lockfile.
+
 To inspect regenerated snapshots locally, run
 `UPDATE_GRAMMAR_SNAPSHOTS=1 node --test test/grammar.test.cjs`, then inspect
 all differences before committing. Do not regenerate to make a failing test
