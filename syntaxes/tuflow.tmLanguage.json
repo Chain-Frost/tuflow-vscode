@@ -37,6 +37,10 @@
         {
           "name": "comment.line.exclamation.tuflow",
           "match": "!.*$"
+        },
+        {
+          "name": "comment.line.number-sign.tuflow",
+          "match": "#.*$"
         }
       ]
     },
@@ -52,7 +56,7 @@
       "patterns": [
         {
           "name": "meta.command.header.tuflow",
-          "begin": "^(?=\\s*[^!=\\r\\n]+?\\s*==)",
+          "begin": "^(?=\\s*[^!#=\\r\\n]+?\\s*==)",
           "end": "(?=\\s*==)|$",
           "patterns": [
             {
@@ -69,7 +73,7 @@
       "patterns": [
         {
           "name": "support.function.tuflow",
-          "match": "(?i)^\\s*(?:Read\\s+GIS(?:\\s+(?:Z\\s+(?:Shape|Line|Point)|Mat|BC|HX|SX|WL|Node|Channel|Pipe))?|Write\\s+GIS(?:\\s+(?:Water\\s+Level|Velocity|Depth))?|Map\\s+Output\\s+(?:Format|Interval)|Geometry\\s+Control\\s+File\\s*\\(\\.tgc\\)|BC\\s+Control\\s+File\\s*\\(\\.tbc\\)|Cell\\s+Size|Set\\s+(?:Code|IWL|Mat|Grid|Origin|Extent)|Start\\s+Time|End\\s+Time|Start|Timestep|Output\\s+Interval|Write\\s+(?:Check\\s+Files|Results)|BC\\s+(?:Event|Database)|Define\\s+(?:Source|Event|BC)|Scenario|Event)(?=\\s*(?:\\|\\s*[^|!=\\r\\n]+\\s*)*==)"
+          "match": "(?i)^\\s*(?:Read\\s+GIS(?:\\s+(?:Z\\s+(?:Shape|Line|Point)|Mat|BC|HX|SX|WL|Node|Channel|Pipe))?|Write\\s+GIS(?:\\s+(?:Water\\s+Level|Velocity|Depth))?|Map\\s+Output\\s+(?:Format|Interval)|Geometry\\s+Control\\s+File\\s*\\(\\.tgc\\)|BC\\s+Control\\s+File\\s*\\(\\.tbc\\)|Cell\\s+Size|Set\\s+(?:Code|IWL|Mat|Grid|Origin|Extent)|Start\\s+Time|End\\s+Time|Start|Timestep|Output\\s+Interval|Write\\s+(?:Check\\s+Files|Results)|BC\\s+(?:Event|Database)|Define\\s+(?:Source|Event|BC)|Scenario|Event)(?=\\s*(?:\\|\\s*[^|!#=\\r\\n]+\\s*)*==)"
         }
       ]
     },
@@ -133,11 +137,11 @@
       "patterns": [
         {
           "name": "string.unquoted.path.tuflow",
-          "match": "(?i)(?<![\\w.])(?:(?:[A-Z]:|~|\\.\\.?)[\\\\\\/]|\\\\\\\\)[^\\r\\n!\"'<>]*?\\.(?:tcf|tgc|tbc|tef|ecf|qcf|trfc|trd|tmf|shp|gpkg|tif|tiff|asc|flt|csv|ts1|ts2|nc|json|txt|dat|xyz)(?=\\b|[\\s>|!]|$)"
+          "match": "(?i)(?<![\\w.])(?:(?:[A-Z]:|~|\\.\\.?)[\\\\\\/]|\\\\\\\\)[^\\r\\n!#\"'<>]*?\\.(?:tcf|tgc|tbc|tef|ecf|qcf|trfc|trd|tmf|shp|gpkg|tif|tiff|asc|flt|csv|ts1|ts2|nc|json|txt|dat|xyz)(?=\\b|[\\s>|!]|$)"
         },
         {
           "name": "string.unquoted.path.tuflow",
-          "match": "(?i)(?<![\\w.])(?:(?:[A-Z]:|~|\\.\\.?)[\\\\\\/]|\\\\\\\\)[^\\s!\"'<>]+"
+          "match": "(?i)(?<![\\w.])(?:(?:[A-Z]:|~|\\.\\.?)[\\\\\\/]|\\\\\\\\)[^\\s!#\"'<>]+"
         },
         {
           "name": "string.unquoted.path.tuflow",

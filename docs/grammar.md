@@ -12,13 +12,13 @@ whole-document formatting. This extension must not duplicate those services.
   word alternation, no release filter, and no assumptions about filename
   existence or GeoPackage layers. Left-side pipe modifiers are highlighted as
   punctuation, not validated. Unrecognised modifiers remain neutral.
-- `!` starts a comment outside quoted values. Both quote styles, `<<...>>`
+- `!` and `#` start comments outside quoted values (per [TUFLOW 2026.3, §4.1.1 Table 4.2](https://docs.tuflow.com/classic-hpc/manual/2026.3/04-ControlFiles-and-Inputs.html)). Both quote styles, `<<...>>`
   placeholders, `==`, `>>`, common unquoted paths, and signed/decimal/scientific
   numeric values have independent scopes. Path colouring is heuristic;
   filenames with uncommon extensions or spacing may be left neutral.
 - Auto-indentation only handles `If`, `Else If`, `Else`, `End If`-style blocks.
   It does not treat `Scenario ==` / `Event ==` declarations as blocks. Only
-  full-line `!` comments are continued on Enter. Indentation width and
+  full-line `!` or `#` comments are continued on Enter. Indentation width and
   formatting are controlled by VS Code/user settings or Path Validator.
 
 ## Fixture tests

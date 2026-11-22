@@ -58,7 +58,7 @@
   ],
   "indentationRules": {
     "increaseIndentPattern": {
-      "pattern": "^\\s*(?:(?:else\\s+)?if\\b|else\\b)(?![^!]*\\bend\\s+if\\b)[^!\\r\\n]*(?:!.*)?$",
+      "pattern": "^\\s*(?:(?:else\\s+)?if\\b|else\\b)(?![^!#]*\\bend\\s+if\\b)[^!#\\r\\n]*(?:[!#].*)?$",
       "flags": "i"
     },
     "decreaseIndentPattern": {
@@ -72,6 +72,13 @@
       "action": {
         "indent": "none",
         "appendText": "! "
+      }
+    },
+    {
+      "beforeText": "^\\s*#.*$",
+      "action": {
+        "indent": "none",
+        "appendText": "# "
       }
     }
   ]
