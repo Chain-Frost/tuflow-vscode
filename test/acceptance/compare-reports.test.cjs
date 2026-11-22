@@ -22,8 +22,13 @@ test('CPU comparisons are per-call and flag different sample configurations', ()
           configuredRepeats: String(samples), configuredSyntheticLines: '10000'
         },
         extensions: {},
-        metrics: {completion: {samples, p50Ms: 10, p95Ms: 15,
-          cpuUserMs: samples, cpuSystemMs: samples / 2}},
+        metrics: {
+          rootFirstOpen: {openAndShowMs: samples === 12 ? 10 : 20,
+            alreadyOpenBeforeMeasurement: false},
+          documentOpen: {'model.tcf': {openAndShowMs: 1}},
+          completion: {samples, p50Ms: 10, p95Ms: 15,
+            cpuUserMs: samples, cpuSystemMs: samples / 2}
+        },
         summary: {pass: 1, fail: 0, blocked: 0, unverified: 1}
       };
     }
@@ -37,6 +42,9 @@ test('CPU comparisons are per-call and flag different sample configurations', ()
     assert.equal(result.status, 0, result.stderr);
     assert.match(result.stdout, /Environment differences: configuredRepeats/);
     assert.match(result.stdout, /completion sample count \| 12 \| 24 \| workload shown/);
+    assert.match(result.stdout, /root first open\/show \| 10\.00 ms \| 20\.00 ms \| 100\.0%/);
+    assert.match(result.stdout, /root subsequent open\/show \| 1\.00 ms \| 1\.00 ms \| 0\.0%/);
+    assert.match(result.stdout, /already editor-open before first measured operation: baseline=false, after=false/);
     assert.match(result.stdout,
       /completion cpuUserMs\/call \| 1\.00 ms\/call \| 1\.00 ms\/call \| 0\.0%/);
     assert.match(result.stdout,
