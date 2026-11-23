@@ -37,15 +37,38 @@ export interface CommandRegistry {
     lookup(fileNameOrExtension: string, phraseOrLine: string | ParsedTuflowLine): readonly CommandDefinition[];
 }
 
+/** Immutable snapshot of the plain command metadata supplied by callers. */
+function snapshotMetadata<T>(value: T, copies = new WeakMap<object, object>()): T {
+    if (value === null || typeof value !== 'object') return value;
+    const previous = copies.get(value);
+    if (previous) return previous as T;
+    if (Array.isArray(value)) {
+        const output: unknown[] = [];
+        copies.set(value, output);
+        for (const item of value) output.push(snapshotMetadata(item, copies));
+        return Object.freeze(output) as T;
+    }
+    const output: Record<string, unknown> = {};
+    copies.set(value, output);
+    for (const [key, item] of Object.entries(value)) {
+        Object.defineProperty(output, key, {
+            enumerable: true, configurable: true, writable: true,
+            value: snapshotMetadata(item, copies)
+        });
+    }
+    return Object.freeze(output) as T;
+}
+
 /** Pure, exact, file-context-aware registry. Unknowns return [] without diagnostics. */
 export function createCommandRegistry(definitions: readonly CommandDefinition[]): CommandRegistry {
+    const snapshots = definitions.map(definition => snapshotMetadata(definition));
     const categories = new Map<ControlFileCategory, CommandDefinition[]>();
     const names = new Map<ControlFileCategory, Map<string, readonly CommandDefinition[]>>();
     for (const category of controlFileCategories) {
         categories.set(category, []);
         names.set(category, new Map());
     }
-    for (const definition of definitions) {
+    for (const definition of snapshots) {
         for (const category of definition.categories) {
             const categoryEntries = categories.get(category);
             const nameEntries = names.get(category);
@@ -63,7 +86,7 @@ export function createCommandRegistry(definitions: readonly CommandDefinition[])
         frozenByCategory.set(category, Object.freeze([...(categories.get(category) ?? [])]));
     }
     return {
-        all: Object.freeze([...definitions]),
+        all: Object.freeze([...snapshots]),
         forFile(fileNameOrExtension) {
             const category = getControlFileCategory(fileNameOrExtension);
             return category ? frozenByCategory.get(category) ?? empty : empty;
