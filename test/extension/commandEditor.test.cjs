@@ -197,7 +197,7 @@ suite('TUFLOW Helper command-aware editor integration (#6)', () => {
             const text = command + ' == 100, 200';
             const document = await documentWithExtension('.tgc', text);
             for (const [column, active] of [
-                [text.indexOf(',') , 0], [text.length, 1]
+                [text.lastIndexOf(','), 0], [text.length, 1]
             ]) {
                 const help = await vscode.commands.executeCommand(
                     'vscode.executeSignatureHelpProvider', document.uri,
