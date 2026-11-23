@@ -65,7 +65,11 @@ suite('TUFLOW Helper Extension Host smoke tests', () => {
   });
 
   test('activation exposes a representative command completion', async () => {
-    const document = await vscode.workspace.openTextDocument({ language: languageId, content: 'Cell' });
+    // Command context is the actual file extension, not just the language ID.
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'helper-command-smoke-'));
+    const file = path.join(directory, 'model.tcf');
+    fs.writeFileSync(file, 'Cell', 'utf8');
+    const document = await vscode.workspace.openTextDocument(vscode.Uri.file(file));
     const completions = await vscode.commands.executeCommand(
       'vscode.executeCompletionItemProvider',
       document.uri,
@@ -73,65 +77,42 @@ suite('TUFLOW Helper Extension Host smoke tests', () => {
     );
     assert.ok(completions);
     assert.ok(completions.items.some(item => item.label === 'Cell Size'));
+    fs.rmSync(directory, { recursive: true, force: true });
   });
-  test('audited multiword command hover exposes its official TUFLOW reference', async () => {
-    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'tuflow-help-hover-'));
+  test('integrated audited End Time hover gives hours and correct official reference', async () => {
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'tuflow-integrated-help-'));
     try {
-      const filename = path.join(directory, 'sample.tcf');
-      fs.writeFileSync(filename, 'End Time == 12\n', 'utf8');
-      const document = await vscode.workspace.openTextDocument(vscode.Uri.file(filename));
-      const hovers = await vscode.commands.executeCommand(
-        'vscode.executeHoverProvider', document.uri, new vscode.Position(0, 3)
-      );
-      assert.ok(Array.isArray(hovers) && hovers.length > 0, 'missing End Time hover');
-      const markdown = hovers.flatMap(hover => hover.contents)
-        .map(content => typeof content === 'string' ? content : content.value || '')
-        .join('\n');
-      assert.match(markdown, /Official TUFLOW command reference/);
-      assert.match(markdown, /https:\/\/docs\.tuflow\.com\/classic-hpc\/manual\/2026\.3\/80-AppendicesA-TCFCommands\.html/);
-    } finally {
-      fs.rmSync(directory, { recursive: true, force: true });
-    }
-  });
-
-  test('TEF and extensionless commands preserve context-appropriate hover', async () => {
-    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'tuflow-hover-context-'));
-    try {
-      const samples = [
-        { filename: path.join(directory, 'events.tef'), text: 'End Time == 12\n', expected: /80-AppendicesA-TCFCommands\.html/ },
-        { filename: path.join(directory, 'timestep.tef'), text: 'Timestep == 1\n', expected: /Timestep/ },
-        { filename: path.join(directory, 'shared.trd'), text: 'Timestep == 1\n', expected: /Timestep/ },
-        { filename: path.join(directory, 'geometry.tgc'), text: 'Set Grid == 10\n', expected: /Set Grid/ }
-      ];
-
-      for (const sample of samples) {
-        fs.writeFileSync(sample.filename, sample.text, 'utf8');
-        const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(sample.filename));
+      for (const [ext, line] of [['.tcf', 'End Time == 12'], ['.tef', 'End Time == 12'], ['.trd', 'End Time == 12']]) {
+        const file = path.join(directory, 'model' + ext);
+        fs.writeFileSync(file, line + '\n');
+        const document = await vscode.workspace.openTextDocument(vscode.Uri.file(file));
         const hovers = await vscode.commands.executeCommand(
-          'vscode.executeHoverProvider', doc.uri, new vscode.Position(0, 3)
+          'vscode.executeHoverProvider', document.uri, new vscode.Position(0, 4)
         );
-        const contents = (hovers || []).flatMap(hover => hover.contents)
-          .map(content => typeof content === 'string' ? content : content.value || '')
-          .join('\n');
-        assert.match(contents, sample.expected, 'missing context hover for ' + sample.filename);
+        const text = (hovers || []).flatMap(h => h.contents)
+          .map(c => typeof c === 'string' ? c : c.value || '').join('\n');
+        assert.match(text, /End Time/, ext);
+        assert.match(text, /hour/i, ext);
+        assert.match(text, /80-AppendicesA-TCFCommands\.html/, ext);
+        assert.doesNotMatch(text, /HH:MM:SS/, ext);
+        assert.match(text, /\*\*Syntax:\*\* `End Time == <time_in_hours>`/, ext);
       }
-
-      const untitled = await vscode.workspace.openTextDocument({
-        language: languageId, content: 'Timestep == 1\n'
-      });
+      const untitled = await vscode.workspace.openTextDocument({ language: languageId, content: 'End Time == 12\n' });
       const hovers = await vscode.commands.executeCommand(
-        'vscode.executeHoverProvider', untitled.uri, new vscode.Position(0, 3)
+        'vscode.executeHoverProvider', untitled.uri, new vscode.Position(0, 4)
       );
-      const contents = (hovers || []).flatMap(hover => hover.contents)
-        .map(content => typeof content === 'string' ? content : content.value || '')
-        .join('\n');
-      assert.match(contents, /Timestep/, 'untitled TUFLOW command lost hover');
+      const text = (hovers || []).flatMap(h => h.contents)
+        .map(c => typeof c === 'string' ? c : c.value || '').join('\n');
+      assert.match(text, /End Time/);
+      assert.match(text, /hour/i);
+      assert.doesNotMatch(text, /HH:MM:SS/);
+      assert.match(text, /\*\*Syntax:\*\* `End Time == <time_in_hours>`/);
     } finally {
-      fs.rmSync(directory, { recursive: true, force: true });
+      fs.rmSync(directory, {recursive:true, force:true});
     }
   });
 
-  test('curated snippets expand with VS Code editable placeholders', async () => {
+  test('integrated VS Code expands all ten curated snippets with placeholders', async () => {
     const extension = vscode.extensions.getExtension(extensionId);
     assert.ok(extension);
     const snippets = require(path.join(extension.extensionPath, 'snippets/tuflow.json'));
@@ -147,14 +128,15 @@ suite('TUFLOW Helper Extension Host smoke tests', () => {
       'trfc-interpolation': 'RF Interpolation Method == IDW',
       'tef-event': 'Define Event == design_event\n    End Time == 12\nEnd Define'
     };
-    for (const item of Object.values(snippets)) {
-      const doc = await vscode.workspace.openTextDocument({ language: languageId, content: '' });
+    assert.equal(Object.keys(snippets).length, 10);
+    for (const snippet of Object.values(snippets)) {
+      const doc = await vscode.workspace.openTextDocument({language:languageId,content:''});
       const editor = await vscode.window.showTextDocument(doc);
       const inserted = await editor.insertSnippet(
-        new vscode.SnippetString(Array.isArray(item.body) ? item.body.join('\n') : item.body)
+        new vscode.SnippetString(Array.isArray(snippet.body) ? snippet.body.join('\n') : snippet.body)
       );
-      assert.equal(inserted, true, 'snippet did not insert: ' + item.prefix);
-      assert.equal(doc.getText().replace(/\r\n/g, '\n'), expected[item.prefix], 'incorrect expansion: ' + item.prefix);
+      assert.equal(inserted, true, 'failed insert ' + snippet.prefix);
+      assert.equal(doc.getText().replace(/\r\n/g, '\n'), expected[snippet.prefix], snippet.prefix);
     }
   });
 

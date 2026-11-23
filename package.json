@@ -26,13 +26,13 @@
     "Snippets"
   ],
   "activationEvents": [
-    "onLanguage:tuflow-helper"
+    "onLanguage:tuflow"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "languages": [
       {
-        "id": "tuflow-helper",
+        "id": "tuflow",
         "aliases": [
           "TUFLOW",
           "tuflow"
@@ -67,23 +67,18 @@
     ],
     "grammars": [
       {
-        "language": "tuflow-helper",
+        "language": "tuflow",
         "scopeName": "source.tuflow",
         "path": "./syntaxes/tuflow.tmLanguage.json"
       }
     ],
     "snippets": [
       {
-        "language": "tuflow-helper",
+        "language": "tuflow",
         "path": "./snippets/tuflow.json"
       }
     ],
     "commands": [
-      {
-        "command": "tuflow-helper.openFileUnderCursor",
-        "title": "Open File Under Cursor",
-        "category": "TUFLOW"
-      },
       {
         "command": "tuflow-helper.openDocumentation",
         "title": "Open Documentation",
@@ -93,12 +88,7 @@
     "menus": {
       "editor/context": [
         {
-          "when": "editorTextFocus && editorLangId == tuflow-helper",
-          "command": "tuflow-helper.openFileUnderCursor",
-          "group": "navigation"
-        },
-        {
-          "when": "editorTextFocus && editorLangId == tuflow-helper",
+          "when": "editorTextFocus && editorLangId == tuflow",
           "command": "tuflow-helper.openDocumentation",
           "group": "navigation@2"
         }
@@ -116,7 +106,8 @@
     "test:extension": "vscode-test",
     "package:vsix": "vsce package --no-dependencies --out tuflow-helper.vsix && node scripts/verify-vsix.cjs tuflow-helper.vsix",
     "test:vsix": "vscode-test --config .vscode-test-installed.mjs",
-    "test:fail-closed": "node scripts/verify-failure-propagation.cjs"
+    "test:fail-closed": "node scripts/verify-failure-propagation.cjs",
+    "test:registration": "node --test test/language-registration.test.cjs"
   },
   "devDependencies": {
     "@types/vscode": "^1.74.0",

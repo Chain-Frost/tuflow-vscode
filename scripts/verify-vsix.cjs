@@ -72,12 +72,12 @@ for (const resource of [
   'extension/out/commands/index.js'
 ]) readEntry(resource);
 
-// Online documentation does not require captured HTML; protect the package boundary.
+// Integrated official documentation no longer needs captured manuals.
 readEntry('extension/out/documentation.js');
 assert.ok(![...entries.keys()].some(name => name.startsWith('extension/doc/')),
-  'captured documentation unexpectedly present in VSIX');
+  'captured TUFLOW manual incorrectly included');
 const snippets = JSON.parse(readEntry('extension/snippets/tuflow.json').toString('utf8'));
-assert.equal(Object.keys(snippets).length, 10, 'curated snippets missing from VSIX');
+assert.equal(Object.keys(snippets).length, 10, 'curated snippet contribution not packaged');
 for (const name of entries.keys()) {
   assert.ok(!/^extension\/(src|test|scripts|docs|node_modules|\.github|\.vscode-test)\//.test(name),
     `unwanted file in VSIX: ${name}`);

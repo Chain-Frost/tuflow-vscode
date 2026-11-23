@@ -17,11 +17,11 @@ TUFLOW is a powerful hydraulic modelling software used for flood simulation. Thi
 
 TUFLOW Helper focuses on control-file syntax highlighting and command-editing assistance. The following optional extensions complement it without requiring those features to be duplicated here:
 
-- **[Open file (seito-openfile)](https://marketplace.visualstudio.com/items?itemName=Fr43nk.seito-openfile)** — opens a referenced file under the cursor. Use this for file navigation rather than TUFLOW Helper's legacy file-opening command.
+- **[Open file (seito-openfile)](https://marketplace.visualstudio.com/items?itemName=Fr43nk.seito-openfile)** — opens a referenced file under the cursor. This is the file-navigation extension; the integrated Helper has no duplicate path opener.
 - **[TUFLOW Path Validator](https://marketplace.visualstudio.com/items?itemName=Chain-Frost.tuflow-path-validator)** — checks TUFLOW control-file references and reports missing files and other supported issues through VS Code diagnostics. See its [source and documentation](https://github.com/Chain-Frost/tuflow_validator).
 - **[Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens)** — optionally displays VS Code diagnostics directly beside the relevant lines, including those produced by TUFLOW Path Validator. It displays diagnostics; it does not perform TUFLOW validation itself.
 
-These extensions are independent installations. TUFLOW Path Validator owns file-reference diagnostics, seito-openfile owns file opening, and TUFLOW Helper owns editor assistance. Compatibility of the two TUFLOW extensions' language registrations is being reviewed; refer to [the integration tracking issue](https://github.com/Chain-Frost/tuflow-vscode/issues/1). The [manual co-installation test](docs/co-installation-smoke-test.md) covers all three optional extensions without requiring or installing them.
+These extensions are independent installations. TUFLOW Path Validator owns file-reference diagnostics, seito-openfile owns file opening, and TUFLOW Helper owns editor assistance. The integrated candidate uses the shared `tuflow` language ID; refer to [the integration tracking issue](https://github.com/Chain-Frost/tuflow-vscode/issues/1). The [manual co-installation test](docs/co-installation-smoke-test.md) covers all three optional extensions without requiring or installing them.
 
 ## Supported File Types
 
@@ -112,7 +112,7 @@ The commands and defaults are checked against official manual appendices. The ex
 
 ## Known Issues
 
-- Currently, optional additional command keywords (such as the "MAX" in "Read GIS Z Shape MAX") are not supported by the syntax highlighting.
+- Snippets share a single `tuflow` language ID and can appear in control-file types other than their intended suffix. Choose the prefix matching the file type.
 
 ## Requirements
 
