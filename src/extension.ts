@@ -31,7 +31,7 @@ export function activate(context: vscode.ExtensionContext) {
                 
                 if (!hasCommandPrefix) {
                     // Add command completions based on file extension
-                    let filteredCommands: TuflowCommand[] = [];
+                    let filteredCommands: readonly TuflowCommand[] = [];
                     
                     switch (fileExtension) {
                         case '.tcf':
