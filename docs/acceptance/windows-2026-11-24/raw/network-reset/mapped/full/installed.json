@@ -1,0 +1,26 @@
+[
+  {
+    "role": "helper",
+    "sha256": "e3cea314de3e6e2664c83b4357d283606a110ea2ab8c121ab5b4df6ed8cf0df3",
+    "version": "0.8.2",
+    "id": "lmillard79.tuflow-helper"
+  },
+  {
+    "role": "validator",
+    "sha256": "6dc8dfeaa3bff8eec733e13c85774fce7f23d4bd969a41041f0009e8ba2f0e09",
+    "version": "0.2.7",
+    "id": "Chain-Frost.tuflow-path-validator"
+  },
+  {
+    "role": "opener",
+    "sha256": "897e6e85daafa331306af95fbb52e908f76b72152014cc9191cd79e7010be5c5",
+    "version": "2.3.3",
+    "id": "Fr43nk.seito-openfile"
+  },
+  {
+    "role": "lens",
+    "sha256": "f579746cdf6923f006045d6888bc6c48ea292b6501b3a608e02b0b37d3e12a62",
+    "version": "3.30.0",
+    "id": "usernamehw.errorlens"
+  }
+]

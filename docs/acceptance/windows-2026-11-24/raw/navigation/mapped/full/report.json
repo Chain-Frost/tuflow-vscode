@@ -1,0 +1,14 @@
+{
+  "startedAt": "2026-11-23T17:58:15.577Z",
+  "workspace": [
+    "t:\\CodexValidation\\issue9-nov24-b14834e8"
+  ],
+  "expected": "T:\\CodexValidation\\issue9-nov24-b14834e8\\watch\\child.trd",
+  "actual": "t:\\codexvalidation\\issue9-nov24-b14834e8\\watch\\child.trd",
+  "pass": true,
+  "finishedAt": "2026-11-23T17:58:16.235Z",
+  "summary": {
+    "pass": true,
+    "error": null
+  }
+}

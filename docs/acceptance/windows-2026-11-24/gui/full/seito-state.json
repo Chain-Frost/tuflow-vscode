@@ -1,0 +1,46 @@
+{
+  "time": "2026-11-23T17:46:37.243Z",
+  "document": "e:\\github\\tuflow-issue9-20261124\\manual-fixtures\\present.trd",
+  "language": "tuflow",
+  "text": "! Opened by seito from disposable navigation.tcf\r\nTimestep == 1\r\n",
+  "selection": {
+    "start": {
+      "line": 0,
+      "character": 0
+    },
+    "end": {
+      "line": 0,
+      "character": 0
+    },
+    "active": {
+      "line": 0,
+      "character": 0
+    },
+    "anchor": {
+      "line": 0,
+      "character": 0
+    }
+  },
+  "diagnostics": [
+    {
+      "file": "e:\\github\\tuflow-issue9-20261124\\manual-fixtures\\syntax.tgc",
+      "items": []
+    },
+    {
+      "file": "e:\\github\\tuflow-issue9-20261124\\manual-fixtures\\present.trd",
+      "items": []
+    },
+    {
+      "file": "e:\\github\\tuflow-issue9-20261124\\manual-fixtures\\navigation.tcf",
+      "items": [
+        {
+          "source": "TUFLOW Path Validator",
+          "code": "TPV001",
+          "message": "File not found: missing_input.trd",
+          "line": 2
+        }
+      ]
+    }
+  ],
+  "obsoleteHelperOpener": false
+}

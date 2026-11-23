@@ -1,0 +1,478 @@
+{
+  "schemaVersion": 1,
+  "issue": "Chain-Frost/tuflow-vscode#9",
+  "profile": "helper-only",
+  "phase": "integrated",
+  "revision": "b838b184f5e74c116bde70578f5d8bf2d30d2225",
+  "startedAt": "2026-11-23T17:37:33.965Z",
+  "environment": {
+    "platform": "win32",
+    "arch": "x64",
+    "vscodeVersion": "1.147.0",
+    "nodeVersion": "24.22.1",
+    "cpuModel": "AMD Ryzen 7 7700X 8-Core Processor             ",
+    "logicalCpus": 16,
+    "machineMemoryBytes": 67869888512,
+    "extensionHostPid": 314672,
+    "invocationId": "9ab68fdc-481d-41d9-84d5-81fb3bed49c8",
+    "configuredRepeats": "30",
+    "configuredSyntheticLines": "10000",
+    "configuredDiagnosticSettleMs": "1800",
+    "workspaceFolders": [
+      "e:\\Github\\tuflow-issue9-20261124\\fixtures"
+    ],
+    "networkFixtureRoot": null
+  },
+  "checks": [
+    {
+      "id": "extension-helper",
+      "status": "pass",
+      "evidence": {
+        "expectedPresent": true,
+        "actualPresent": true,
+        "id": "lmillard79.tuflow-helper"
+      }
+    },
+    {
+      "id": "extension-validator",
+      "status": "pass",
+      "evidence": {
+        "expectedPresent": false,
+        "actualPresent": false
+      }
+    },
+    {
+      "id": "extension-opener",
+      "status": "pass",
+      "evidence": {
+        "expectedPresent": false,
+        "actualPresent": false
+      }
+    },
+    {
+      "id": "extension-lens",
+      "status": "pass",
+      "evidence": {
+        "expectedPresent": false,
+        "actualPresent": false
+      }
+    },
+    {
+      "id": "language-model.tcf",
+      "status": "pass",
+      "evidence": {
+        "observed": "tuflow",
+        "expected": "tuflow"
+      }
+    },
+    {
+      "id": "language-geometry.tgc",
+      "status": "pass",
+      "evidence": {
+        "observed": "tuflow",
+        "expected": "tuflow"
+      }
+    },
+    {
+      "id": "language-boundary.tbc",
+      "status": "pass",
+      "evidence": {
+        "observed": "tuflow",
+        "expected": "tuflow"
+      }
+    },
+    {
+      "id": "language-estuary.ecf",
+      "status": "pass",
+      "evidence": {
+        "observed": "tuflow",
+        "expected": "tuflow"
+      }
+    },
+    {
+      "id": "language-events.tef",
+      "status": "pass",
+      "evidence": {
+        "observed": "tuflow",
+        "expected": "tuflow"
+      }
+    },
+    {
+      "id": "language-include/nested.trd",
+      "status": "pass",
+      "evidence": {
+        "observed": "tuflow",
+        "expected": "tuflow"
+      }
+    },
+    {
+      "id": "language-settings.qcf",
+      "status": "pass",
+      "evidence": {
+        "observed": "tuflow",
+        "expected": "tuflow"
+      }
+    },
+    {
+      "id": "activated-helper",
+      "status": "pass",
+      "evidence": {
+        "activeAfterOpening": true
+      }
+    },
+    {
+      "id": "helper-no-duplicate-opener",
+      "status": "pass",
+      "evidence": {
+        "legacyOpenCommandRegistered": false
+      }
+    },
+    {
+      "id": "tgc-command-completion",
+      "status": "pass",
+      "evidence": {
+        "found": [
+          "Read GIS Z Shape",
+          "Read GIS Z Shape GULLY",
+          "Read GIS Z Shape GULLY Write TIN",
+          "Read GIS Z Shape GULLY XF OFF",
+          "Read GIS Z Shape GULLY XF ON",
+          "Read GIS Z Shape LOWER",
+          "Read GIS Z Shape LOWER Write TIN",
+          "Read GIS Z Shape LOWER XF OFF",
+          "Read GIS Z Shape LOWER XF ON",
+          "Read GIS Z Shape MAX"
+        ],
+        "total": 29
+      }
+    },
+    {
+      "id": "multiword-command-hover",
+      "status": "pass",
+      "evidence": {
+        "matched": true,
+        "excerpt": "**Read GIS Z Shape**\n\nModify Zpts from a vector 2d_zsh layer.\n\n**Syntax:** `Read GIS Z Shape == <gis_layer>`\n\n**Verified examples:**\n- Read GIS Z Shape == ..\\model\\gis\\2d_zsh.shp\n- Read GIS Z Shape RIDGE == ..\\model\\gis\\"
+      }
+    },
+    {
+      "id": "snippet-provider-observation",
+      "status": "unverified",
+      "evidence": {
+        "snippetCompletions": 1,
+        "manualInsertionRequired": true
+      }
+    },
+    {
+      "id": "no-cross-file-command-leakage",
+      "status": "pass",
+      "evidence": {
+        "tefCompletionCount": 115,
+        "leakedTgcCompletions": []
+      }
+    },
+    {
+      "id": "no-generic-completions-in-comment",
+      "status": "pass",
+      "evidence": {
+        "leakedSuggestions": [],
+        "knownCommandCount": 72,
+        "completionCount": 114
+      }
+    },
+    {
+      "id": "no-universal-gis-values",
+      "status": "pass",
+      "evidence": {
+        "unrelatedValues": [],
+        "completionCount": 124
+      }
+    },
+    {
+      "id": "no-duplicate-problems",
+      "status": "pass",
+      "evidence": {
+        "duplicateCount": 0,
+        "duplicates": []
+      }
+    },
+    {
+      "id": "helper-does-not-own-diagnostics",
+      "status": "pass",
+      "evidence": {
+        "helperDiagnosticCount": 0
+      }
+    },
+    {
+      "id": "helper-alone-no-problems",
+      "status": "pass",
+      "evidence": {
+        "count": 0
+      }
+    },
+    {
+      "id": "format-provider-observation",
+      "status": "unverified",
+      "evidence": {
+        "edits": null,
+        "manualOwnershipCheckRequired": true
+      }
+    },
+    {
+      "id": "network-fixture",
+      "status": "blocked",
+      "evidence": {
+        "reason": "TUFLOW_ACCEPT_NETWORK_FIXTURES not provided"
+      }
+    },
+    {
+      "id": "theme-and-ui-checks",
+      "status": "unverified",
+      "evidence": {
+        "manualChecks": [
+          "TextMate scopes and theme-specific syntax rendering",
+          "Snippet insertion and tab-stop expansion in editor",
+          "seito-openfile cursor and context-menu behavior",
+          "Error Lens decorations compared with Problems view",
+          "Validator-owned formatting on opted-in settings",
+          "UNC and GeoPackage layer resolution against actual Windows network datasets"
+        ]
+      }
+    }
+  ],
+  "metrics": {
+    "rootFirstOpen": {
+      "openAndShowMs": 99.26,
+      "alreadyOpenBeforeMeasurement": false
+    },
+    "documentOpen": {
+      "model.tcf": {
+        "openAndShowMs": 85.7,
+        "languageId": "tuflow"
+      },
+      "geometry.tgc": {
+        "openAndShowMs": 216.58,
+        "languageId": "tuflow"
+      },
+      "boundary.tbc": {
+        "openAndShowMs": 91.1,
+        "languageId": "tuflow"
+      },
+      "estuary.ecf": {
+        "openAndShowMs": 104.57,
+        "languageId": "tuflow"
+      },
+      "events.tef": {
+        "openAndShowMs": 95.82,
+        "languageId": "tuflow"
+      },
+      "include/nested.trd": {
+        "openAndShowMs": 94.28,
+        "languageId": "tuflow"
+      },
+      "settings.qcf": {
+        "openAndShowMs": 79.63,
+        "languageId": "tuflow"
+      }
+    },
+    "rootWarmOpen": {
+      "samples": 30,
+      "p50Ms": 47.09,
+      "p95Ms": 73.27,
+      "maxMs": 80.32,
+      "valuesMs": [
+        80.31680000000006,
+        71.52970000000005,
+        57.165899999999965,
+        48.40340000000015,
+        52.17800000000034,
+        41.23339999999962,
+        47.15340000000015,
+        38.16360000000077,
+        40.594199999999546,
+        41.763200000000325,
+        41.09909999999945,
+        51.570699999999306,
+        45.83190000000013,
+        45.413000000000466,
+        50.87790000000041,
+        47.08629999999994,
+        57.20710000000054,
+        53.6273999999994,
+        48.99990000000071,
+        50.2524999999996,
+        42.027900000000045,
+        45.44710000000032,
+        48.92230000000018,
+        50.831599999999526,
+        40.108000000000175,
+        39.18239999999969,
+        43.737600000000384,
+        73.26800000000003,
+        40.18090000000029,
+        37.90850000000046
+      ],
+      "cpuUserMs": 156,
+      "cpuSystemMs": 78,
+      "rssBeforeBytes": 243625984,
+      "rssAfterBytes": 245809152
+    },
+    "completion": {
+      "samples": 30,
+      "p50Ms": 3.09,
+      "p95Ms": 5,
+      "maxMs": 14.5,
+      "valuesMs": [
+        3.519199999999728,
+        3.7424000000000888,
+        4.089499999999134,
+        4.711599999999635,
+        4.42699999999968,
+        4.5820999999996275,
+        4.083700000000135,
+        14.501999999999498,
+        4.996000000000095,
+        2.6531999999997424,
+        2.759100000000217,
+        2.7890000000006694,
+        3.5707000000002154,
+        3.7731999999996333,
+        4.309600000000501,
+        4.261800000000221,
+        2.827400000000125,
+        2.870299999999588,
+        2.9785000000001673,
+        4.561200000000099,
+        2.9390000000003056,
+        3.0398999999997613,
+        2.5342000000000553,
+        2.7038999999995212,
+        2.5684000000001106,
+        2.907799999999952,
+        3.4336999999995896,
+        3.0938999999998487,
+        2.609400000000278,
+        2.791900000000169
+      ],
+      "cpuUserMs": 203,
+      "cpuSystemMs": 16,
+      "rssBeforeBytes": 245981184,
+      "rssAfterBytes": 248107008
+    },
+    "hover": {
+      "samples": 30,
+      "p50Ms": 0.92,
+      "p95Ms": 1.15,
+      "maxMs": 1.52,
+      "valuesMs": [
+        1.1494000000002416,
+        0.9027000000005501,
+        0.9420000000000073,
+        0.9893000000001848,
+        0.9175999999997657,
+        1.0293000000001484,
+        0.9092000000000553,
+        1.518699999999626,
+        1.025300000000243,
+        1.030399999999645,
+        1.0114999999996144,
+        0.9574999999995271,
+        0.8123999999997977,
+        0.8251000000000204,
+        0.8944000000001324,
+        0.8069000000004962,
+        0.8616000000001804,
+        0.9118000000007669,
+        0.9135999999998603,
+        1.0447999999996682,
+        0.9008000000003449,
+        0.8976999999995314,
+        1.0375000000003638,
+        1.126299999999901,
+        0.8543999999992593,
+        1.0445999999992637,
+        0.884900000000016,
+        1.1400999999996202,
+        1,
+        0.9152000000003682
+      ],
+      "cpuUserMs": 0,
+      "cpuSystemMs": 16,
+      "rssBeforeBytes": 248205312,
+      "rssAfterBytes": 249511936
+    },
+    "largeFile": {
+      "lineCount": 10002,
+      "bytes": 438947,
+      "openAndShowMs": 46.63
+    },
+    "largeFileCompletion": {
+      "samples": 30,
+      "p50Ms": 10.71,
+      "p95Ms": 12.84,
+      "maxMs": 14.17,
+      "valuesMs": [
+        8.605400000000373,
+        9.963200000000143,
+        12.761700000000019,
+        12.838999999999942,
+        9.39259999999922,
+        10.692399999999907,
+        9.840400000000045,
+        8.979400000000169,
+        12.28060000000005,
+        12.780300000000352,
+        10.26220000000012,
+        11.728000000000065,
+        12.781500000000051,
+        11.111399999999776,
+        9.750300000000607,
+        9.59860000000026,
+        9.789299999999457,
+        9.848500000000058,
+        11.923300000000381,
+        14.166799999999967,
+        10.045399999999972,
+        10.249699999999393,
+        10.759500000000116,
+        10.710800000000745,
+        11.313100000000304,
+        12.128899999999703,
+        12.26339999999982,
+        11.318200000000616,
+        10.760800000000017,
+        9.869700000000194
+      ],
+      "cpuUserMs": 31,
+      "cpuSystemMs": 0,
+      "rssBeforeBytes": 253530112,
+      "rssAfterBytes": 258805760
+    }
+  },
+  "extensions": {
+    "helper": {
+      "id": "lmillard79.tuflow-helper",
+      "version": "0.8.2",
+      "activeInitially": false,
+      "activeAfterOpen": true
+    },
+    "validator": null,
+    "opener": null,
+    "lens": null
+  },
+  "diagnostics": [],
+  "manualChecks": [
+    "TextMate scopes and theme-specific syntax rendering",
+    "Snippet insertion and tab-stop expansion in editor",
+    "seito-openfile cursor and context-menu behavior",
+    "Error Lens decorations compared with Problems view",
+    "Validator-owned formatting on opted-in settings",
+    "UNC and GeoPackage layer resolution against actual Windows network datasets"
+  ],
+  "finishedAt": "2026-11-23T17:37:38.949Z",
+  "summary": {
+    "pass": 21,
+    "fail": 0,
+    "blocked": 1,
+    "unverified": 3
+  }
+}

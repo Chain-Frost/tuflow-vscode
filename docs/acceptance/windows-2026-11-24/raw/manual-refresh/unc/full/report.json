@@ -1,0 +1,71 @@
+{
+  "startedAt": "2026-11-23T18:02:58.151Z",
+  "workspace": [
+    "e:\\Github\\tuflow-issue9-20261124\\empty-workspace"
+  ],
+  "target": "\\\\SMB-SERVER\\TEST-SHARE\\CodexValidation\\issue9-nov24-b14834e8\\watch",
+  "trials": [
+    {
+      "operation": "create",
+      "automaticObservationMs": 1000,
+      "staleBeforeCommand": true,
+      "before": {
+        "root.tcf": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV002",
+            "message": "Referenced file has 1 issue(s): child.trd"
+          }
+        ],
+        "child.trd": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV001",
+            "message": "File not found: external.trd"
+          }
+        ]
+      },
+      "after": {
+        "root.tcf": [],
+        "child.trd": []
+      },
+      "refreshMs": 7,
+      "status": "PASS"
+    },
+    {
+      "operation": "delete",
+      "automaticObservationMs": 1000,
+      "staleBeforeCommand": true,
+      "before": {
+        "root.tcf": [],
+        "child.trd": []
+      },
+      "after": {
+        "root.tcf": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV002",
+            "message": "Referenced file has 1 issue(s): child.trd"
+          }
+        ],
+        "child.trd": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV001",
+            "message": "File not found: external.trd"
+          }
+        ]
+      },
+      "refreshMs": 3,
+      "status": "PASS"
+    }
+  ],
+  "targetOutsideWorkspace": true,
+  "initialMissing": true,
+  "finishedAt": "2026-11-23T18:03:02.018Z",
+  "summary": {
+    "trials": 2,
+    "pass": 2,
+    "error": null
+  }
+}

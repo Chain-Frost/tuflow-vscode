@@ -1,0 +1,278 @@
+{
+  "contexts": [
+    {
+      "ext": "tcf",
+      "command": "End Time",
+      "language": "tuflow",
+      "completionExpected": true,
+      "signatureExpected": false,
+      "completion": true,
+      "inserted": "End Time == 12 ! comment",
+      "hover": "**End Time**\n\nSimulation finish time in hours, after the start time.\n\n**Syntax:** `End Time == <time_in_hours>`\n\n**Verified examples:**\n- End Time == 12\n- End Time == 48\n\n[Official TUFLOW documentation](https://docs.tuflow.com/classic-hpc/manual/2026.3/80-AppendicesA-TCFCommands.html)",
+      "contextualValues": [],
+      "status": "PASS"
+    },
+    {
+      "ext": "tgc",
+      "command": "Read GIS Z Shape",
+      "language": "tuflow",
+      "completionExpected": true,
+      "signatureExpected": false,
+      "completion": true,
+      "inserted": "Read GIS Z Shape == present.gpkg >> layer ! comment",
+      "hover": "**Read GIS Z Shape**\n\nModify Zpts from a vector 2d_zsh layer.\n\n**Syntax:** `Read GIS Z Shape == <gis_layer>`\n\n**Verified examples:**\n- Read GIS Z Shape == ..\\model\\gis\\2d_zsh.shp\n- Read GIS Z Shape RIDGE == ..\\model\\gis\\2d_zsh.shp\n- Read GIS Z Shape GULLY == ..\\model\\gis\\2d_zsh.shp\n\n**Notes:** Uses vector points, lines and polygons; never a TIF/ASC raster. RIDGE, GULLY and XF switches modify the left-hand command.\n\n[Official TUFLOW documentation](https://docs.tuflow.com/classic-hpc/manual/2026.3/82-AppendicesC-TGCCommands.html)",
+      "contextualValues": [],
+      "status": "PASS"
+    },
+    {
+      "ext": "tbc",
+      "command": "BC Database",
+      "language": "tuflow",
+      "completionExpected": true,
+      "signatureExpected": false,
+      "completion": true,
+      "inserted": "BC Database == boundary.csv ! comment",
+      "hover": "**BC Database**\n\nSelect the active boundary-condition CSV database.\n\n**Syntax:** `BC Database == <.csv_file>`\n\n[Official TUFLOW documentation](https://docs.tuflow.com/classic-hpc/manual/2026.3/83-AppendicesD-TBCCommands.html)",
+      "contextualValues": [],
+      "status": "PASS"
+    },
+    {
+      "ext": "ecf",
+      "command": "AD Approach",
+      "language": "tuflow",
+      "completionExpected": true,
+      "signatureExpected": false,
+      "completion": true,
+      "inserted": "AD Approach == METHOD B ! comment",
+      "hover": "**AD Approach**\n\nChoose the 1D advection-dispersion approach.\n\n**Syntax:** `AD Approach == METHOD A | {METHOD B}`\n\n**Documented values:** METHOD A, METHOD B\n\n**Verified examples:**\n- AD Approach == METHOD A\n- AD Approach == METHOD B\n\n[Official TUFLOW documentation](https://docs.tuflow.com/classic-hpc/manual/2026.3/81-AppendicesB-ECFCommands.html)",
+      "contextualValues": [
+        "METHOD A",
+        "METHOD B"
+      ],
+      "status": "PASS"
+    },
+    {
+      "ext": "trfc",
+      "command": "RF Interpolation Method",
+      "language": "tuflow",
+      "completionExpected": true,
+      "signatureExpected": false,
+      "completion": true,
+      "inserted": "RF Interpolation Method == IDW ! comment",
+      "hover": "**RF Interpolation Method**\n\nSelect rainfall interpolation algorithm.\n\n**Syntax:** `RF Interpolation Method == IDW | POLYGON | TIN`\n\n**Documented values:** IDW, POLYGON, TIN\n\n**Verified examples:**\n- RF Interpolation Method == IDW\n- RF Interpolation Method == POLYGON\n- RF Interpolation Method == TIN\n\n[Official TUFLOW documentation](https://docs.tuflow.com/classic-hpc/manual/2026.3/85-AppendicesF-TRFCCommands.html)",
+      "contextualValues": [
+        "IDW",
+        "POLYGON",
+        "TIN"
+      ],
+      "status": "PASS"
+    },
+    {
+      "ext": "qcf",
+      "command": "Base Cell Size",
+      "language": "tuflow",
+      "completionExpected": true,
+      "signatureExpected": false,
+      "completion": true,
+      "inserted": "Base Cell Size == 20 ! comment",
+      "hover": "**Base Cell Size**\n\nDefine the Level 1 quadtree cell size or inherit from TGC.\n\n**Syntax:** `Base Cell Size == <cell_size> | {TGC}`\n\n**Documented values:** TGC\n\n**Verified examples:**\n- Base Cell Size == TGC\n\n[Official TUFLOW documentation](https://docs.tuflow.com/classic-hpc/manual/2026.3/87-AppendicesH-QCFCommands.html)",
+      "contextualValues": [
+        "TGC"
+      ],
+      "status": "PASS"
+    },
+    {
+      "ext": "tef",
+      "command": "End Time",
+      "language": "tuflow",
+      "completionExpected": false,
+      "signatureExpected": false,
+      "completion": false,
+      "inserted": null,
+      "hover": "**End Time**\n\nSimulation finish time in hours, after the start time.\n\n**Syntax:** `End Time == <time_in_hours>`\n\n**Verified examples:**\n- End Time == 12\n- End Time == 48\n\n[Official TUFLOW documentation](https://docs.tuflow.com/classic-hpc/manual/2026.3/80-AppendicesA-TCFCommands.html)",
+      "contextualValues": [],
+      "status": "PASS"
+    },
+    {
+      "ext": "trd",
+      "command": "Timestep",
+      "language": "tuflow",
+      "completionExpected": false,
+      "signatureExpected": false,
+      "completion": false,
+      "inserted": null,
+      "hover": "**Timestep**\n\nClassic fixed timestep or HPC starting timestep, in seconds.\n\n**Syntax:** `Timestep == <timestep_in_seconds>`\n\n**Verified examples:**\n- Timestep == 1\n- Timestep == 0.5\n\n**Notes:** HPC subsequently uses adaptive timestepping.\n\n[Official TUFLOW documentation](https://docs.tuflow.com/classic-hpc/manual/2026.3/80-AppendicesA-TCFCommands.html)",
+      "contextualValues": [],
+      "status": "PASS"
+    },
+    {
+      "ext": "tgc",
+      "command": "Origin",
+      "language": "tuflow",
+      "completionExpected": true,
+      "signatureExpected": true,
+      "completion": true,
+      "inserted": "Origin == 500000, 6500000 ! comment",
+      "hover": "**Origin**\n\nSet geographic origin at the lower-left grid corner.\n\n**Syntax:** `Origin == <OX>, <OY>`\n\n**Verified examples:**\n- Origin == 500000, 6500000\n\n[Official TUFLOW documentation](https://docs.tuflow.com/classic-hpc/manual/2026.3/82-AppendicesC-TGCCommands.html)",
+      "signature": {
+        "activeSignature": 0,
+        "activeParameter": 0,
+        "signatures": [
+          {
+            "label": "Origin == <OX>, <OY>",
+            "documentation": {},
+            "parameters": [
+              {
+                "label": "<OX>"
+              },
+              {
+                "label": "<OY>"
+              }
+            ]
+          }
+        ]
+      },
+      "contextualValues": [],
+      "status": "PASS"
+    },
+    {
+      "ext": "tbc",
+      "command": "BC Event Source",
+      "language": "tuflow",
+      "completionExpected": true,
+      "signatureExpected": true,
+      "completion": true,
+      "inserted": "BC Event Source == ~A~ | event ! comment",
+      "hover": "**BC Event Source**\n\nAssociate an event placeholder with a boundary-event name.\n\n**Syntax:** `BC Event Source == <bc_event_text> | <bc_event_name>`\n\n[Official TUFLOW documentation](https://docs.tuflow.com/classic-hpc/manual/2026.3/83-AppendicesD-TBCCommands.html)",
+      "signature": {
+        "activeSignature": 0,
+        "activeParameter": 0,
+        "signatures": [
+          {
+            "label": "BC Event Source == <bc_event_text>| <bc_event_name>",
+            "documentation": {},
+            "parameters": [
+              {
+                "label": "<bc_event_text>"
+              },
+              {
+                "label": "<bc_event_name>"
+              }
+            ]
+          }
+        ]
+      },
+      "contextualValues": [],
+      "status": "PASS"
+    }
+  ],
+  "snippets": [
+    {
+      "title": "TCF: Geometry Control File",
+      "description": "TCF (.tcf): reference a geometry control file",
+      "inserted": "Geometry Control File == ../model/model.tgc",
+      "firstSelection": "../model/model.tgc",
+      "afterEdit": "Geometry Control File == ACCEPT",
+      "nextSelection": "",
+      "status": "PASS"
+    },
+    {
+      "title": "TCF: BC Control File",
+      "description": "TCF (.tcf): reference a boundary control file",
+      "inserted": "BC Control File == ../model/model.tbc",
+      "firstSelection": "../model/model.tbc",
+      "afterEdit": "BC Control File == ACCEPT",
+      "nextSelection": "",
+      "status": "PASS"
+    },
+    {
+      "title": "TCF: End Time",
+      "description": "TCF (.tcf): set the simulation end time in hours",
+      "inserted": "End Time == 12",
+      "firstSelection": "12",
+      "afterEdit": "End Time == ACCEPT",
+      "nextSelection": "",
+      "status": "PASS"
+    },
+    {
+      "title": "TGC: Cell Size",
+      "description": "TGC (.tgc): set the 2D grid cell size",
+      "inserted": "Cell Size == 10",
+      "firstSelection": "10",
+      "afterEdit": "Cell Size == ACCEPT",
+      "nextSelection": "",
+      "status": "PASS"
+    },
+    {
+      "title": "TGC: Read GIS Z Shape",
+      "description": "TGC (.tgc): read a vector 2d_zsh elevation-modification layer",
+      "inserted": "Read GIS Z Shape == ../model/gis/2d_zsh_001.shp",
+      "firstSelection": "../model/gis/2d_zsh_001.shp",
+      "afterEdit": "Read GIS Z Shape == ACCEPT",
+      "nextSelection": "",
+      "status": "PASS"
+    },
+    {
+      "title": "TBC: BC Database",
+      "description": "TBC (.tbc): reference a boundary-condition database",
+      "inserted": "BC Database == ../bc_dbase/bc_dbase.csv",
+      "firstSelection": "../bc_dbase/bc_dbase.csv",
+      "afterEdit": "BC Database == ACCEPT",
+      "nextSelection": "",
+      "status": "PASS"
+    },
+    {
+      "title": "ECF: Read GIS Network",
+      "description": "ECF (.ecf): read a 1d_nwk vector network layer",
+      "inserted": "Read GIS Network == ../model/gis/1d_nwk_001.shp",
+      "firstSelection": "../model/gis/1d_nwk_001.shp",
+      "afterEdit": "Read GIS Network == ACCEPT",
+      "nextSelection": "",
+      "status": "PASS"
+    },
+    {
+      "title": "QCF: Base Cell Size",
+      "description": "QCF (.qcf): set the quadtree parent cell size",
+      "inserted": "Base Cell Size == 20",
+      "firstSelection": "20",
+      "afterEdit": "Base Cell Size == ACCEPT",
+      "nextSelection": "",
+      "status": "PASS"
+    },
+    {
+      "title": "TRFC: RF Interpolation Method",
+      "description": "TRFC (.trfc): choose a documented rainfall interpolation method",
+      "inserted": "RF Interpolation Method == IDW",
+      "firstSelection": "IDW",
+      "afterEdit": "RF Interpolation Method == ACCEPT",
+      "nextSelection": "",
+      "status": "PASS"
+    },
+    {
+      "title": "TEF: Define Event block",
+      "description": "TEF (.tef): define an event block with an end-time override",
+      "inserted": "Define Event == design_event\r\n    End Time == 12\r\nEnd Define",
+      "firstSelection": "design_event",
+      "afterEdit": "Define Event == ACCEPT\r\n    End Time == 12\r\nEnd Define",
+      "nextSelection": "12",
+      "status": "PASS"
+    }
+  ],
+  "checks": [
+    {
+      "id": "no-helper-opener",
+      "pass": true
+    },
+    {
+      "id": "documentation-command",
+      "pass": true
+    }
+  ],
+  "untitledHover": "**End Time**\n\nSimulation finish time in hours, after the start time.\n\n**Syntax:** `End Time == <time_in_hours>`\n\n**Verified examples:**\n- End Time == 12\n- End Time == 48\n\n[Official TUFLOW documentation](https://docs.tuflow.com/classic-hpc/manual/2026.3/80-AppendicesA-TCFCommands.html)",
+  "finishedAt": "2026-11-23T17:40:14.570Z",
+  "summary": {
+    "contexts": 10,
+    "snippets": 10,
+    "error": null
+  }
+}

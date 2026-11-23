@@ -1,0 +1,16 @@
+[info] Execute command child.trd: Error: ENOENT: no such file or directory, scandir 'C:\Program Files\Microsoft VS Code\SMB-SERVER\'
+	at readdirSync (node:fs:1631:26)
+	at node:electron/js2c/node_init:2:16179
+	at e:\Github\tuflow-issue9-20261124\trials\navigation-ready\unc\full\extensions\fr43nk.seito-openfile-2.3.3\dist\extension.js:1:3451
+	at Array.reduce (<anonymous>)
+	at e:\Github\tuflow-issue9-20261124\trials\navigation-ready\unc\full\extensions\fr43nk.seito-openfile-2.3.3\dist\extension.js:1:3428
+	at e:\Github\tuflow-issue9-20261124\trials\navigation-ready\unc\full\extensions\fr43nk.seito-openfile-2.3.3\dist\extension.js:1:3465
+	at e.OpenFileFromText.openDocument (e:\Github\tuflow-issue9-20261124\trials\navigation-ready\unc\full\extensions\fr43nk.seito-openfile-2.3.3\dist\extension.js:1:9051)
+	at e.OpenFileFromText.execute (e:\Github\tuflow-issue9-20261124\trials\navigation-ready\unc\full\extensions\fr43nk.seito-openfile-2.3.3\dist\extension.js:1:4325)
+	at e:\Github\tuflow-issue9-20261124\trials\navigation-ready\unc\full\extensions\fr43nk.seito-openfile-2.3.3\dist\extension.js:1:103434
+	at Nh._executeContributedCommand (file:///c:/Program%20Files/Microsoft%20VS%20Code/8a14f0cc1b/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:168:49606)
+	at Nh._doExecuteCommand (file:///c:/Program%20Files/Microsoft%20VS%20Code/8a14f0cc1b/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:168:48623)
+	at Nh.executeCommand (file:///c:/Program%20Files/Microsoft%20VS%20Code/8a14f0cc1b/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:168:48444)
+	at Object.executeCommand (file:///c:/Program%20Files/Microsoft%20VS%20Code/8a14f0cc1b/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:300:143572)
+	at exports.run (e:\Github\tuflow-issue9-20261124\driver\navigation.cjs:1:569)
+2026-11-24 01:58:45.562 [error] (node:351112) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.

@@ -1,0 +1,66 @@
+{
+  "time": "2026-11-23T17:50:57.353Z",
+  "document": "e:\\Github\\tuflow-issue9-20261124\\manual-fixtures\\indent.tcf",
+  "language": "tuflow",
+  "text": "If Scenario == acceptance\r\n    End Time == 12\r\nElse\r\n    End Time == 24\r\nEnd If",
+  "selection": {
+    "start": {
+      "line": 4,
+      "character": 6
+    },
+    "end": {
+      "line": 4,
+      "character": 6
+    },
+    "active": {
+      "line": 4,
+      "character": 6
+    },
+    "anchor": {
+      "line": 4,
+      "character": 6
+    }
+  },
+  "diagnostics": [
+    {
+      "file": "e:\\github\\tuflow-issue9-20261124\\manual-fixtures\\syntax.tgc",
+      "items": []
+    },
+    {
+      "file": "e:\\github\\tuflow-issue9-20261124\\manual-fixtures\\present.trd",
+      "items": []
+    },
+    {
+      "file": "e:\\github\\tuflow-issue9-20261124\\manual-fixtures\\navigation.tcf",
+      "items": [
+        {
+          "source": "TUFLOW Path Validator",
+          "code": "TPV001",
+          "message": "File not found: missing_input.trd",
+          "line": 2
+        }
+      ]
+    },
+    {
+      "file": "e:\\github\\tuflow-issue9-20261124\\manual-fixtures\\probe.tgc",
+      "items": []
+    },
+    {
+      "file": "e:\\github\\tuflow-issue9-20261124\\manual-fixtures\\probe.tef",
+      "items": []
+    },
+    {
+      "file": "e:\\github\\tuflow-issue9-20261124\\manual-fixtures\\indent.tcf",
+      "items": []
+    },
+    {
+      "file": "e:\\github\\tuflow-issue9-20261124\\manual-fixtures\\probe.tcf",
+      "items": []
+    },
+    {
+      "file": "e:\\github\\tuflow-issue9-20261124\\manual-fixtures\\formatting.tcf",
+      "items": []
+    }
+  ],
+  "obsoleteHelperOpener": false
+}

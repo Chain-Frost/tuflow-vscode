@@ -1,0 +1,847 @@
+{
+  "schemaVersion": 1,
+  "issue": "Chain-Frost/tuflow-vscode#9",
+  "profile": "combined",
+  "phase": "integrated",
+  "revision": "b838b184f5e74c116bde70578f5d8bf2d30d2225",
+  "startedAt": "2026-11-23T17:37:52.096Z",
+  "environment": {
+    "platform": "win32",
+    "arch": "x64",
+    "vscodeVersion": "1.147.0",
+    "nodeVersion": "24.22.1",
+    "cpuModel": "AMD Ryzen 7 7700X 8-Core Processor             ",
+    "logicalCpus": 16,
+    "machineMemoryBytes": 67869888512,
+    "extensionHostPid": 316164,
+    "invocationId": "2accc8e0-55d6-46db-9855-6098e39b6964",
+    "configuredRepeats": "30",
+    "configuredSyntheticLines": "10000",
+    "configuredDiagnosticSettleMs": "1800",
+    "workspaceFolders": [
+      "e:\\Github\\tuflow-issue9-20261124\\fixtures"
+    ],
+    "networkFixtureRoot": null
+  },
+  "checks": [
+    {
+      "id": "extension-helper",
+      "status": "pass",
+      "evidence": {
+        "expectedPresent": true,
+        "actualPresent": true,
+        "id": "lmillard79.tuflow-helper"
+      }
+    },
+    {
+      "id": "extension-validator",
+      "status": "pass",
+      "evidence": {
+        "expectedPresent": true,
+        "actualPresent": true,
+        "id": "Chain-Frost.tuflow-path-validator"
+      }
+    },
+    {
+      "id": "extension-opener",
+      "status": "pass",
+      "evidence": {
+        "expectedPresent": false,
+        "actualPresent": false
+      }
+    },
+    {
+      "id": "extension-lens",
+      "status": "pass",
+      "evidence": {
+        "expectedPresent": false,
+        "actualPresent": false
+      }
+    },
+    {
+      "id": "root-only-child-not-editor-open",
+      "status": "pass",
+      "evidence": {
+        "childUri": "file:///e%3A/Github/tuflow-issue9-20261124/fixtures/include/nested.trd",
+        "childOpened": false
+      }
+    },
+    {
+      "id": "recursive-root-child-summary",
+      "status": "pass",
+      "evidence": {
+        "expectedCode": "TPV002",
+        "actual": [
+          "Referenced file has 2 issue(s): nested.trd"
+        ]
+      }
+    },
+    {
+      "id": "recursive-root-missing-child",
+      "status": "pass",
+      "evidence": {
+        "pass": true,
+        "expected": [
+          "missing_nested.trd"
+        ],
+        "actual": [
+          "missing_nested.trd"
+        ],
+        "ignoredUnrelated": 0
+      }
+    },
+    {
+      "id": "recursive-root-present-child",
+      "status": "pass",
+      "evidence": {
+        "fileExists": true,
+        "reference": "Read File == include/leaf.trd",
+        "pass": true,
+        "expected": [],
+        "actual": [],
+        "ignoredUnrelated": 0
+      }
+    },
+    {
+      "id": "language-model.tcf",
+      "status": "pass",
+      "evidence": {
+        "observed": "tuflow",
+        "expected": "tuflow"
+      }
+    },
+    {
+      "id": "language-geometry.tgc",
+      "status": "pass",
+      "evidence": {
+        "observed": "tuflow",
+        "expected": "tuflow"
+      }
+    },
+    {
+      "id": "language-boundary.tbc",
+      "status": "pass",
+      "evidence": {
+        "observed": "tuflow",
+        "expected": "tuflow"
+      }
+    },
+    {
+      "id": "language-estuary.ecf",
+      "status": "pass",
+      "evidence": {
+        "observed": "tuflow",
+        "expected": "tuflow"
+      }
+    },
+    {
+      "id": "language-events.tef",
+      "status": "pass",
+      "evidence": {
+        "observed": "tuflow",
+        "expected": "tuflow"
+      }
+    },
+    {
+      "id": "language-include/nested.trd",
+      "status": "pass",
+      "evidence": {
+        "observed": "tuflow",
+        "expected": "tuflow"
+      }
+    },
+    {
+      "id": "language-settings.qcf",
+      "status": "pass",
+      "evidence": {
+        "observed": "tuflow",
+        "expected": "tuflow"
+      }
+    },
+    {
+      "id": "activated-helper",
+      "status": "pass",
+      "evidence": {
+        "activeAfterOpening": true
+      }
+    },
+    {
+      "id": "activated-validator",
+      "status": "pass",
+      "evidence": {
+        "activeAfterOpening": true
+      }
+    },
+    {
+      "id": "helper-no-duplicate-opener",
+      "status": "pass",
+      "evidence": {
+        "legacyOpenCommandRegistered": false
+      }
+    },
+    {
+      "id": "tgc-command-completion",
+      "status": "pass",
+      "evidence": {
+        "found": [
+          "Read GIS Z Shape",
+          "Read GIS Z Shape GULLY",
+          "Read GIS Z Shape GULLY Write TIN",
+          "Read GIS Z Shape GULLY XF OFF",
+          "Read GIS Z Shape GULLY XF ON",
+          "Read GIS Z Shape LOWER",
+          "Read GIS Z Shape LOWER Write TIN",
+          "Read GIS Z Shape LOWER XF OFF",
+          "Read GIS Z Shape LOWER XF ON",
+          "Read GIS Z Shape MAX"
+        ],
+        "total": 29
+      }
+    },
+    {
+      "id": "multiword-command-hover",
+      "status": "pass",
+      "evidence": {
+        "matched": true,
+        "excerpt": "**Read GIS Z Shape**\n\nModify Zpts from a vector 2d_zsh layer.\n\n**Syntax:** `Read GIS Z Shape == <gis_layer>`\n\n**Verified examples:**\n- Read GIS Z Shape == ..\\model\\gis\\2d_zsh.shp\n- Read GIS Z Shape RIDGE == ..\\model\\gis\\"
+      }
+    },
+    {
+      "id": "snippet-provider-observation",
+      "status": "unverified",
+      "evidence": {
+        "snippetCompletions": 1,
+        "manualInsertionRequired": true
+      }
+    },
+    {
+      "id": "no-cross-file-command-leakage",
+      "status": "pass",
+      "evidence": {
+        "tefCompletionCount": 115,
+        "leakedTgcCompletions": []
+      }
+    },
+    {
+      "id": "no-generic-completions-in-comment",
+      "status": "pass",
+      "evidence": {
+        "leakedSuggestions": [],
+        "knownCommandCount": 72,
+        "completionCount": 114
+      }
+    },
+    {
+      "id": "no-universal-gis-values",
+      "status": "pass",
+      "evidence": {
+        "unrelatedValues": [],
+        "completionCount": 124
+      }
+    },
+    {
+      "id": "no-duplicate-problems",
+      "status": "pass",
+      "evidence": {
+        "duplicateCount": 0,
+        "duplicates": []
+      }
+    },
+    {
+      "id": "helper-does-not-own-diagnostics",
+      "status": "pass",
+      "evidence": {
+        "helperDiagnosticCount": 0
+      }
+    },
+    {
+      "id": "validator-tcf-missing-trd",
+      "status": "pass",
+      "evidence": {
+        "pass": true,
+        "expected": [
+          "include/missing.trd"
+        ],
+        "actual": [
+          "include/missing.trd"
+        ],
+        "ignoredUnrelated": 0
+      }
+    },
+    {
+      "id": "validator-tbc-missing-gis",
+      "status": "pass",
+      "evidence": {
+        "pass": true,
+        "expected": [
+          "gis/absent_bc.shp"
+        ],
+        "actual": [
+          "gis/absent_bc.shp"
+        ],
+        "ignoredUnrelated": 0
+      }
+    },
+    {
+      "id": "validator-tgc-gpkg",
+      "status": "pass",
+      "evidence": {
+        "pass": true,
+        "expected": [
+          "gis/absent_terrain.gpkg"
+        ],
+        "actual": [
+          "gis/absent_terrain.gpkg"
+        ],
+        "ignoredUnrelated": 0
+      }
+    },
+    {
+      "id": "validator-tgc-list",
+      "status": "pass",
+      "evidence": {
+        "pass": true,
+        "expected": [
+          "../gis/absent_a.shp",
+          "../gis/absent_b.shp"
+        ],
+        "actual": [
+          "../gis/absent_a.shp",
+          "../gis/absent_b.shp"
+        ],
+        "ignoredUnrelated": 0
+      }
+    },
+    {
+      "id": "validator-tcf-macro-ignored",
+      "status": "pass",
+      "evidence": {
+        "pass": true,
+        "expected": [],
+        "actual": [],
+        "ignoredUnrelated": 0
+      }
+    },
+    {
+      "id": "validator-tbc-suppressed-ignored",
+      "status": "pass",
+      "evidence": {
+        "pass": true,
+        "expected": [],
+        "actual": [],
+        "ignoredUnrelated": 0
+      }
+    },
+    {
+      "id": "validator-tgc-macro-layer-ignored",
+      "status": "pass",
+      "evidence": {
+        "pass": true,
+        "expected": [],
+        "actual": [],
+        "ignoredUnrelated": 0
+      }
+    },
+    {
+      "id": "validator-tcf-unknown-ignored",
+      "status": "pass",
+      "evidence": {
+        "pass": true,
+        "expected": [],
+        "actual": [],
+        "ignoredUnrelated": 0
+      }
+    },
+    {
+      "id": "format-provider-observation",
+      "status": "unverified",
+      "evidence": {
+        "edits": null,
+        "manualOwnershipCheckRequired": true
+      }
+    },
+    {
+      "id": "network-fixture",
+      "status": "blocked",
+      "evidence": {
+        "reason": "TUFLOW_ACCEPT_NETWORK_FIXTURES not provided"
+      }
+    },
+    {
+      "id": "theme-and-ui-checks",
+      "status": "unverified",
+      "evidence": {
+        "manualChecks": [
+          "TextMate scopes and theme-specific syntax rendering",
+          "Snippet insertion and tab-stop expansion in editor",
+          "seito-openfile cursor and context-menu behavior",
+          "Error Lens decorations compared with Problems view",
+          "Validator-owned formatting on opted-in settings",
+          "UNC and GeoPackage layer resolution against actual Windows network datasets"
+        ]
+      }
+    }
+  ],
+  "metrics": {
+    "rootFirstOpen": {
+      "openAndShowMs": 107.15,
+      "alreadyOpenBeforeMeasurement": false
+    },
+    "documentOpen": {
+      "model.tcf": {
+        "openAndShowMs": 61.63,
+        "languageId": "tuflow"
+      },
+      "geometry.tgc": {
+        "openAndShowMs": 71.2,
+        "languageId": "tuflow"
+      },
+      "boundary.tbc": {
+        "openAndShowMs": 47.56,
+        "languageId": "tuflow"
+      },
+      "estuary.ecf": {
+        "openAndShowMs": 69.44,
+        "languageId": "tuflow"
+      },
+      "events.tef": {
+        "openAndShowMs": 48.06,
+        "languageId": "tuflow"
+      },
+      "include/nested.trd": {
+        "openAndShowMs": 59.6,
+        "languageId": "tuflow"
+      },
+      "settings.qcf": {
+        "openAndShowMs": 63.76,
+        "languageId": "tuflow"
+      }
+    },
+    "rootWarmOpen": {
+      "samples": 30,
+      "p50Ms": 43.67,
+      "p95Ms": 75.23,
+      "maxMs": 76.46,
+      "valuesMs": [
+        48.87260000000015,
+        52.3119999999999,
+        76.46039999999994,
+        45.64210000000003,
+        42.8744999999999,
+        58.88279999999986,
+        75.22659999999996,
+        60.816100000000006,
+        45.30569999999989,
+        53.06719999999996,
+        53.259700000000066,
+        32.35219999999981,
+        40.1836000000003,
+        45.86360000000013,
+        35.48289999999997,
+        43.67169999999987,
+        26.95580000000018,
+        42.725200000000314,
+        37.04399999999987,
+        38.245199999999386,
+        36.8126000000002,
+        40.47190000000046,
+        40.863900000000285,
+        44.532499999999345,
+        45.05409999999938,
+        43.356299999999464,
+        44.20560000000023,
+        29.095099999999547,
+        47.69260000000031,
+        43.513999999999214
+      ],
+      "cpuUserMs": 203,
+      "cpuSystemMs": 125,
+      "rssBeforeBytes": 240381952,
+      "rssAfterBytes": 245579776
+    },
+    "completion": {
+      "samples": 30,
+      "p50Ms": 3.91,
+      "p95Ms": 12.89,
+      "maxMs": 20.96,
+      "valuesMs": [
+        5.151100000000042,
+        5.421900000000278,
+        20.95890000000054,
+        9.452699999999822,
+        12.893599999999424,
+        9.944300000000112,
+        4.514199999999619,
+        4.742000000000189,
+        3.1802999999999884,
+        3.695499999999811,
+        3.3245000000006257,
+        4.071399999999812,
+        5.163799999999355,
+        3.813799999999901,
+        3.4749999999994543,
+        4.316100000000006,
+        3.2601999999997133,
+        3.908499999999549,
+        3.603700000000572,
+        3.1302000000005137,
+        3.4799000000002707,
+        2.8306000000002314,
+        3.0168000000003303,
+        4.068599999999606,
+        4.444300000000112,
+        4.480899999999565,
+        3.0281000000004497,
+        3.332300000000032,
+        4.276100000000042,
+        3.7335000000002765
+      ],
+      "cpuUserMs": 141,
+      "cpuSystemMs": 15,
+      "rssBeforeBytes": 245755904,
+      "rssAfterBytes": 251682816
+    },
+    "hover": {
+      "samples": 30,
+      "p50Ms": 0.96,
+      "p95Ms": 1.18,
+      "maxMs": 1.46,
+      "valuesMs": [
+        1.0416999999997643,
+        0.9279999999998836,
+        1.0140000000001237,
+        1.0607999999992899,
+        1.1018999999996595,
+        1.0127999999995154,
+        1.061200000000099,
+        0.966099999999642,
+        0.966099999999642,
+        1.0091000000002168,
+        1.4579000000003361,
+        1.181300000000192,
+        0.99579999999969,
+        0.9495999999999185,
+        0.960399999999936,
+        0.9476000000004206,
+        0.9253000000007887,
+        0.867099999999482,
+        0.9197999999996682,
+        0.9963999999999942,
+        1.0511999999998807,
+        0.9646000000002459,
+        1.0427000000008775,
+        0.9395999999997002,
+        0.7715999999991254,
+        0.8917000000001281,
+        0.9269000000003871,
+        0.7878000000000611,
+        0.8229999999994106,
+        0.8995999999997366
+      ],
+      "cpuUserMs": 31,
+      "cpuSystemMs": 0,
+      "rssBeforeBytes": 251772928,
+      "rssAfterBytes": 253104128
+    },
+    "largeFile": {
+      "lineCount": 10002,
+      "bytes": 438947,
+      "openAndShowMs": 54.16
+    },
+    "largeFileCompletion": {
+      "samples": 30,
+      "p50Ms": 9.17,
+      "p95Ms": 11.43,
+      "maxMs": 11.65,
+      "valuesMs": [
+        8.551500000000487,
+        8.666699999999764,
+        10.290500000000065,
+        9.118900000000394,
+        7.862100000000282,
+        8.65729999999985,
+        11.653800000000047,
+        10.273299999999836,
+        7.939800000000105,
+        10.399499999999534,
+        8.777299999999741,
+        8.616299999999683,
+        10.26589999999942,
+        10.196100000000115,
+        9.755499999999302,
+        7.527900000000045,
+        9.243600000000697,
+        8.437099999999191,
+        9.170200000000477,
+        11.213600000000042,
+        9.066100000000006,
+        8.546199999999772,
+        7.542199999999866,
+        9.319400000000314,
+        10.998900000000503,
+        9.397399999999834,
+        9.202800000000025,
+        11.428599999999278,
+        8.447400000000016,
+        9.958200000000033
+      ],
+      "cpuUserMs": 110,
+      "cpuSystemMs": 32,
+      "rssBeforeBytes": 258146304,
+      "rssAfterBytes": 259137536
+    }
+  },
+  "extensions": {
+    "helper": {
+      "id": "lmillard79.tuflow-helper",
+      "version": "0.8.2",
+      "activeInitially": false,
+      "activeAfterOpen": true
+    },
+    "validator": {
+      "id": "Chain-Frost.tuflow-path-validator",
+      "version": "0.2.7",
+      "activeInitially": true,
+      "activeAfterOpen": true
+    },
+    "opener": null,
+    "lens": null
+  },
+  "diagnostics": [
+    {
+      "file": "model.tcf",
+      "line": 2,
+      "start": 25,
+      "endLine": 2,
+      "end": 37,
+      "severity": 1,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV002",
+      "message": "Referenced file has 4 issue(s): geometry.tgc"
+    },
+    {
+      "file": "model.tcf",
+      "line": 3,
+      "start": 19,
+      "endLine": 3,
+      "end": 31,
+      "severity": 1,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV002",
+      "message": "Referenced file has 2 issue(s): boundary.tbc"
+    },
+    {
+      "file": "model.tcf",
+      "line": 4,
+      "start": 22,
+      "endLine": 4,
+      "end": 33,
+      "severity": 1,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV002",
+      "message": "Referenced file has 2 issue(s): estuary.ecf"
+    },
+    {
+      "file": "model.tcf",
+      "line": 5,
+      "start": 14,
+      "endLine": 5,
+      "end": 24,
+      "severity": 1,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV002",
+      "message": "Referenced file has 1 issue(s): events.tef"
+    },
+    {
+      "file": "model.tcf",
+      "line": 6,
+      "start": 13,
+      "endLine": 6,
+      "end": 31,
+      "severity": 1,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV002",
+      "message": "Referenced file has 2 issue(s): nested.trd"
+    },
+    {
+      "file": "model.tcf",
+      "line": 7,
+      "start": 13,
+      "endLine": 7,
+      "end": 32,
+      "severity": 0,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV001",
+      "message": "File not found: include/missing.trd"
+    },
+    {
+      "file": "model.tcf",
+      "line": 14,
+      "start": 17,
+      "endLine": 14,
+      "end": 35,
+      "severity": 1,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV002",
+      "message": "Referenced file has 2 issue(s): nested.trd"
+    },
+    {
+      "file": "model.tcf",
+      "line": 16,
+      "start": 28,
+      "endLine": 16,
+      "end": 36,
+      "severity": 1,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV020",
+      "message": "Filename is missing token \"~s1~\" listed in this control file."
+    },
+    {
+      "file": "geometry.tgc",
+      "line": 2,
+      "start": 20,
+      "endLine": 2,
+      "end": 43,
+      "severity": 0,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV001",
+      "message": "File not found: gis/absent_terrain.gpkg"
+    },
+    {
+      "file": "geometry.tgc",
+      "line": 3,
+      "start": 20,
+      "endLine": 3,
+      "end": 60,
+      "severity": 0,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV001",
+      "message": "File not found: \\\\fileserver\\hydraulics\\gis\\terrain.gpkg"
+    },
+    {
+      "file": "geometry.tgc",
+      "line": 4,
+      "start": 20,
+      "endLine": 4,
+      "end": 39,
+      "severity": 0,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV001",
+      "message": "File not found: ../gis/absent_a.shp"
+    },
+    {
+      "file": "geometry.tgc",
+      "line": 4,
+      "start": 42,
+      "endLine": 4,
+      "end": 61,
+      "severity": 0,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV001",
+      "message": "File not found: ../gis/absent_b.shp"
+    },
+    {
+      "file": "boundary.tbc",
+      "line": 2,
+      "start": 15,
+      "endLine": 2,
+      "end": 32,
+      "severity": 0,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV001",
+      "message": "File not found: gis/absent_bc.shp"
+    },
+    {
+      "file": "boundary.tbc",
+      "line": 3,
+      "start": 15,
+      "endLine": 3,
+      "end": 33,
+      "severity": 0,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV001",
+      "message": "File not found: gis/absent_bc.gpkg"
+    },
+    {
+      "file": "estuary.ecf",
+      "line": 2,
+      "start": 20,
+      "endLine": 2,
+      "end": 42,
+      "severity": 0,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV001",
+      "message": "File not found: gis/absent_network.shp"
+    },
+    {
+      "file": "estuary.ecf",
+      "line": 3,
+      "start": 20,
+      "endLine": 3,
+      "end": 63,
+      "severity": 0,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV001",
+      "message": "File not found: \\\\fileserver\\hydraulics\\estuary\\network.shp"
+    },
+    {
+      "file": "events.tef",
+      "line": 2,
+      "start": 0,
+      "endLine": 2,
+      "end": 6,
+      "severity": 0,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV010",
+      "message": "Define Event statement is missing a closing End Define."
+    },
+    {
+      "file": "include/nested.trd",
+      "line": 3,
+      "start": 13,
+      "endLine": 3,
+      "end": 31,
+      "severity": 0,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV001",
+      "message": "File not found: missing_nested.trd"
+    },
+    {
+      "file": "include/nested.trd",
+      "line": 6,
+      "start": 17,
+      "endLine": 6,
+      "end": 25,
+      "severity": 0,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV001",
+      "message": "File not found: leaf.trd"
+    },
+    {
+      "file": "settings.qcf",
+      "line": 3,
+      "start": 20,
+      "endLine": 3,
+      "end": 44,
+      "severity": 0,
+      "source": "TUFLOW Path Validator",
+      "code": "TPV001",
+      "message": "File not found: gis/absent_quadtree.gpkg"
+    }
+  ],
+  "manualChecks": [
+    "TextMate scopes and theme-specific syntax rendering",
+    "Snippet insertion and tab-stop expansion in editor",
+    "seito-openfile cursor and context-menu behavior",
+    "Error Lens decorations compared with Problems view",
+    "Validator-owned formatting on opted-in settings",
+    "UNC and GeoPackage layer resolution against actual Windows network datasets"
+  ],
+  "finishedAt": "2026-11-23T17:37:56.576Z",
+  "summary": {
+    "pass": 33,
+    "fail": 0,
+    "blocked": 1,
+    "unverified": 3
+  }
+}
