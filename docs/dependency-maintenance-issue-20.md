@@ -31,3 +31,16 @@ The audit command can exit nonzero when advisories are found. Record exact vulne
 Final acceptance requires an npm-generated consistent lockfile, all source/installed-VSIX tests passing in both extension hosts on both operating systems, complete current audit results and independent Codex review. The review should include regressions from the ESLint migration and older VS Code hosts. **Do not merge until those gates pass.**
 
 No tag, Marketplace publisher change, release, publication, or Path Validator modification is authorised.
+
+## Executed npm registry audit — 23 November 2026
+
+- Bootstrap: GitHub Actions Node **24.22.3**, npm **11.19.1**; lockfile regenerated with `npm install --package-lock-only --ignore-scripts --no-audit --no-fund` and committed on the issue branch. Full raw `npm audit --json` is retained as the workflow artifact (run 45187500025).
+- Initial regenerated graph: **10 advisories (2 high, 7 moderate, 1 low)**. The two high entries were the outdated `brace-expansion` 1.1.12 and `serialize-javascript` 6.0.2.
+- The deliberately narrow overrides apply `brace-expansion` **1.1.22** only beneath `minimatch@^3.1.2`, and `serialize-javascript` **7.1.4** only beneath `mocha@^11.7.6`. The latter crosses a dependency major version: source and installed-VSIX Extension Host tests are mandatory to qualify this change.
+- Rebuilt and re-audited dependency graph: **0 critical, 0 high, 7 moderate, 1 low (8 total)**. Neither override is carried in the extension's distributed runtime dependencies. The npm lockfile contains 390 package records.
+- Remaining advisory roots: `@vscode/test-cli` (moderate), `@vscode/vsce` (moderate), `c8` (moderate), `glob` (moderate), `minimatch` (moderate), `mocha` (moderate), `test-exclude` (moderate), `diff` (low). All occur in development/testing/packaging tooling; none is a direct runtime dependency of the extension.
+- `@vscode/test-cli` **0.0.15** and `@vscode/vsce` **4.1.1** are current packages, and the audit currently reports **no nonbreaking fix** for their moderate transitive findings. Downgrading vsce to 3.9.1, as npm audit suggests, would revert packaging upgrades and is not accepted as a verified security improvement.
+- Mitigation: no untrusted external files are processed by production `node_modules` because there are no packaged runtime npm dependencies; test fixtures and CI source are controlled. CI still uses these toolchains, so avoid untrusted workflow inputs, keep the residual list visible, and recheck after future upstream releases. The permanent CI security gate `npm audit --audit-level=high` fails future high/critical findings.
+- Do **not** treat the moderate findings as remediated. They are residual reviewed toolchain exposure; revisit upstream fixes via a separate dependency maintenance follow-up if issue #20 closes.
+
+Independent source review and Linux/Windows 1.74.3/1.147.0 compatibility results must still pass before merge.

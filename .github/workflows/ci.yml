@@ -32,6 +32,10 @@ jobs:
           cache: npm
       - name: Install locked dependencies
         run: npm ci
+      - name: Reject high and critical npm advisories
+        run: npm audit --audit-level=high
+      - name: Verify production dependency audit
+        run: npm audit --omit=dev --audit-level=low
       - name: Compile
         run: npm run compile
       - name: Lint
