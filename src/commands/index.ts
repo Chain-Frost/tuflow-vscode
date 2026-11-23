@@ -1,6 +1,5 @@
 /**
- * Central editor command registry. Existing records are retained until the
- * separate official-documentation audits are completed by Agents D/E.
+ * Editor-only registry combining the documented TCF/TGC and TBC/ECF/TRFC/QCF catalogues.
  */
 import { tcfCommands } from './tcfCommands';
 import { tgcCommands } from './tgcCommands';
@@ -10,6 +9,8 @@ import { trfcCommands } from './trfcCommands';
 import { qcfCommands } from './qcfCommands';
 import { normalizeCommandName } from './lineParser';
 import { createCommandRegistry } from './registry';
+import { isAuditedCommand } from './audited';
+import type { AuditedTuflowCommand } from './audited';
 import type { TuflowCommand, CommandDefinition, CommandValueKind, ControlFileCategory, LeftSideSuffixGroup } from './types';
 import type { ParsedTuflowLine } from './lineParser';
 
@@ -79,33 +80,62 @@ const verified: Readonly<Record<string, VerifiedMetadata>> = {
     }
 };
 
+function auditedValueKind(command: AuditedTuflowCommand): CommandValueKind {
+    switch (command.valueKind) {
+        case 'file': return 'file-path';
+        case 'enum': return 'keyword';
+        case 'number': return command.enumValues?.length ? 'number-or-keyword' : 'number';
+        case 'text': return 'free-text';
+        case 'tuple':
+            // Only comma-separated numeric *pairs* have a proven two-argument signature.
+            return command.category === 'TRFC' && (
+                command.name === 'RF Grid Origin' || command.name.startsWith('RF Grid Size (')
+            ) ? 'number-pair' : 'unknown';
+    }
+}
+
 function importLegacy(category: ControlFileCategory, commands: readonly TuflowCommand[]): CommandDefinition[] {
     return commands.map((command, index) => {
         if (command.category !== category) throw new Error('Catalogue category mismatch: ' + command.name);
         const fields = verified[category + ':' + normalizeCommandName(command.name)];
         const manual = manuals[category];
+        const audited = isAuditedCommand(command) ? command : undefined;
+        const verifiedFields = audited
+            ? [
+                'canonicalName', 'description', 'syntax', 'valueKind', 'sourceUrl',
+                ...(audited.enumValues ? ['allowedValues'] : []),
+                ...(audited.suffixGroups ? ['suffixGroups'] : []),
+                ...(audited.argumentNames ? ['argumentNames'] : [])
+            ]
+            : fields?.verifiedFields ?? [];
         return Object.freeze({
             ...command,
+            // Preserve source-checked argument structure for the interim #3 editor
+            // provider; do not treat enum alternatives as separate arguments.
+            parameters: audited?.argumentNames ?? (audited ? undefined : command.parameters),
             id: category + ':' + normalizeCommandName(command.name) + ':' + index,
             canonicalName: command.name,
             categories: Object.freeze([category]),
-            suffixGroups: fields?.suffixGroups ?? Object.freeze([]),
-            valueKind: fields?.valueKind ?? 'unknown',
-            allowedValues: fields?.allowedValues,
-            safeExamples: fields?.safeExamples ?? Object.freeze([]),
+            suffixGroups: audited?.suffixGroups ?? fields?.suffixGroups ?? Object.freeze([]),
+            valueKind: audited ? auditedValueKind(audited) : fields?.valueKind ?? 'unknown',
+            allowedValues: audited?.enumValues ?? fields?.allowedValues,
+            safeExamples: audited
+                ? (audited.examples?.length ? audited.examples :
+                    (audited.enumValues?.map(value => command.name + ' == ' + value) ?? []))
+                : fields?.safeExamples ?? Object.freeze([]),
             provenance: Object.freeze({
-                url: manual.url,
+                url: audited?.sourceUrl ?? manual.url,
                 section: manual.appendix + ', "' + command.name + '"',
-                auditStatus: 'needs-audit' as const,
-                verifiedFields: fields?.verifiedFields ?? Object.freeze([])
+                auditStatus: audited ? 'verified' as const : 'needs-audit' as const,
+                verifiedFields
             })
         });
     });
 }
 
 const registry = createCommandRegistry([
-    ...importLegacy('TCF', tcfCommands),
-    ...importLegacy('TGC', tgcCommands),
+    ...tcfCommands,
+    ...tgcCommands,
     ...importLegacy('TBC', tbcCommands),
     ...importLegacy('ECF', ecfCommands),
     ...importLegacy('TRFC', trfcCommands),

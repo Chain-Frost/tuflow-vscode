@@ -5,7 +5,9 @@ on:
     paths:
       - 'src/commands/**'
       - 'src/extension.ts'
-      - 'src/test/commandCatalogue.test.ts'
+      - 'src/test/**'
+      - 'src/editor/**'
+      - 'test/extension/**'
       - 'tsconfig.json'
       - 'package.json'
       - 'package-lock.json'
@@ -23,4 +25,5 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run compile
-      - run: node --test out/test/commandCatalogue.test.js
+      - name: Run every compiled pure Node test
+        run: node --test out/test/*.test.js

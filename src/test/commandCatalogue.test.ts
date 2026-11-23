@@ -126,14 +126,14 @@ test('parentheses and numerical command names match', () => {
 });
 
 test('duplicate names from different control files retain their context', () => {
-    const tcf = lookupCommandsForFile('.tcf', 'Set Mat == 2');
-    const tgc = lookupCommandsForFile('.TGC', 'Set Mat == 2');
+    const tcf = lookupCommandsForFile('.tcf', 'Set IWL == 2');
+    const tgc = lookupCommandsForFile('.TGC', 'Set IWL == 2');
     assert.equal(tcf.length, 1);
     assert.equal(tgc.length, 1);
     assert.equal(tcf[0].category, 'TCF');
     assert.equal(tgc[0].category, 'TGC');
     assert.notEqual(tcf[0].id, tgc[0].id);
-    assert.ok(getCommandsByName('Set Mat').length >= 2);
+    assert.ok(getCommandsByName('Set IWL').length >= 2);
     assert.equal(getControlFileCategory('C:\\runs\\MODEL.TGC'), 'TGC');
     assert.equal(getControlFileCategory('rainfall.tef'), undefined);
     assert.equal(getCommandsForFile('.tef').length, 0);
@@ -150,15 +150,24 @@ test('provenance and verified metadata do not silently certify legacy fields', (
     for (const command of allTuflowCommands) {
         assert.match(command.provenance.url, /^https:\/\/docs\.tuflow\.com\//);
         assert.match(command.provenance.section, /Appendix/);
-        assert.equal(command.provenance.auditStatus, 'needs-audit');
+        assert.equal(command.provenance.auditStatus, 'verified');
         assert.ok(command.canonicalName.length > 0);
     }
     const format = lookupCommandsForFile('.trfc', 'RF Grid Format == TIF')[0];
     assert.deepEqual(format.allowedValues, ['ASC', 'FLT', 'NC', 'TIF']);
-    assert.deepEqual(format.safeExamples, ['RF Grid Format == TIF']);
-    const uncertain = lookupCommandsForFile('.tcf', 'Define Source == something')[0];
-    assert.equal(uncertain.valueKind, 'unknown');
-    assert.equal(uncertain.allowedValues, undefined);
+    assert.ok(format.safeExamples.includes('RF Grid Format == TIF'));
+    assert.equal(format.parameters, undefined);
+    assert.equal(lookupCommandsForFile('.tcf', 'Define Source == something').length, 0);
+    const auditedTBC = getCommandsForFile('.tbc')[0];
+    assert.equal(auditedTBC.provenance.auditStatus, 'verified');
+    assert.deepEqual(
+        lookupCommandsForFile('.trfc', 'RF Grid Origin == 1, 2')[0].parameters,
+        ['<OX>', '<OY>']
+    );
+    assert.deepEqual(
+        lookupCommandsForFile('.ecf', 'BC Event Name == RAIN')[0].parameters,
+        ['<bc_event_name>']
+    );
 });
 
 function fixture(name: string, category: CommandDefinition['category'], id = 'example'): CommandDefinition {
@@ -171,6 +180,125 @@ function fixture(name: string, category: CommandDefinition['category'], id = 'ex
         }
     };
 }
+
+
+const expectedAudited = {
+    TCF: ["Start Time","End Time","Timestep","Cell Size","Map Output Interval","Time Series Output Interval","Start Map Output","End Map Output","Geometry Control File","BC Control File","ESTRY Control File","Event File","Quadtree Control File","Rainfall Control File","BC Database","Read Materials File","Read Soils File","Read GIS PO","Read GIS IWL","Set IWL","Solution Scheme","Hardware","GIS Format","GPKG Projection","SHP Projection","Output Folder","Log Folder","Map Output Data Types","Map Output Format","Time Series Output Format","Timestep Maximum","Read File","Write Check Files","Write Check Files EXCLUDE","Write Check Files INCLUDE","Output Files EXCLUDE","Output Files INCLUDE","XMDF Map Output Interval","TIF Map Output Data Types"],
+    TGC: ["Cell Size","Grid Size (N,M)","Grid Size (X,Y)","Origin","Orientation","Orientation Angle","Read GIS Location","Read Grid Location","Read GIS Code","Set Code","Set Code and Clean Zpt","Set Zpt","Read Grid Zpts","Read GIS Z Shape","Read GIS Mat","Read Grid Mat","Set Mat","Read GIS Soil","Read Grid Soil","Read GIS IWL","Read Grid IWL","Set IWL","Read GIS FLC","Read GIS FLC/L","Read GIS SRF","Read GIS WrF","Read GIS Layered FC Shape","Read GIS Variable Z Shape","Read TIN Zpts","Create TIN Zpts","Read File"]
+} as const;
+
+test('audited completion names are stable, context-specific and unique', () => {
+    for (const category of ['TCF', 'TGC'] as const) {
+        const commands = getCommandsForFile('.' + category.toLowerCase());
+        assert.deepEqual(commands.map(cmd => cmd.name), [...expectedAudited[category]]);
+        assert.equal(new Set(commands.map(cmd => cmd.name.toLowerCase())).size, commands.length);
+        assert.ok(commands.every(cmd => cmd.category === category));
+    }
+});
+
+test('TCF and TGC examples resolve against the audited registry', () => {
+    for (const category of ['TCF', 'TGC'] as const) {
+        const commands = getCommandsForFile('.' + category.toLowerCase());
+        for (const command of commands) {
+            assert.equal(command.provenance.auditStatus, 'verified');
+            assert.ok(command.provenance.url.includes('/manual/2026.3/'));
+            assert.ok(command.provenance.section.includes('Appendix'));
+            assert.ok(command.safeExamples.length > 0, command.name);
+            assert.ok(command.syntax?.startsWith(command.name + ' == '));
+            for (const example of command.safeExamples) {
+                assert.ok(example.includes(' == '), example);
+                assert.ok(example.split(' == ')[1].trim(), example);
+                assert.equal(
+                    lookupCommandsForFile('.' + category.toLowerCase(), example).length,
+                    1, 'No matching documented example: ' + example
+                );
+            }
+        }
+    }
+});
+
+test('TCF hours and output intervals are not misrepresented as clock times', () => {
+    for (const name of ['Start Time', 'End Time']) {
+        const matches = lookupCommandsForFile('.tcf', name + ' == 0');
+        assert.equal(matches.length, 1);
+        assert.match(matches[0].syntax ?? '', /time_in_hours/);
+        assert.ok(matches[0].safeExamples.every(x => !/\d+:\d+/.test(x)));
+    }
+    assert.match(lookupCommandsForFile('.tcf', 'Map Output Interval == 900')[0].syntax ?? '',
+        /time_in_seconds/);
+    assert.equal(lookupCommandsForFile('.tcf', 'Solution Scheme == HPC')[0].valueKind,
+        'keyword');
+    assert.equal(lookupCommandsForFile('.tcf', 'Set Code == HPC').length, 0);
+});
+
+test('output token lists do not masquerade as free-text file paths', () => {
+    for (const name of ['Map Output Data Types', 'Map Output Format',
+        'Output Files EXCLUDE', 'TIF Map Output Data Types']) {
+        const command = lookupCommandsForFile('.tcf', name + ' == example')[0];
+        assert.ok(command, name);
+        assert.equal(command.valueKind, 'token-list', name);
+        assert.notEqual(command.valueKind, 'file-path', name);
+        assert.notEqual(command.valueKind, 'free-text', name);
+    }
+    assert.equal(lookupCommandsForFile('.tcf', 'BC Database == file.csv')[0].valueKind,
+        'file-path');
+});
+
+test('Write Check Files variants have different operand semantics', () => {
+    const folder = lookupCommandsForFile('.tcf', 'Write Check Files == ..\\check\\');
+    assert.equal(folder.length, 1);
+    assert.equal(folder[0].valueKind, 'file-path');
+    assert.deepEqual(folder[0].safeExamples, ['Write Check Files == ..\\check\\']);
+
+    for (const [variant, example] of [
+        ['EXCLUDE', 'Write Check Files EXCLUDE == zpt uvpt'],
+        ['INCLUDE', 'Write Check Files INCLUDE == DEM_Z']
+    ]) {
+        const matching = lookupCommandsForFile('.tcf', example);
+        assert.equal(matching.length, 1, example);
+        assert.equal(matching[0].canonicalName, 'Write Check Files ' + variant);
+        assert.equal(matching[0].valueKind, 'token-list');
+        assert.equal(matching[0].syntax, 'Write Check Files ' + variant + ' == <prefix_list>');
+        assert.deepEqual(matching[0].safeExamples, [example]);
+    }
+    // A misplaced folder path must not become a recommended value for suffix variants.
+    assert.equal(getCommandsForFile('.tcf').filter(
+        command => command.name.startsWith('Write Check Files')
+    ).length, 3);
+});
+
+test('TGC raster guidance, vector Z Shapes and left-hand modifier groups', () => {
+    const shape = lookupCommandsForFile('.tgc', 'Read GIS Z Shape == model.shp')[0];
+    assert.ok(shape.safeExamples.every(x => !/\.(?:tif|asc)\b/i.test(x)));
+    const grid = lookupCommandsForFile('.tgc', 'Read Grid Zpts == model.tif')[0];
+    assert.ok(grid.safeExamples.some(x => x.endsWith('.tif')));
+    assert.ok(grid.safeExamples.some(x => x.endsWith('.asc')));
+    for (const suffix of ['ADD', 'MAX', 'MIN']) {
+        assert.equal(lookupCommandsForFile('.tgc', 'Read Grid Zpts ' + suffix + ' == test.tif')
+            .length, 1);
+    }
+    for (const suffix of ['RIDGE', 'GULLY', 'Write TIN', 'RIDGE XF ON']) {
+        assert.equal(lookupCommandsForFile('.tgc', 'Read GIS Z Shape ' + suffix + ' == test.shp')
+            .length, 1);
+    }
+    assert.ok(lookupCommandsForFile('.tgc', 'Read GIS Layered FC Shape == test.shp')[0]
+        .safeExamples.some(x => x.includes('2d_lfcsh.shp')));
+    assert.deepEqual(lookupCommandsForFile('.tgc', 'Set Mat == 1')[0].safeExamples,
+        ['Set Mat == 1']);
+});
+
+test('quarantined invented or misplaced commands are not offered as suggestions', () => {
+    for (const name of ['Read GIS', 'Write GIS', 'Write Results', 'Set Code', 'Define Source',
+        'Set 1D Domain', 'Set 2D Domain', 'Set Mat']) {
+        assert.equal(lookupCommandsForFile('.tcf', name + ' == sample').length, 0, name);
+    }
+    for (const name of ['Read GIS BC', 'Read GIS SX', 'Read GIS SA', 'Read GIS Pipe',
+        'Set Grid', 'Set Extent', 'Set Origin', 'Set Node', 'Set Pipe']) {
+        assert.equal(lookupCommandsForFile('.tgc', name + ' == sample').length, 0, name);
+    }
+    assert.equal(lookupCommandsForFile('.tgc', 'Future Unknown == sample').length, 0);
+    assert.equal(parseTuflowLine('Future Unknown == sample').kind, 'assignment');
+});
 
 test('embedded apostrophes are not quote openers and do not hide comments', () => {
     for (const marker of ['!', '#']) {

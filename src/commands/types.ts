@@ -14,7 +14,7 @@ export interface TuflowCommand {
 
 export type CommandValueKind =
     | 'unknown' | 'file-path' | 'number' | 'number-pair'
-    | 'keyword' | 'number-or-keyword' | 'free-text';
+    | 'keyword' | 'number-or-keyword' | 'token-list' | 'free-text';
 
 /** Optional modifier groups, in documented order, after the canonical command. */
 export interface LeftSideSuffixGroup {
@@ -38,6 +38,8 @@ export interface CommandDefinition extends TuflowCommand {
     readonly valueKind: CommandValueKind;
     /** Verified keywords; mixed-value commands may also accept numbers. */
     readonly allowedValues?: readonly string[];
+    /** Audited ordered argument labels; not a list of keyword choices. */
+    readonly argumentNames?: readonly string[];
     readonly safeExamples: readonly string[];
     readonly provenance: CommandProvenance;
 }
