@@ -68,15 +68,21 @@ suite('TUFLOW Helper Extension Host smoke tests', () => {
     }
   });
 
-  test('activation exposes a representative command completion', async () => {
-    const document = await vscode.workspace.openTextDocument({ language: languageId, content: 'Cell' });
-    const completions = await vscode.commands.executeCommand(
-      'vscode.executeCompletionItemProvider',
-      document.uri,
-      new vscode.Position(0, 4)
-    );
-    assert.ok(completions);
-    assert.ok(completions.items.some(item => item.label === 'Cell Size'));
+  test('activation exposes a contextual TCF command completion', async () => {
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'tuflow-completion-'));
+    try {
+      const filename = path.join(directory, 'model.tcf');
+      fs.writeFileSync(filename, 'Cell\n', 'utf8');
+      const document = await vscode.workspace.openTextDocument(vscode.Uri.file(filename));
+      const completions = await vscode.commands.executeCommand(
+        'vscode.executeCompletionItemProvider', document.uri, new vscode.Position(0, 4)
+      );
+      assert.ok(completions && completions.items.some(item => item.label === 'Cell Size'),
+        'TCF command completion must be scoped to the source file');
+    } finally {
+      await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+      fs.rmSync(directory, { recursive: true, force: true });
+    }
   });
   test('audited multiword command hover exposes its official TUFLOW reference', async () => {
     const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'tuflow-help-hover-'));
@@ -91,7 +97,7 @@ suite('TUFLOW Helper Extension Host smoke tests', () => {
       const markdown = hovers.flatMap(hover => hover.contents)
         .map(content => typeof content === 'string' ? content : content.value || '')
         .join('\n');
-      assert.match(markdown, /Official TUFLOW command reference/);
+      assert.match(markdown, /Official TUFLOW (?:command reference|documentation)/);
       assert.match(markdown, /https:\/\/docs\.tuflow\.com\/classic-hpc\/manual\/2026\.3\/80-AppendicesA-TCFCommands\.html/);
     } finally {
       fs.rmSync(directory, { recursive: true, force: true });

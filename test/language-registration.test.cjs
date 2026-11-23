@@ -112,6 +112,14 @@ function activateHelperOnly() {
         exports: module.exports,
         require(id) {
             if (id === 'vscode') return mockVSCode;
+            if (id === './editor/commandProviders') return {
+                registerCommandEditorServices(language) {
+                    // Test the activation adapter only. Provider behaviour is
+                    // exercised in the real VS Code Extension Host suites.
+                    return ['completion', 'hover', 'signature'].map(type =>
+                        makeProvider(type)(language, {}));
+                },
+            };
             if (id === './commands') return commands;
             if (id === './documentation') return {
                 getAuditedCommandDocumentationUrl() { return undefined; },
@@ -137,25 +145,16 @@ test('Helper-only activation registers its three providers against tuflow', () =
     assert.equal(context.subscriptions.length, 4);
 });
 
-test('completion, hover and signature help are available on overlapping file types', () => {
+test('all overlapping file types retain shared provider registration', () => {
     const { registrations } = activateHelperOnly();
-    const complete = registrations.completion[0].provider;
-    const hover = registrations.hover[0].provider;
-    const signature = registrations.signature[0].provider;
+    const contributed = new Set(manifest.contributes.languages[0].extensions);
     for (const ext of overlappingExtensions) {
-        const document = {
-            languageId: 'tuflow',
-            fileName: '/model/test' + ext,
-            lineAt() { return { text: 'Test == VALUE' }; },
-            getWordRangeAtPosition() { return { start: 0, end: 4 }; },
-            getText() { return 'Test'; },
-        };
-        const items = complete.provideCompletionItems(document, { line: 0, character: 4 }, {}, {});
-        assert.ok(items.some(item => item.label === 'Test'), 'completion missing for ' + ext);
-        const info = hover.provideHover(document, { line: 0, character: 2 }, {});
-        assert.ok(info && info.contents, 'hover missing for ' + ext);
-        document.lineAt = () => ({ text: 'Test == ' });
-        const help = signature.provideSignatureHelp(document, { line: 0, character: 8 }, {}, {});
-        assert.ok(help && help.signatures.length === 1, 'signature help missing for ' + ext);
+        assert.ok(contributed.has(ext), 'missing extension association for ' + ext);
     }
+    for (const type of ['completion', 'hover', 'signature']) {
+        assert.equal(registrations[type].length, 1);
+        assert.equal(registrations[type][0].language, 'tuflow');
+    }
+    // Real completion, hover, signature and contextual values are asserted by
+    // test/extension/commandEditor.test.cjs in both source and installed VSIX.
 });
