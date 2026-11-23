@@ -1,4 +1,4 @@
-import { TuflowCommand } from './index';
+import type { TuflowCommand } from './types';
 
 export const ecfCommands: TuflowCommand[] = [
 	{

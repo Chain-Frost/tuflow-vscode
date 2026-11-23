@@ -3,15 +3,7 @@
  * TUFLOW Geometry Control commands for geometry setup
  */
 
-export interface TuflowCommand {
-    name: string;
-    description: string;
-    category: string;
-    parameters?: string[];
-    examples?: string[];
-    syntax?: string;
-    notes?: string;
-}
+import type { TuflowCommand } from './types';
 
 export const tgcCommands: TuflowCommand[] = [
     {
