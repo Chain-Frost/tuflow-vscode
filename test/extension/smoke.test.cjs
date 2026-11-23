@@ -105,7 +105,7 @@ suite('TUFLOW Helper Extension Host smoke tests', () => {
         { filename: path.join(directory, 'events.tef'), text: 'End Time == 12\n', expected: /80-AppendicesA-TCFCommands\.html/ },
         { filename: path.join(directory, 'timestep.tef'), text: 'Timestep == 1\n', expected: /Timestep/ },
         { filename: path.join(directory, 'shared.trd'), text: 'Timestep == 1\n', expected: /Timestep/ },
-        { filename: path.join(directory, 'geometry.tgc'), text: 'Set Grid == 10\n', expected: /Set Grid/ }
+        { filename: path.join(directory, 'geometry.tgc'), text: 'Read GIS Z Shape == terrain.shp\n', expected: /Read GIS Z Shape/ }
       ];
 
       for (const sample of samples) {
