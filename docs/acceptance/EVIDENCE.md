@@ -140,3 +140,27 @@ full **218.19 ms**; Windows combined **685.61 ms**, full **608.58 ms**. Each is
 one first-open operation on a hosted runner, not a distribution estimate, and
 there is still no integrated-feature post-change dataset. These results must
 not be interpreted as a performance regression or a platform benchmark.
+
+## 2026-11-23: local Windows component and SMB acceptance supplement
+
+The [full local report on PR #16](https://github.com/Chain-Frost/tuflow-vscode/pull/16#issuecomment-7089840167) and [issue #9 summary](https://github.com/Chain-Frost/tuflow-vscode/issues/9#issuecomment-7089844812) contain the test procedure, diagnostic excerpts, source identities, sample timings and limitations.
+
+- **Environment:** Windows 10 Pro x64 (19045), VS Code 1.147.0, Ryzen 7 7700X, 67,869,888,512 bytes RAM. Fresh isolated test profiles and **a disposable six-file, 645-byte synthetic control-file fixture on a real SMB share**, accessed by local, UNC and mapped-drive paths. No production model or GeoPackage was opened.
+- **Validated component:** source-built TUFLOW Path Validator 0.2.6, source `dd7c5e83abdc997766bc5fd3bb92e7459f2db2d2`, VSIX SHA-256 `de3b249cfa5a1c7b67fe53f1000b506fab0a9326699737e5284db4bfb85025e7`. Helper **was not installed** in the new network component probes.
+- **PASS (component scope):** source-built Validator emitted five TPV001 missing-file diagnostics and two TPV002 parent summaries per path mode; source/code/ranges were correct. Included TRDs, both absent file-list members, physical GeoPackage filename selectors (not layers), resolved variables, unresolved macros and `tpv-ignore` behaved as expected. No duplicate Problems entries. Real seito-openfile cursor navigation, Error Lens presentation and opt-in Validator formatting worked.
+- **FAIL (known external artifact):** a published/Marketplace Validator package declaring 0.2.6 has legacy parser/diagnostic content; its provenance differs from the corrected source-built 0.2.6 VSIX. This is owned by [Validator PR #19](https://github.com/Chain-Frost/tuflow_validator/pull/19) / Validator issue #10, **not** a Helper/PR #16 runtime regression.
+- **UNVERIFIED:** SMB external-edit notification reliability. VS Code logged `fs.watch(): UNKNOWN` and Parcel `EUNKNOWN` watcher errors, but no controlled change-notification test was performed. Reads and initial diagnostics passing **do not** prove automatic invalidation/refresh. Do not assign this to Validator until transport behavior is isolated.
+- **BLOCKED:** entire Helper PRs #1–#8 integration acceptance, genuine GeoPackage-layer checks, true physical cold-cache I/O and like-for-like large-model baseline/post-feature performance. This component test does not supersede the earlier four-extension host evidence.
+
+| Access mode | First open/show (ms) | Warm median / p95 (12 opens, ms) |
+|---|---:|---:|
+| Local | 68.97 | 12.76 / 15.34 |
+| UNC | 50.89 | 14.38 / 15.77 |
+| Mapped | 57.23 | 11.54 / 16.29 |
+
+These timings are **not cold-cache benchmarks**, per-extension CPU metrics or evidence that a fully integrated Helper has acceptable large-model performance. Source data were freshly written; caches were not cleared; UNC/mapped access points alias the same share. Local temporary SMB fixtures were removed; the private raw evidence remains only on the test workstation. No feature branches, production files or releases were changed.
+
+## Independent review follow-up: acceptance checkout provenance
+
+Codex's independent review of the acceptance host workflow identified that the GitHub Actions default `pull_request` checkout could execute a synthetic merge commit while labeling its evidence with the PR head SHA. The host workflow now explicitly checks out the PR's head SHA (or the selected `workflow_dispatch` SHA), derives the actual checked-out commit from Git, and requires the host driver's verified `git rev-parse HEAD` to match the claimed SHA. This fixes **evidence provenance**, not production extension behavior. Review and CI verification of this change are tracked on PR #16.
+
