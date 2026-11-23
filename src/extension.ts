@@ -1,13 +1,14 @@
 import * as vscode from 'vscode';
-import { getCommandsForFile, lookupCommandsForFile, parseTuflowLine } from './commands';
+import { allTuflowCommands, TuflowCommand, tcfCommands, tgcCommands, tbcCommands, ecfCommands, trfcCommands, qcfCommands } from './commands';
 import * as path from 'path';
+import { getAuditedCommandDocumentationUrl, getDocumentationUrlForLine } from './documentation';
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('TUFLOW extension activated');
 
     // Register completion provider for TUFLOW commands
     const provider = vscode.languages.registerCompletionItemProvider(
-        'tuflow-helper',
+        'tuflow',
         {
             provideCompletionItems(
                 document: vscode.TextDocument,
@@ -16,238 +17,253 @@ export function activate(context: vscode.ExtensionContext) {
                 context: vscode.CompletionContext
             ) {
                 const completionItems: vscode.CompletionItem[] = [];
+                
+                // Get current line text
                 const lineText = document.lineAt(position).text;
-                const parsedLine = parseTuflowLine(lineText, position.line);
+                const textBeforeCursor = lineText.substring(0, position.character);
+                
+                // Check if we're providing parameter suggestions after '=='
+                const hasCommandPrefix = textBeforeCursor.includes('==');
+                const commandMatch = textBeforeCursor.match(/^\s*([A-Za-z\s]+?)(?:\s*==\s*)?$/);
+                
+                // Get file extension to filter commands
                 const fileExtension = path.extname(document.fileName).toLowerCase();
-
-                // A comment is not command text or a parameter.
-                if (parsedLine.comment &&
-                    position.character >= parsedLine.comment.range.start.character) {
-                    return completionItems;
-                }
-
-                const afterDelimiter = parsedLine.delimiter !== null &&
-                    position.character >= parsedLine.delimiter.range.end.character;
-                if (!afterDelimiter) {
-                    // Syntax-only extensions deliberately have no command catalogue.
-                    const filteredCommands = getCommandsForFile(fileExtension);
-                    const seen = new Set<string>();
-
-                    for (const cmd of filteredCommands) {
-                        const key = cmd.canonicalName.toLowerCase();
-                        if (seen.has(key)) continue;
-                        seen.add(key);
-                        const item = new vscode.CompletionItem(
-                            cmd.canonicalName, vscode.CompletionItemKind.Keyword
-                        );
+                
+                if (!hasCommandPrefix) {
+                    // Add command completions based on file extension
+                    let filteredCommands: TuflowCommand[] = [];
+                    
+                    switch (fileExtension) {
+                        case '.tcf':
+                            filteredCommands = tcfCommands;
+                            break;
+                        case '.tgc':
+                            filteredCommands = tgcCommands;
+                            break;
+                        case '.tbc':
+                            filteredCommands = tbcCommands;
+                            break;
+                        case '.ecf':
+                            filteredCommands = ecfCommands;
+                            break;
+                        case '.trfc':
+                            filteredCommands = trfcCommands;
+                            break;
+                        case '.qcf':
+                            filteredCommands = qcfCommands;
+                            break;
+                        default:
+                            filteredCommands = allTuflowCommands;
+                    }
+                    
+                    filteredCommands.forEach(cmd => {
+                        const item = new vscode.CompletionItem(cmd.name, vscode.CompletionItemKind.Keyword);
                         item.detail = cmd.description;
-                        let documentation = '**' + cmd.canonicalName + '**\n\n' + cmd.description;
-                        if (cmd.syntax) documentation += '\n\n**Syntax:** ' + cmd.syntax;
-                        if (cmd.parameters?.length) {
-                            documentation += '\n\n**Parameters:** ' + cmd.parameters.join(', ');
+                        
+                        let documentation = `**${cmd.name}**\n\n${cmd.description}`;
+                        
+                        if (cmd.syntax) {
+                            documentation += `\n\n**Syntax:** ${cmd.syntax}`;
                         }
-                        if (cmd.safeExamples.length) {
-                            documentation += '\n\n**Verified examples:**\n' +
-                                cmd.safeExamples.map(value => '- ' + value).join('\n');
-                        } else if (cmd.examples?.length) {
-                            documentation += '\n\n**Legacy examples (not audited):**\n' +
-                                cmd.examples.map(value => '- ' + value).join('\n');
+                        
+                        if (cmd.parameters && cmd.parameters.length > 0) {
+                            documentation += `\n\n**Parameters:** ${cmd.parameters.join(', ')}`;
                         }
-                        if (cmd.notes) documentation += '\n\n**Notes:** ' + cmd.notes;
-                        documentation += '\n\n**Reference:** [Official TUFLOW manual](' +
-                            cmd.provenance.url + ')';
+                        
+                        if (cmd.examples && cmd.examples.length > 0) {
+                            documentation += `\n\n**Examples:**\n${cmd.examples.map(ex => `- ${ex}`).join('\n')}`;
+                        }
+                        
+                        if (cmd.notes) {
+                            documentation += `\n\n**Notes:** ${cmd.notes}`;
+                        }
+                        
+                        const officialUrl = getAuditedCommandDocumentationUrl(fileExtension, cmd.name);
+                        if (officialUrl) {
+                            documentation += `\n\n[Official TUFLOW command reference](${officialUrl})`;
+                        }
                         item.documentation = new vscode.MarkdownString(documentation);
-                        item.insertText = cmd.canonicalName + ' == ';
+                        item.insertText = cmd.name + ' == ';
                         completionItems.push(item);
-                    }
+                    });
                 } else {
-                    const candidates = lookupCommandsForFile(fileExtension, parsedLine);
-                    // Use documented options in preference to generic guesses.
-                    const options = [...new Set(candidates.flatMap(cmd => cmd.allowedValues ?? []))];
-                    const expectsPath = candidates.some(cmd => cmd.valueKind === 'file-path');
-                    if (expectsPath) {
-                        const fileItem = new vscode.CompletionItem('file path', vscode.CompletionItemKind.File);
-                        fileItem.insertText = new vscode.SnippetString('$' + '{1:filename}');
-                        completionItems.push(fileItem);
-                    }
-
-                    const suggestedValues = options;
-                    for (const value of suggestedValues) {
-                        const item = new vscode.CompletionItem(value, vscode.CompletionItemKind.Value);
-                        item.insertText = value;
-                        completionItems.push(item);
-                    }
+                    // Add parameter and file suggestions
+                    const fileItem = new vscode.CompletionItem('file path', vscode.CompletionItemKind.File);
+                    fileItem.insertText = new vscode.SnippetString('${1:filename}');
+                    completionItems.push(fileItem);
+                    
+                    // Add common parameter values
+                    const commonParams = [
+                        'ALL', 'NONE', 'AUTO', 'MANUAL', 'ON', 'OFF',
+                        'TRUE', 'FALSE', 'YES', 'NO', '0', '1'
+                    ];
+                    
+                    commonParams.forEach(param => {
+                        const paramItem = new vscode.CompletionItem(param, vscode.CompletionItemKind.Value);
+                        paramItem.insertText = param;
+                        completionItems.push(paramItem);
+                    });
                 }
-
+                
                 return completionItems;
             }
         },
         ' ' // Trigger on space
     );
 
-    // Hover uses the complete parsed left-hand phrase (including modifiers).
-    // It never performs global first-word lookup or interprets comment/value text.
+    // Register hover provider for TUFLOW commands
     const hoverProvider = vscode.languages.registerHoverProvider(
-        'tuflow-helper',
+        'tuflow',
         {
             provideHover(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
-                const parsed = parseTuflowLine(document.lineAt(position.line).text, position.line);
-                const left = parsed.leftHand;
-                if (!left || position.character < left.range.start.character ||
-                    position.character >= left.range.end.character) {
+                // Match the complete left-hand command, not one word. The old
+                // getWordRangeAtPosition lookup never matched multiword commands
+                // such as "End Time" and therefore hid their official links.
+                const line = document.lineAt(position.line).text;
+                const equals = line.indexOf('==');
+                if (equals < 0) {
                     return;
                 }
-
-                const matches = lookupCommandsForFile(path.extname(document.fileName), parsed);
-                if (!matches.length) return;
-
-                const markdown = new vscode.MarkdownString();
-                for (const command of matches) {
-                    if (command.syntax) markdown.appendCodeblock(command.syntax, 'tuflow');
-                    let body = '**' + command.canonicalName + '**\n\n' + command.description;
-                    if (command.parameters?.length) {
-                        body += '\n\n**Parameters:** ' + command.parameters.join(', ');
-                    }
-                    if (command.safeExamples.length) {
-                        body += '\n\n**Verified examples:**\n' +
-                            command.safeExamples.map(value => '- ' + value).join('\n');
-                    } else if (command.examples?.length) {
-                        body += '\n\n**Legacy examples (not audited):**\n' +
-                            command.examples.map(value => '- ' + value).join('\n');
-                    }
-                    if (command.notes) body += '\n\n**Notes:** ' + command.notes;
-                    body += '\n\n**Reference:** [Official TUFLOW manual](' +
-                        command.provenance.url + ')';
-                    markdown.appendMarkdown(body + '\n\n');
+                const left = line.slice(0, equals);
+                const start = left.search(/\S/);
+                if (start < 0 || position.character < start || position.character >= equals) {
+                    return;
                 }
-                const hoverRange = new vscode.Range(
-                    new vscode.Position(left.range.start.line, left.range.start.character),
-                    new vscode.Position(left.range.end.line, left.range.end.character)
-                );
-                return new vscode.Hover(markdown, hoverRange);
+                const name = left.trim().replace(/\s+/g, ' ').toLowerCase();
+                const extension = path.extname(document.fileName).toLowerCase().slice(1);
+                const sameName = allTuflowCommands.filter(cmd => cmd.name.toLowerCase() === name);
+                const scoped = sameName.find(cmd => cmd.category.toLowerCase() === extension);
+                // TEF files admit TCF and ECF commands, and Read File / untitled
+                // buffers have no dedicated catalogue. Preserve their hovers,
+                // without showing unrelated commands in a known file category.
+                const hasOwnCatalogue = ['tcf', 'tgc', 'tbc', 'ecf', 'trfc', 'qcf'].includes(extension);
+                const inherited = extension === 'tef'
+                    ? sameName.find(cmd => cmd.category === 'TCF' || cmd.category === 'ECF')
+                    : (!hasOwnCatalogue ? sameName[0] : undefined);
+                const command = scoped || inherited;
+                
+                if (command) {
+                    const markdown = new vscode.MarkdownString();
+                    
+                    if (command.syntax) {
+                        markdown.appendCodeblock(command.syntax, 'tuflow');
+                    }
+                    
+                    let content = `**${command.name}**\n\n${command.description}`;
+                    
+                    if (command.parameters && command.parameters.length > 0) {
+                        content += `\n\n**Parameters:** ${command.parameters.join(', ')}`;
+                    }
+                    
+                    if (command.examples && command.examples.length > 0) {
+                        content += `\n\n**Examples:**\n${command.examples.map(ex => `- ${ex}`).join('\n')}`;
+                    }
+                    
+                    if (command.notes) {
+                        content += `\n\n**Notes:** ${command.notes}`;
+                    }
+                    
+                    // Event files inherit TCF/ECF commands; link those to the
+                    // appendix that actually defines them, not the TEF appendix.
+                    const sourceExtension = extension === 'tef' || !extension
+                        ? '.' + command.category.toLowerCase()
+                        : '.' + extension;
+                    const officialUrl = getAuditedCommandDocumentationUrl(sourceExtension, command.name);
+                    if (officialUrl) {
+                        content += `\n\n[Official TUFLOW command reference](${officialUrl})`;
+                    }
+                    markdown.appendMarkdown(content);
+                    return new vscode.Hover(markdown, new vscode.Range(position.line, start, position.line, equals));
+                }
             }
         }
     );
 
-    // Signatures use the same context-aware registry as completions and hover.
+    // Register signature help provider
     const signatureProvider = vscode.languages.registerSignatureHelpProvider(
-        'tuflow-helper',
+        'tuflow',
         {
-            provideSignatureHelp(document: vscode.TextDocument, position: vscode.Position,
-                token: vscode.CancellationToken, context: vscode.SignatureHelpContext) {
-                const parsed = parseTuflowLine(document.lineAt(position.line).text, position.line);
-                if (!parsed.delimiter || position.character < parsed.delimiter.range.end.character ||
-                    (parsed.comment && position.character >= parsed.comment.range.start.character)) {
-                    return null;
+            provideSignatureHelp(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.SignatureHelpContext) {
+                const lineText = document.lineAt(position).text;
+                const textBeforeCursor = lineText.substring(0, position.character);
+                
+                // Get file extension to filter commands
+                const fileExtension = path.extname(document.fileName).toLowerCase();
+                
+                // Match command names with spaces
+                const commandMatch = textBeforeCursor.match(/^\s*([A-Za-z0-9_\s]+?)(?:\s*==\s*)?$/);
+                if (commandMatch) {
+                    const commandName = commandMatch[1].trim();
+                    // Find command by name, considering file extension
+                    let command: TuflowCommand | undefined;
+                    
+                    switch (fileExtension) {
+                        case '.tcf':
+                            command = tcfCommands.find(cmd => cmd.name.toLowerCase() === commandName.toLowerCase());
+                            break;
+                        case '.tgc':
+                            command = tgcCommands.find(cmd => cmd.name.toLowerCase() === commandName.toLowerCase());
+                            break;
+                        case '.tbc':
+                            command = tbcCommands.find(cmd => cmd.name.toLowerCase() === commandName.toLowerCase());
+                            break;
+                        case '.ecf':
+                            command = ecfCommands.find(cmd => cmd.name.toLowerCase() === commandName.toLowerCase());
+                            break;
+                        case '.trfc':
+                            command = trfcCommands.find(cmd => cmd.name.toLowerCase() === commandName.toLowerCase());
+                            break;
+                        case '.qcf':
+                            command = qcfCommands.find(cmd => cmd.name.toLowerCase() === commandName.toLowerCase());
+                            break;
+                        default:
+                            command = allTuflowCommands.find(cmd => cmd.name.toLowerCase() === commandName.toLowerCase());
+                    }
+                    
+                    if (command && command.parameters && command.parameters.length > 0) {
+                        const signature = new vscode.SignatureInformation(
+                            `${command.name} == ${command.parameters.join(' ')}`,
+                            command.description
+                        );
+                        
+                        signature.parameters = command.parameters.map(param => 
+                            new vscode.ParameterInformation(param, `Parameter: ${param}`)
+                        );
+                        
+                        const help = new vscode.SignatureHelp();
+                        help.signatures = [signature];
+                        help.activeSignature = 0;
+                        help.activeParameter = 0;
+                        
+                        return help;
+                    }
                 }
-
-                const matches = lookupCommandsForFile(path.extname(document.fileName), parsed)
-                    .filter(cmd => (cmd.parameters?.length ?? 0) > 0);
-                if (!matches.length) return null;
-
-                const help = new vscode.SignatureHelp();
-                help.signatures = matches.map(command => {
-                    const parameters = command.parameters ?? [];
-                    const signature = new vscode.SignatureInformation(
-                        command.canonicalName + ' == ' + parameters.join(' '),
-                        command.description
-                    );
-                    signature.parameters = parameters.map(param =>
-                        new vscode.ParameterInformation(param, 'Parameter: ' + param));
-                    return signature;
-                });
-                help.activeSignature = 0;
-                help.activeParameter = 0;
-                return help;
+                
+                return null;
             }
         },
-        ' ', '(', ',', '='
+        ' ', '(', ','
     );
 
-    // Register command to open file under cursor
-    const openFileCommand = vscode.commands.registerCommand('tuflow-helper.openFileUnderCursor', () => {
+    // Open official, pinned TUFLOW documentation in the user's browser.
+    // No model-workspace path, local TUFLOW installation or bundled HTML is needed.
+    const openDocumentationCommand = vscode.commands.registerCommand('tuflow-helper.openDocumentation', async () => {
         const editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            return;
-        }
-        
-        const document = editor.document;
-        const selection = editor.selection;
-        const text = document.getText(selection);
-        
-        if (text) {
-            // Try to extract a file path from the selected text
-            const filePathMatch = text.match(/(?:'|"|\s|^)([\w\\/\-\.]+\.[\w]+)(?:'|"|\s|$)/);
-            if (filePathMatch) {
-                const filePath = filePathMatch[1];
-                vscode.window.showInformationMessage(`Opening file: ${filePath}`);
-                
-                // Try to open the file
-                vscode.workspace.openTextDocument(filePath).then(doc => {
-                    vscode.window.showTextDocument(doc);
-                }, error => {
-                    // If file doesn't exist, show error message
-                    vscode.window.showErrorMessage(`Could not open file: ${filePath}. Error: ${error.message}`);
-                });
-            } else {
-                vscode.window.showErrorMessage('No valid file path found in selection or under cursor');
+        const extension = editor ? path.extname(editor.document.fileName) : '';
+        const line = editor ? editor.document.lineAt(editor.selection.active.line).text : '';
+        const url = getDocumentationUrlForLine(extension, line);
+
+        try {
+            const opened = await vscode.env.openExternal(vscode.Uri.parse(url));
+            if (!opened) {
+                vscode.window.showWarningMessage('Could not open the official TUFLOW documentation in a browser.');
             }
-        } else {
-            // If no text is selected, try to get file path under cursor
-            const position = editor.selection.active;
-            const lineText = document.lineAt(position.line).text;
-            
-            // Extract word under cursor
-            const wordRange = document.getWordRangeAtPosition(position);
-            if (wordRange) {
-                const word = document.getText(wordRange);
-                
-                // Try to open as file
-                vscode.workspace.openTextDocument(word).then(doc => {
-                    vscode.window.showTextDocument(doc);
-                }, error => {
-                    vscode.window.showErrorMessage(`Could not open file: ${word}. Error: ${error.message}`);
-                });
-            } else {
-                vscode.window.showErrorMessage('No text selected or under cursor');
-            }
+        } catch (error) {
+            const detail = error instanceof Error ? error.message : String(error);
+            vscode.window.showErrorMessage(`Could not open official TUFLOW documentation: ${detail}`);
         }
     });
-
-    // Register command to open documentation based on file extension
-    const openDocumentationCommand = vscode.commands.registerCommand('tuflow-helper.openDocumentation', () => {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            return;
-        }
-        
-        const document = editor.document;
-        const fileExtension = path.extname(document.fileName).toLowerCase();
-        
-        // Mapping of file extensions to documentation files
-        const documentationMap: { [key: string]: string } = {
-            '.tcf': 'doc/Appendix A TCF Commands _ TUFLOW Classic_HPC User Manual 2023-03.html',
-            '.tgc': 'doc/Appendix C TGC Commands _ TUFLOW Classic_HPC User Manual 2023-03.html',
-            '.tbc': 'doc/Appendix D TBC Commands _ TUFLOW Classic_HPC User Manual 2023-03.html',
-            '.ecf': 'doc/Appendix B ECF Commands _ TUFLOW Classic_HPC User Manual 2025.0.htm',
-            '.trfc': 'doc/Appendix F TRFC Commands _ TUFLOW Classic_HPC User Manual 2025.0.htm',
-            '.qcf': 'doc/Appendix H QCF Commands _ TUFLOW Classic_HPC User Manual 2025.0.htm'
-        };
-        
-        const docPath = documentationMap[fileExtension];
-        if (docPath) {
-            const fullDocPath = path.join(vscode.workspace.rootPath || '', docPath);
-            vscode.workspace.openTextDocument(fullDocPath).then(doc => {
-                vscode.window.showTextDocument(doc);
-            }, error => {
-                vscode.window.showErrorMessage(`Could not open documentation for ${fileExtension} files. Error: ${error.message}`);
-            });
-        } else {
-            vscode.window.showErrorMessage(`No documentation available for ${fileExtension} files`);
-        }
-    });
-
-    context.subscriptions.push(provider, hoverProvider, signatureProvider, openFileCommand, openDocumentationCommand);
+    context.subscriptions.push(provider, hoverProvider, signatureProvider, openDocumentationCommand);
 }
 
-export function deactivate() {}
+export function deactivate() { /* Subscriptions are disposed by VS Code. */ }
