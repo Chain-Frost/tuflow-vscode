@@ -20,6 +20,17 @@ if (!helperArg || !validatorArg || !acceptanceArg) {
 const helper = path.resolve(helperArg);
 const validator = path.resolve(validatorArg);
 const acceptance = path.resolve(acceptanceArg);
+const actualAcceptanceCommit = cp.spawnSync('git', ['-C', acceptance, 'rev-parse', 'HEAD'], {encoding: 'utf8'});
+if (actualAcceptanceCommit.status !== 0 || !/^[a-f0-9]{40}\s*$/.test(actualAcceptanceCommit.stdout || '')) {
+  throw new Error('Could not verify the acceptance checkout commit: ' +
+    (actualAcceptanceCommit.stderr || actualAcceptanceCommit.error || actualAcceptanceCommit.status));
+}
+const acceptanceSha = actualAcceptanceCommit.stdout.trim();
+if (process.env.TUFLOW_HOST_ACCEPTANCE_SHA &&
+    process.env.TUFLOW_HOST_ACCEPTANCE_SHA !== acceptanceSha) {
+  throw new Error('Acceptance source identity mismatch: claimed ' +
+    process.env.TUFLOW_HOST_ACCEPTANCE_SHA + ', actual ' + acceptanceSha);
+}
 const fixtures = path.join(acceptance, 'test', 'acceptance', 'fixtures');
 const runner = path.join(acceptance, 'test', 'acceptance', 'vscode-runner.cjs');
 const outputDir = path.resolve(process.env.TUFLOW_ACCEPT_ARTIFACTS || 'acceptance-host-reports');
@@ -88,7 +99,7 @@ async function main() {
     pinnedSourceSHAs: {
       helper: process.env.TUFLOW_HOST_HELPER_SHA,
       validator: process.env.TUFLOW_HOST_VALIDATOR_SHA,
-      acceptance: process.env.TUFLOW_HOST_ACCEPTANCE_SHA
+      acceptance: acceptanceSha
     },
     vsixSha256: {helper: sha256(helper), validator: sha256(validator)},
     profiles: []
