@@ -62,7 +62,10 @@ export function parseTuflowLine(text: string, lineNumber = 0): ParsedTuflowLine 
             }
             continue;
         }
-        if (current === '"' || current === "'") {
+        // Quoted operands begin at a token boundary; an apostrophe inside an
+        // unquoted path (for example O'Brien) is part of the path, not a quote.
+        const atValueBoundary = index === 0 || /[\\s=,(|]/.test(text[index - 1]);
+        if ((current === '"' || current === "'") && atValueBoundary) {
             quote = current;
         } else if (current === '!' || current === '#') {
             commentAt = index;
