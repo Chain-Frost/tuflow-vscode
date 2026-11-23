@@ -58,11 +58,24 @@ function matchesPrefix(candidate: string, prefix: string): boolean {
     return normalizeCommandName(candidate).startsWith(normalizeCommandName(prefix));
 }
 
+/** Protect all syntax metacharacters, including literal <...> operand names. */
+function markdownCodeSpan(value: string): string {
+    const runs = value.match(/`+/g);
+    const fence = '`'.repeat(runs ? Math.max(...runs.map(run => run.length)) + 1 : 1);
+    // CommonMark code spans trim a surrounding space when the content has
+    // non-space characters, allowing syntax that starts/ends with a backtick.
+    const pad = value.startsWith('`') || value.endsWith('`') ? ' ' : '';
+    return fence + pad + value + pad + fence;
+}
+
 export function documentationForCommand(command: CommandDefinition): string {
     const audited = command.provenance.auditStatus === 'verified';
     let documentation = '**' + command.canonicalName + '**\n\n' + command.description;
     if (command.syntax && audited) {
-        documentation += '\n\n**Syntax:** ' + command.syntax;
+        // Render source-checked syntax as literal Markdown code. Unquoted
+        // <time_in_hours> and other operand placeholders are parsed as HTML
+        // tags by VS Code's Markdown renderer and disappear from the hover.
+        documentation += '\n\n**Syntax:** ' + markdownCodeSpan(command.syntax);
     }
     if (command.allowedValues?.length) {
         documentation += '\n\n**Documented values:** ' + command.allowedValues.join(', ');

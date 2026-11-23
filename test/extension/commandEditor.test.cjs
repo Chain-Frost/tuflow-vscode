@@ -156,6 +156,18 @@ suite('TUFLOW Helper command-aware editor integration (#6)', () => {
         assert.equal(unrelated.length, 0);
     });
 
+
+    test('VS Code hover preserves audited angle-bracket operand as Markdown code', async () => {
+        const document = await documentWithExtension('.trfc', 'RF Grid Origin == 100, 200');
+        const hovers = await vscode.commands.executeCommand(
+            'vscode.executeHoverProvider', document.uri, new vscode.Position(0, 5)
+        );
+        const formatted = (hovers || []).flatMap(hover => hover.contents)
+            .map(content => typeof content === 'string' ? content : content.value || '').join('\n');
+        assert.ok(formatted.includes('**Syntax:** `RF Grid Origin == <OX>, <OY>`'));
+        assert.ok(formatted.includes('Official TUFLOW documentation'));
+    });
+
     test('signature help reports accurate second argument for RF Grid Origin', async () => {
         const text = 'RF Grid Origin == 100, 200';
         const document = await documentWithExtension('.trfc', text);
