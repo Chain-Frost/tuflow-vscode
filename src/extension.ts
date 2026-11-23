@@ -229,7 +229,7 @@ export function activate(context: vscode.ExtensionContext) {
         
         if (text) {
             // Try to extract a file path from the selected text
-            const filePathMatch = text.match(/(?:'|"|\s|^)([\w\\/\-\.]+\.[\w]+)(?:'|"|\s|$)/);
+            const filePathMatch = text.match(/(?:'|"|\s|^)([\w\\/\-.]+\.[\w]+)(?:'|"|\s|$)/);
             if (filePathMatch) {
                 const filePath = filePathMatch[1];
                 vscode.window.showInformationMessage(`Opening file: ${filePath}`);
@@ -302,4 +302,4 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(provider, hoverProvider, signatureProvider, openFileCommand, openDocumentationCommand);
 }
 
-export function deactivate() {}
+export function deactivate() { /* Subscriptions are disposed by VS Code. */ }
