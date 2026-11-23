@@ -49,7 +49,7 @@ function leakedCommentCompletions(items, commandLabels, universalLabels, keyword
   return items.filter(item => {
     const label = typeof item.label === 'string' ? item.label : item.label?.label || '';
     const lower = label.toLowerCase();
-    return universalLabels.has(label.toUpperCase()) ||
+    return (item.kind === 12 && universalLabels.has(label.toUpperCase())) ||
       (item.kind === keywordKind && known.has(lower)) ||
       (item.kind === fileKind && lower === 'file path');
   }).map(item => typeof item.label === 'string' ? item.label : item.label?.label || '');

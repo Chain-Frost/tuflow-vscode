@@ -276,7 +276,8 @@ module.exports.run = async function run() {
 
       const valuePosition = new vscode.Position(line, probe.line.indexOf('==') + 3);
       const valueItems = itemsOf(await vscode.commands.executeCommand('vscode.executeCompletionItemProvider', document.uri, valuePosition));
-      const unrelatedValues = valueItems.map(itemName).filter(name => universal.has(name.toUpperCase()));
+      const unrelatedValues = valueItems.filter(item => item.kind === vscode.CompletionItemKind.Value)
+        .map(itemName).filter(name => universal.has(name.toUpperCase()));
       check('no-universal-gis-values', unrelatedValues.length ? 'fail' : 'pass',
         { unrelatedValues, completionCount: valueItems.length });
     }
