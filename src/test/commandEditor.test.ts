@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { test } from 'node:test';
 import { getCommandsForFile } from '../commands';
-import { planCompletions, planHover, planSignature } from '../editor/commandModel';
+import { documentationForCommand, planCompletions, planHover, planSignature } from '../editor/commandModel';
 import type { CompletionPlan } from '../editor/commandModel';
 
 function apply(line: string, plan: CompletionPlan): string {
@@ -237,4 +237,28 @@ test('integrated TEF and extensionless hovers inherit audited command help witho
     }
     assert.deepEqual(planCompletions('events.tef', 'End T', 5), []);
     assert.equal(planHover('model.tgc', 'End Time == 12', 4), undefined);
+});
+
+test('verified syntax displays Markdown metacharacters as literal code', () => {
+    const verified = getCommandsForFile('.trfc')
+        .find(command => command.canonicalName === 'RF Grid Origin');
+    assert.ok(verified, 'audited rainfall grid command must be present');
+    const source = documentationForCommand(verified);
+    assert.ok(source.includes('**Syntax:** `RF Grid Origin == <OX>, <OY>`'));
+    assert.ok(source.includes('[Official TUFLOW documentation]('));
+
+    // The TCF catalogue's hours-based definition is supplied by issue #4.
+    // Test rendering independently here so the fix is effective before #4 merges.
+    const time = documentationForCommand({
+        ...verified,
+        canonicalName: 'End Time',
+        syntax: 'End Time == <time_in_hours>',
+        description: 'Simulation finish time in hours'
+    });
+    assert.ok(time.includes('**Syntax:** `End Time == <time_in_hours>`'));
+    assert.doesNotMatch(time, /\*\*Syntax:\*\* End Time == <time_in_hours>/);
+
+    // Delimiters must also remain balanced if syntax itself contains backticks.
+    const ticks = documentationForCommand({ ...verified, syntax: 'Read File == `<path>`' });
+    assert.ok(ticks.includes('**Syntax:** `` Read File == `<path>` ``'));
 });
