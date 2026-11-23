@@ -31,7 +31,7 @@ if (process.env.TUFLOW_HOST_ACCEPTANCE_SHA &&
   throw new Error('Acceptance source identity mismatch: claimed ' +
     process.env.TUFLOW_HOST_ACCEPTANCE_SHA + ', actual ' + acceptanceSha);
 }
-const fixtures = process.env.TUFLOW_ACCEPT_FIXTURES || path.join(acceptance, 'test', 'acceptance', 'fixtures');
+const fixtures = path.resolve(process.env.TUFLOW_ACCEPT_FIXTURES || path.join(acceptance, 'test', 'acceptance', 'fixtures'));
 const runner = path.join(acceptance, 'test', 'acceptance', 'vscode-runner.cjs');
 const outputDir = path.resolve(process.env.TUFLOW_ACCEPT_ARTIFACTS || 'acceptance-host-reports');
 const profiles = [
@@ -137,7 +137,7 @@ async function main() {
           TUFLOW_ACCEPT_REPEATS: process.env.TUFLOW_ACCEPT_REPEATS || '30',
           TUFLOW_ACCEPT_LINES: process.env.TUFLOW_ACCEPT_LINES || '10000',
           TUFLOW_ACCEPT_SETTLE_MS: '1800',
-          TUFLOW_ACCEPT_FIXTURES: process.env.TUFLOW_ACCEPT_FIXTURES || fixtures
+          TUFLOW_ACCEPT_FIXTURES: fixtures
         }
       });
     } catch (error) {

@@ -12,7 +12,7 @@ const {
   childSummaryDiagnostics, leakedCommentCompletions
 } = require('./assertions.cjs');
 
-const FIXTURES = process.env.TUFLOW_ACCEPT_FIXTURES || path.join(__dirname, 'fixtures');
+const FIXTURES = path.resolve(process.env.TUFLOW_ACCEPT_FIXTURES || path.join(__dirname, 'fixtures'));
 const MATRIX = JSON.parse(fs.readFileSync(path.join(FIXTURES, 'matrix.json'), 'utf8'));
 const PROFILES = {
   'helper-only': { helper: true, validator: false, opener: false, lens: false },
