@@ -299,3 +299,50 @@ test('quarantined invented or misplaced commands are not offered as suggestions'
     assert.equal(lookupCommandsForFile('.tgc', 'Future Unknown == sample').length, 0);
     assert.equal(parseTuflowLine('Future Unknown == sample').kind, 'assignment');
 });
+
+test('embedded apostrophes are not quote openers and do not hide comments', () => {
+    for (const marker of ['!', '#']) {
+        const line = "Output Folder == results/O'Brien " + marker + ' preserved comment';
+        const parsed = parseTuflowLine(line);
+        assert.equal(parsed.value?.text, "results/O'Brien");
+        assert.equal(parsed.comment?.text, marker + ' preserved comment');
+        assert.equal(parsed.comment?.range.start.character, line.indexOf(marker));
+        assert.equal(parsed.kind, 'assignment');
+    }
+    const escaped = parseTuflowLine("Output Folder == 'results/O''Brien' ! note");
+    assert.equal(escaped.value?.text, "'results/O''Brien'");
+    assert.equal(escaped.comment?.text, '! note');
+});
+
+test('registry takes a deep frozen snapshot of mutable supplied metadata', () => {
+    const input = {
+        ...fixture('Original', 'TCF'),
+        categories: ['TCF'] as CommandDefinition['category'][],
+        suffixGroups: [{ optional: true, alternatives: ['MODIFIER'] }],
+        safeExamples: ['Original == value'],
+        allowedValues: ['ON'],
+        provenance: {
+            ...fixture('Original', 'TCF').provenance,
+            verifiedFields: ['canonicalName']
+        }
+    };
+    const registry = createCommandRegistry([input]);
+    input.canonicalName = 'Changed';
+    input.categories[0] = 'TGC';
+    input.suffixGroups[0].alternatives[0] = 'ALTERED';
+    input.safeExamples[0] = 'mutated';
+    input.allowedValues[0] = 'OFF';
+    input.provenance.verifiedFields[0] = 'mutated';
+    const record = registry.lookup('.tcf', 'Original MODIFIER == value')[0];
+    assert.equal(record.canonicalName, 'Original');
+    assert.deepEqual(record.categories, ['TCF']);
+    assert.deepEqual(record.suffixGroups[0].alternatives, ['MODIFIER']);
+    assert.deepEqual(record.safeExamples, ['Original == value']);
+    assert.deepEqual(record.allowedValues, ['ON']);
+    assert.deepEqual(record.provenance.verifiedFields, ['canonicalName']);
+    assert.equal(registry.lookup('.tcf', 'Changed MODIFIER == value').length, 0);
+    assert.equal(registry.lookup('.tgc', 'Original MODIFIER == value').length, 0);
+    assert.ok(Object.isFrozen(record));
+    assert.ok(Object.isFrozen(record.provenance));
+    assert.ok(Object.isFrozen(record.suffixGroups[0].alternatives));
+});
