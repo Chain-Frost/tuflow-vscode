@@ -245,5 +245,5 @@ test('verified syntax displays Markdown metacharacters as literal code', () => {
 
     // Delimiters must also remain balanced if syntax itself contains backticks.
     const ticks = documentationForCommand({ ...verified, syntax: 'Read File == `<path>`' });
-    assert.ok(ticks.includes('**Syntax:** ``Read File == `<path>```'));
+    assert.ok(ticks.includes('**Syntax:** `` Read File == `<path>` ``'));
 });
