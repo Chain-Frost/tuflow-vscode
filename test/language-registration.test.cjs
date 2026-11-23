@@ -35,7 +35,10 @@ test('language, grammar, snippets, configuration and activation share the tuflow
 test('no duplicate file opening, diagnostic or formatting contributions in Helper', () => {
     const commands = manifest.contributes.commands.map(c => c.command);
     assert.deepEqual(commands, ['tuflow-helper.openDocumentation']);
-    assert.ok(!Object.values(manifest.contributes.menus || {}).flat().some(c => c.command.includes('openFileUnderCursor')));
+    const menus = Object.values(manifest.contributes.menus || {}).flat();
+    assert.ok(!menus.some(c => c.command.includes('openFileUnderCursor')));
+    assert.ok(menus.some(c => c.command === 'tuflow-helper.openDocumentation'
+        && c.when.includes('editorLangId == tuflow')), 'documentation context menu must use the shared language ID');
     for (const file of ['src/extension.ts', 'out/extension.js']) {
         const text = read(file);
         assert.doesNotMatch(text, /openFileUnderCursor|openFileCommand|createDiagnosticCollection|registerDocumentFormattingEditProvider/);
@@ -71,7 +74,8 @@ function activateHelperOnly() {
             appendCodeblock(value) { this.value += value; }
             appendMarkdown(value) { this.value += value; }
         },
-        Hover: class { constructor(contents) { this.contents = contents; } },
+        Hover: class { constructor(contents, range) { this.contents = contents; this.range = range; } },
+        Range: class { constructor(line, start, endLine, end) { this.start = { line, character: start }; this.end = { line: endLine, character: end }; } },
         SignatureInformation: class {
             constructor(label, documentation) { this.label = label; this.documentation = documentation; }
         },
@@ -82,19 +86,25 @@ function activateHelperOnly() {
     };
     const sampleCommand = {
         name: 'Test',
+        category: 'TCF',
         description: 'Fixture command',
         syntax: 'Test == VALUE',
         parameters: ['VALUE'],
         examples: ['Test == 1'],
     };
+    const tgcCommand = { ...sampleCommand, category: 'TGC' };
+    const tbcCommand = { ...sampleCommand, category: 'TBC' };
+    const ecfCommand = { ...sampleCommand, category: 'ECF' };
+    const trfcCommand = { ...sampleCommand, category: 'TRFC' };
+    const qcfCommand = { ...sampleCommand, category: 'QCF' };
     const commands = {
-        allTuflowCommands: [sampleCommand],
+        allTuflowCommands: [sampleCommand, tgcCommand, tbcCommand, ecfCommand, trfcCommand, qcfCommand],
         tcfCommands: [sampleCommand],
-        tgcCommands: [sampleCommand],
-        tbcCommands: [sampleCommand],
-        ecfCommands: [sampleCommand],
-        trfcCommands: [sampleCommand],
-        qcfCommands: [sampleCommand],
+        tgcCommands: [tgcCommand],
+        tbcCommands: [tbcCommand],
+        ecfCommands: [ecfCommand],
+        trfcCommands: [trfcCommand],
+        qcfCommands: [qcfCommand],
     };
     const module = { exports: {} };
     vm.runInNewContext(read('out/extension.js'), {
@@ -103,6 +113,10 @@ function activateHelperOnly() {
         require(id) {
             if (id === 'vscode') return mockVSCode;
             if (id === './commands') return commands;
+            if (id === './documentation') return {
+                getAuditedCommandDocumentationUrl() { return undefined; },
+                getDocumentationUrlForLine() { return 'https://docs.tuflow.com/classic-hpc/manual/2026.3/'; },
+            };
             if (id === 'path') return path;
             throw Error('unexpected module: ' + id);
         },
@@ -132,7 +146,7 @@ test('completion, hover and signature help are available on overlapping file typ
         const document = {
             languageId: 'tuflow',
             fileName: '/model/test' + ext,
-            lineAt() { return { text: 'Test' }; },
+            lineAt() { return { text: 'Test == VALUE' }; },
             getWordRangeAtPosition() { return { start: 0, end: 4 }; },
             getText() { return 'Test'; },
         };

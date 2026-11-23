@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { allTuflowCommands, TuflowCommand, tcfCommands, tgcCommands, tbcCommands, ecfCommands, trfcCommands, qcfCommands } from './commands';
 import * as path from 'path';
+import { getAuditedCommandDocumentationUrl, getDocumentationUrlForLine } from './documentation';
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('TUFLOW extension activated');
@@ -77,6 +78,10 @@ export function activate(context: vscode.ExtensionContext) {
                             documentation += `\n\n**Notes:** ${cmd.notes}`;
                         }
                         
+                        const officialUrl = getAuditedCommandDocumentationUrl(fileExtension, cmd.name);
+                        if (officialUrl) {
+                            documentation += `\n\n[Official TUFLOW command reference](${officialUrl})`;
+                        }
                         item.documentation = new vscode.MarkdownString(documentation);
                         item.insertText = cmd.name + ' == ';
                         completionItems.push(item);
@@ -111,16 +116,31 @@ export function activate(context: vscode.ExtensionContext) {
         'tuflow',
         {
             provideHover(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
-                const range = document.getWordRangeAtPosition(position);
-                
-                if (!range) {
+                // Match the complete left-hand command, not one word. The old
+                // getWordRangeAtPosition lookup never matched multiword commands
+                // such as "End Time" and therefore hid their official links.
+                const line = document.lineAt(position.line).text;
+                const equals = line.indexOf('==');
+                if (equals < 0) {
                     return;
                 }
-                
-                const word = document.getText(range);
-                const command = allTuflowCommands.find(cmd => 
-                    cmd.name.toLowerCase() === word.toLowerCase()
-                );
+                const left = line.slice(0, equals);
+                const start = left.search(/\S/);
+                if (start < 0 || position.character < start || position.character >= equals) {
+                    return;
+                }
+                const name = left.trim().replace(/\s+/g, ' ').toLowerCase();
+                const extension = path.extname(document.fileName).toLowerCase().slice(1);
+                const sameName = allTuflowCommands.filter(cmd => cmd.name.toLowerCase() === name);
+                const scoped = sameName.find(cmd => cmd.category.toLowerCase() === extension);
+                // TEF files admit TCF and ECF commands, and Read File / untitled
+                // buffers have no dedicated catalogue. Preserve their hovers,
+                // without showing unrelated commands in a known file category.
+                const hasOwnCatalogue = ['tcf', 'tgc', 'tbc', 'ecf', 'trfc', 'qcf'].includes(extension);
+                const inherited = extension === 'tef'
+                    ? sameName.find(cmd => cmd.category === 'TCF' || cmd.category === 'ECF')
+                    : (!hasOwnCatalogue ? sameName[0] : undefined);
+                const command = scoped || inherited;
                 
                 if (command) {
                     const markdown = new vscode.MarkdownString();
@@ -143,8 +163,17 @@ export function activate(context: vscode.ExtensionContext) {
                         content += `\n\n**Notes:** ${command.notes}`;
                     }
                     
+                    // Event files inherit TCF/ECF commands; link those to the
+                    // appendix that actually defines them, not the TEF appendix.
+                    const sourceExtension = extension === 'tef' || !extension
+                        ? '.' + command.category.toLowerCase()
+                        : '.' + extension;
+                    const officialUrl = getAuditedCommandDocumentationUrl(sourceExtension, command.name);
+                    if (officialUrl) {
+                        content += `\n\n[Official TUFLOW command reference](${officialUrl})`;
+                    }
                     markdown.appendMarkdown(content);
-                    return new vscode.Hover(markdown);
+                    return new vscode.Hover(markdown, new vscode.Range(position.line, start, position.line, equals));
                 }
             }
         }
@@ -216,39 +245,24 @@ export function activate(context: vscode.ExtensionContext) {
         ' ', '(', ','
     );
 
-    // Register command to open documentation based on file extension
-    const openDocumentationCommand = vscode.commands.registerCommand('tuflow-helper.openDocumentation', () => {
+    // Open official, pinned TUFLOW documentation in the user's browser.
+    // No model-workspace path, local TUFLOW installation or bundled HTML is needed.
+    const openDocumentationCommand = vscode.commands.registerCommand('tuflow-helper.openDocumentation', async () => {
         const editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            return;
-        }
-        
-        const document = editor.document;
-        const fileExtension = path.extname(document.fileName).toLowerCase();
-        
-        // Mapping of file extensions to documentation files
-        const documentationMap: { [key: string]: string } = {
-            '.tcf': 'doc/Appendix A TCF Commands _ TUFLOW Classic_HPC User Manual 2023-03.html',
-            '.tgc': 'doc/Appendix C TGC Commands _ TUFLOW Classic_HPC User Manual 2023-03.html',
-            '.tbc': 'doc/Appendix D TBC Commands _ TUFLOW Classic_HPC User Manual 2023-03.html',
-            '.ecf': 'doc/Appendix B ECF Commands _ TUFLOW Classic_HPC User Manual 2025.0.htm',
-            '.trfc': 'doc/Appendix F TRFC Commands _ TUFLOW Classic_HPC User Manual 2025.0.htm',
-            '.qcf': 'doc/Appendix H QCF Commands _ TUFLOW Classic_HPC User Manual 2025.0.htm'
-        };
-        
-        const docPath = documentationMap[fileExtension];
-        if (docPath) {
-            const fullDocPath = path.join(vscode.workspace.rootPath || '', docPath);
-            vscode.workspace.openTextDocument(fullDocPath).then(doc => {
-                vscode.window.showTextDocument(doc);
-            }, error => {
-                vscode.window.showErrorMessage(`Could not open documentation for ${fileExtension} files. Error: ${error.message}`);
-            });
-        } else {
-            vscode.window.showErrorMessage(`No documentation available for ${fileExtension} files`);
+        const extension = editor ? path.extname(editor.document.fileName) : '';
+        const line = editor ? editor.document.lineAt(editor.selection.active.line).text : '';
+        const url = getDocumentationUrlForLine(extension, line);
+
+        try {
+            const opened = await vscode.env.openExternal(vscode.Uri.parse(url));
+            if (!opened) {
+                vscode.window.showWarningMessage('Could not open the official TUFLOW documentation in a browser.');
+            }
+        } catch (error) {
+            const detail = error instanceof Error ? error.message : String(error);
+            vscode.window.showErrorMessage(`Could not open official TUFLOW documentation: ${detail}`);
         }
     });
-
     context.subscriptions.push(provider, hoverProvider, signatureProvider, openDocumentationCommand);
 }
 

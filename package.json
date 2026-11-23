@@ -84,7 +84,16 @@
         "title": "Open Documentation",
         "category": "TUFLOW"
       }
-    ]
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "when": "editorTextFocus && editorLangId == tuflow",
+          "command": "tuflow-helper.openDocumentation",
+          "group": "navigation@2"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

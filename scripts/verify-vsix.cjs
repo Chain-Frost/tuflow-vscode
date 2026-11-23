@@ -72,17 +72,12 @@ for (const resource of [
   'extension/out/commands/index.js'
 ]) readEntry(resource);
 
-// The current implementation opens bundled HTML snapshots. Future documentation
-// implementations may use official online links instead. Enforce the snapshot
-// presence whenever the packaged runtime still references those paths.
-const runtime = readEntry(packagedPath(manifest.main)).toString('utf8');
-if (runtime.includes('doc/Appendix ')) {
-  for (const section of ['A TCF', 'B ECF', 'C TGC', 'D TBC', 'F TRFC', 'H QCF']) {
-    assert.ok([...entries.keys()].some(name => name.startsWith(`extension/doc/Appendix ${section} Commands`)),
-      `bundled documentation missing: ${section}`);
-  }
-}
-
+// Online documentation does not require captured HTML; protect the package boundary.
+readEntry('extension/out/documentation.js');
+assert.ok(![...entries.keys()].some(name => name.startsWith('extension/doc/')),
+  'captured documentation unexpectedly present in VSIX');
+const snippets = JSON.parse(readEntry('extension/snippets/tuflow.json').toString('utf8'));
+assert.equal(Object.keys(snippets).length, 10, 'curated snippets missing from VSIX');
 for (const name of entries.keys()) {
   assert.ok(!/^extension\/(src|test|scripts|docs|node_modules|\.github|\.vscode-test)\//.test(name),
     `unwanted file in VSIX: ${name}`);
