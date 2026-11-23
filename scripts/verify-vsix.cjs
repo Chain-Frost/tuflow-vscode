@@ -83,7 +83,10 @@ for (const name of entries.keys()) {
     `unwanted file in VSIX: ${name}`);
   assert.ok(!/^extension\/out\/test\//.test(name), `compiled test in VSIX: ${name}`);
   assert.ok(!/\.js\.map$/.test(name), `source map in VSIX: ${name}`);
-  assert.ok(!/^extension\/(package-lock\.json|tsconfig\.json|test\.tcf|myDummymodel\.tcf|indentation-test\.tcf)$/.test(name),
+  assert.ok(!/^extension\/(package-lock\.json|tsconfig\.json)$/.test(name),
     `development asset in VSIX: ${name}`);
+  // Root-level sample model files must never ship, regardless of filename.
+  assert.ok(!/^extension\/[^/]+\.tcf$/i.test(name),
+    `root-level TUFLOW control file in VSIX: ${name}`);
 }
 console.log(`VSIX verified: ${path.basename(filename)}; ${entries.size} files; ${(archive.length / 1048576).toFixed(2)} MiB`);
