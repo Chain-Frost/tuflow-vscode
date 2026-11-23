@@ -86,7 +86,9 @@ if (mode) {
       assert.ok(!commands.includes('tuflow-helper.openFileUnderCursor'));
       if (hasHelper) {
         assert.ok(commands.includes('tuflow-helper.openDocumentation'));
-        const input = await vscode.workspace.openTextDocument({language: 'tuflow', content: 'Cell'});
+        const inputPath = path.join(fixtureDir, 'helper-completion.tcf');
+        fs.writeFileSync(inputPath, 'Cell\n', 'utf8');
+        const input = await vscode.workspace.openTextDocument(vscode.Uri.file(inputPath));
         const completions = await vscode.commands.executeCommand(
           'vscode.executeCompletionItemProvider', input.uri, new vscode.Position(0, 4)
         );
