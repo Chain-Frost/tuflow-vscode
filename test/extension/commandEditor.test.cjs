@@ -186,4 +186,38 @@ suite('TUFLOW Helper command-aware editor integration (#6)', () => {
         );
         assert.ok(!absent || absent.signatures.length === 0);
     });
+    test('VS Code signature help exposes four audited TGC coordinate/grid pairs', async () => {
+        const pairs = [
+            ['Grid Size (N,M)', ['<rows>', '<columns>']],
+            ['Grid Size (X,Y)', ['<X_length>', '<Y_length>']],
+            ['Origin', ['<OX>', '<OY>']],
+            ['Orientation', ['<XX>', '<YX>']]
+        ];
+        for (const [command, expected] of pairs) {
+            const text = command + ' == 100, 200';
+            const document = await documentWithExtension('.tgc', text);
+            for (const [column, active] of [
+                [text.indexOf(',') , 0], [text.length, 1]
+            ]) {
+                const help = await vscode.commands.executeCommand(
+                    'vscode.executeSignatureHelpProvider', document.uri,
+                    new vscode.Position(0, column)
+                );
+                assert.ok(help, 'missing signature: ' + command);
+                assert.equal(help.activeParameter, active, command);
+                assert.deepEqual(
+                    help.signatures[help.activeSignature].parameters.map(p => p.label),
+                    expected, command
+                );
+            }
+        }
+        const oneValue = 'Orientation Angle == 45';
+        const document = await documentWithExtension('.tgc', oneValue);
+        const none = await vscode.commands.executeCommand(
+            'vscode.executeSignatureHelpProvider', document.uri,
+            new vscode.Position(0, oneValue.length)
+        );
+        assert.ok(!none || none.signatures.length === 0);
+    });
+
 });

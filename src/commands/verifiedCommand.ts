@@ -18,6 +18,8 @@ export interface VerifiedCommandSpec {
     readonly description: string;
     readonly valueKind: AuditedValueKind;
     readonly valueSyntax: string;
+    /** Source-verified positional arguments, only for structured commands. */
+    readonly argumentNames?: readonly string[];
     readonly examples: readonly string[];
     readonly notes?: string;
     readonly referenceCommand?: string;
@@ -48,6 +50,7 @@ export function verifiedCommand(
         category,
         description: spec.description,
         parameters: Object.freeze([spec.valueSyntax]),
+        argumentNames: spec.argumentNames ? Object.freeze([...spec.argumentNames]) : undefined,
         syntax: spec.name + ' == ' + spec.valueSyntax,
         examples: Object.freeze([...spec.examples]),
         notes: spec.notes,
@@ -63,7 +66,8 @@ export function verifiedCommand(
             auditStatus: 'verified' as const,
             verifiedFields: Object.freeze([
                 'canonicalName', 'categories', 'suffixGroups', 'valueKind',
-                'allowedValues', 'description', 'syntax', 'safeExamples', 'notes'
+                'allowedValues', 'description', 'syntax', 'safeExamples', 'notes',
+                ...(spec.argumentNames?.length ? ['argumentNames'] : [])
             ])
         })
     });

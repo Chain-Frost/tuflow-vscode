@@ -277,3 +277,31 @@ test('signature argument scanner preserves embedded apostrophes and quoted separ
     assert.equal(third.activeParameter, 1);
 });
 
+test('source-audited TGC grid and origin pairs expose two signature arguments', () => {
+    const pairs: readonly [string, readonly string[]][] = [
+        ['Grid Size (N,M)', ['<rows>', '<columns>']],
+        ['Grid Size (X,Y)', ['<X_length>', '<Y_length>']],
+        ['Origin', ['<OX>', '<OY>']],
+        ['Orientation', ['<XX>', '<YX>']]
+    ];
+    for (const [name, expected] of pairs) {
+        const beginning = name + ' == 100';
+        const first = planSignature('.tgc', beginning, beginning.length);
+        assert.ok(first, 'first argument missing: ' + name);
+        assert.equal(first.activeParameter, 0, name);
+        assert.deepEqual(first.parameters, expected, name);
+        const complete = beginning + ', 200';
+        const second = planSignature('.tgc', complete, complete.length);
+        assert.ok(second, 'second argument missing: ' + name);
+        assert.equal(second.activeParameter, 1, name);
+        assert.deepEqual(second.parameters, expected, name);
+        assert.equal(second.label, name + ' == ' + expected.join(', '));
+        assert.match(second.documentation, /Official TUFLOW documentation/);
+        assert.equal(planSignature('.tcf', complete, complete.length), undefined,
+            'TGC signature leaked to TCF: ' + name);
+    }
+    const single = 'Orientation Angle == 45';
+    assert.equal(planSignature('.tgc', single, single.length), undefined);
+    const path = 'Read GIS Z Shape == model/line.shp';
+    assert.equal(planSignature('.tgc', path, path.length), undefined);
+});

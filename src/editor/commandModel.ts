@@ -249,9 +249,7 @@ export function planSignature(
     const typed = line.slice(parsed.delimiter.range.end.character, cursor).trim();
     for (const command of lookupCommandsForFile(fileName, parsed)) {
         if (command.provenance.auditStatus !== 'verified') continue;
-        const names = (command as CommandDefinition & {
-            argumentNames?: readonly string[];
-        }).argumentNames;
+        const names = command.argumentNames;
         if (!names || names.length < 2) continue;
         const rhsSyntax = command.syntax?.split('==').slice(1).join('==') ?? '';
         const separator: ',' | '|' | undefined = rhsSyntax.includes(',')
