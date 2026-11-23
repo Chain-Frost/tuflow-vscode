@@ -110,19 +110,28 @@
     "test:registration": "node --test test/language-registration.test.cjs"
   },
   "devDependencies": {
-    "@types/vscode": "^1.74.0",
+    "@eslint/js": "9.39.2",
     "@types/node": "16.x",
-    "@typescript-eslint/eslint-plugin": "^5.45.0",
-    "@typescript-eslint/parser": "^5.45.0",
-    "eslint": "^8.28.0",
-    "typescript": "^4.9.4",
+    "@types/vscode": "1.74.0",
+    "@typescript-eslint/eslint-plugin": "8.73.0",
+    "@typescript-eslint/parser": "8.73.0",
     "@vscode/test-cli": "0.0.15",
     "@vscode/test-electron": "3.1.0",
-    "@vscode/vsce": "3.7.1"
+    "@vscode/vsce": "4.1.1",
+    "eslint": "9.39.2",
+    "typescript": "5.9.3"
   },
   "__metadata": {
     "id": "0805575c-1827-403e-9b99-d2f77f2c84a9",
     "publisherId": "724e0895-6846-4103-9c3b-04710b69098d",
     "publisherDisplayName": "lmillard79"
+  },
+  "overrides": {
+    "minimatch@^3.1.2": {
+      "brace-expansion": "1.1.22"
+    },
+    "mocha@^11.7.6": {
+      "serialize-javascript": "7.1.4"
+    }
   }
 }

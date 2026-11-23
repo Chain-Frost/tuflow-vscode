@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 
 export default {
-  version: '1.147.0',
+  version: process.env.TUFLOW_TEST_VSCODE_VERSION || '1.147.0',
   files: 'test/extension/coexistence.test.cjs',
   extensionDevelopmentPath: 'test/fixtures/host',
   installExtensions: [resolve('tuflow-path-validator.vsix')],
