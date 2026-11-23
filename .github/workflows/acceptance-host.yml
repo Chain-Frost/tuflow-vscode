@@ -16,6 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
       - name: Attempt integration without pushing or merging main
         shell: bash
@@ -42,7 +43,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           path: acceptance
+      - name: Record actual acceptance checkout identity
+        shell: bash
+        run: |
+          SHA="$(git -C acceptance rev-parse HEAD)"
+          echo "TUFLOW_HOST_ACCEPTANCE_SHA=$SHA" >> "$GITHUB_ENV"
+          echo "Acceptance source SHA: $SHA"
       - uses: actions/checkout@v4
         with:
           repository: Chain-Frost/tuflow-vscode
@@ -75,7 +83,6 @@ jobs:
           TUFLOW_ACCEPT_ARTIFACTS: ${{ github.workspace }}/acceptance-host-reports
           TUFLOW_HOST_HELPER_SHA: ec6ac6b774f119320d2f623b012f91c2d0215057
           TUFLOW_HOST_VALIDATOR_SHA: 4a0282e93b979345374076fb0adc60c7faf6af99
-          TUFLOW_HOST_ACCEPTANCE_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           if [[ "$RUNNER_OS" == "Linux" ]]; then
             xvfb-run -a node acceptance/test/acceptance/run-host.cjs \
