@@ -7,6 +7,11 @@ export default {
   files: 'test/extension/**/*.test.cjs',
   extensionDevelopmentPath: 'test/fixtures/host',
   installExtensions: [resolve('tuflow-helper.vsix')],
-  env: { TUFLOW_TEST_INSTALLED: '1' },
+  env: {
+    TUFLOW_TEST_INSTALLED: '1',
+    TUFLOW_TEST_COEXIST_MODE: 'helper-only',
+    TUFLOW_TEST_COEXIST_EVIDENCE: resolve('coexist-evidence/helper-only.json'),
+    TUFLOW_TEST_SOURCE_SHA: process.env.GITHUB_HEAD_SHA || 'unrecorded'
+  },
   mocha: { timeout: 30000 }
 };
