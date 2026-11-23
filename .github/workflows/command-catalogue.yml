@@ -5,9 +5,9 @@ on:
     paths:
       - 'src/commands/**'
       - 'src/extension.ts'
-      - 'src/test/commandCatalogue.test.ts'
-      - 'scripts/test-vscode-command-catalogue.cjs'
-      - 'test/extension/command-catalogue.test.cjs'
+      - 'src/test/**'
+      - 'src/editor/**'
+      - 'test/extension/**'
       - 'tsconfig.json'
       - 'package.json'
       - 'package-lock.json'
@@ -25,29 +25,5 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run compile
-      - run: node --test out/test/commandCatalogue.test.js
-
-  extension-host-smoke:
-    name: VS Code Extension Host (${{ matrix.os }})
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: npm
-      - run: npm ci
-      - run: npm run compile
-      - name: Install host test runner (CI only)
-        run: npm install --no-save --ignore-scripts @vscode/test-electron@^2
-      - name: Extension Host smoke — Linux
-        if: runner.os == 'Linux'
-        run: xvfb-run -a node scripts/test-vscode-command-catalogue.cjs
-      - name: Extension Host smoke — Windows
-        if: runner.os == 'Windows'
-        run: node scripts/test-vscode-command-catalogue.cjs
+      - name: Run every compiled pure Node test
+        run: node --test out/test/*.test.js

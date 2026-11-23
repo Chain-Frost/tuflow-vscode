@@ -10,7 +10,7 @@ This is an **editor-only** metadata source, not a control-file validator. Filesy
 - **getCommandsByName(name)**: returns all contextual matches, not a global arbitrary first match.
 - **createCommandRegistry(definitions)**: pure registry builder for tests and catalogue extensions.
 
-TCF and TGC now use the source-audited metadata from [issue #4](tcf-tgc-command-audit.md); the other four control-file catalogues remain legacy imports. Their unverified descriptions and examples are **not necessarily correct**. Unaudited entries receive a source appendix URL, command-specific section hint and needs-audit status. Audited TCF/TGC entries are verified against the 2026.3 appendices. Fields individually checked against official documentation are listed under verifiedFields.
+TCF and TGC use source-audited metadata from [issue #4](tcf-tgc-command-audit.md); TBC, ECF, TRFC and QCF use source-audited metadata from [issue #5](command-audit-issue-5.md). Unverified legacy descriptions and examples are **not necessarily correct**; unaudited entries retain a needs-audit status. Audited entries are checked against the 2026.3 appendices, with individually verified fields listed under verifiedFields.
 
 ## Agent D/E catalogue audit guide
 
