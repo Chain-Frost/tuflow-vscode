@@ -8,7 +8,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Register completion provider for TUFLOW commands
     const provider = vscode.languages.registerCompletionItemProvider(
-        'tuflow-helper',
+        'tuflow',
         {
             provideCompletionItems(
                 document: vscode.TextDocument,
@@ -113,7 +113,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Register hover provider for TUFLOW commands
     const hoverProvider = vscode.languages.registerHoverProvider(
-        'tuflow-helper',
+        'tuflow',
         {
             provideHover(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
                 // Match the complete left-hand command, not one word. The old
@@ -181,7 +181,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Register signature help provider
     const signatureProvider = vscode.languages.registerSignatureHelpProvider(
-        'tuflow-helper',
+        'tuflow',
         {
             provideSignatureHelp(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.SignatureHelpContext) {
                 const lineText = document.lineAt(position).text;
@@ -245,56 +245,6 @@ export function activate(context: vscode.ExtensionContext) {
         ' ', '(', ','
     );
 
-    // Register command to open file under cursor
-    const openFileCommand = vscode.commands.registerCommand('tuflow-helper.openFileUnderCursor', () => {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            return;
-        }
-        
-        const document = editor.document;
-        const selection = editor.selection;
-        const text = document.getText(selection);
-        
-        if (text) {
-            // Try to extract a file path from the selected text
-            const filePathMatch = text.match(/(?:'|"|\s|^)([\w\\/\-.]+\.[\w]+)(?:'|"|\s|$)/);
-            if (filePathMatch) {
-                const filePath = filePathMatch[1];
-                vscode.window.showInformationMessage(`Opening file: ${filePath}`);
-                
-                // Try to open the file
-                vscode.workspace.openTextDocument(filePath).then(doc => {
-                    vscode.window.showTextDocument(doc);
-                }, error => {
-                    // If file doesn't exist, show error message
-                    vscode.window.showErrorMessage(`Could not open file: ${filePath}. Error: ${error.message}`);
-                });
-            } else {
-                vscode.window.showErrorMessage('No valid file path found in selection or under cursor');
-            }
-        } else {
-            // If no text is selected, try to get file path under cursor
-            const position = editor.selection.active;
-            const lineText = document.lineAt(position.line).text;
-            
-            // Extract word under cursor
-            const wordRange = document.getWordRangeAtPosition(position);
-            if (wordRange) {
-                const word = document.getText(wordRange);
-                
-                // Try to open as file
-                vscode.workspace.openTextDocument(word).then(doc => {
-                    vscode.window.showTextDocument(doc);
-                }, error => {
-                    vscode.window.showErrorMessage(`Could not open file: ${word}. Error: ${error.message}`);
-                });
-            } else {
-                vscode.window.showErrorMessage('No text selected or under cursor');
-            }
-        }
-    });
-
     // Open official, pinned TUFLOW documentation in the user's browser.
     // No model-workspace path, local TUFLOW installation or bundled HTML is needed.
     const openDocumentationCommand = vscode.commands.registerCommand('tuflow-helper.openDocumentation', async () => {
@@ -313,7 +263,7 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showErrorMessage(`Could not open official TUFLOW documentation: ${detail}`);
         }
     });
-    context.subscriptions.push(provider, hoverProvider, signatureProvider, openFileCommand, openDocumentationCommand);
+    context.subscriptions.push(provider, hoverProvider, signatureProvider, openDocumentationCommand);
 }
 
 export function deactivate() { /* Subscriptions are disposed by VS Code. */ }

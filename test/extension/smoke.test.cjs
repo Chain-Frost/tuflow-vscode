@@ -48,12 +48,16 @@ suite('TUFLOW Helper Extension Host smoke tests', () => {
     for (const { command } of manifest.contributes.commands || []) {
       assert.ok(commands.includes(command), `command not registered: ${command}`);
     }
+    assert.ok(!commands.includes('tuflow-helper.openFileUnderCursor'),
+      'legacy Helper file opener must not be registered');
+    assert.ok(commands.includes('tuflow-helper.openDocumentation'),
+      'official documentation command must remain registered');
   });
 
   test('TUFLOW file extensions resolve to the contributed language', async () => {
     const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'tuflow-helper-test-'));
     try {
-      for (const extension of ['.tcf', '.ecf', '.tgc', '.tbc', '.qcf', '.toc', '.trfc']) {
+      for (const extension of ['.tcf', '.ecf', '.tgc', '.tbc', '.tef', '.trd', '.qcf', '.toc', '.trfc']) {
         const file = path.join(directory, `model${extension}`);
         fs.writeFileSync(file, 'Cell Size == 10\n', 'utf8');
         const document = await vscode.workspace.openTextDocument(vscode.Uri.file(file));
