@@ -94,3 +94,14 @@ test('a stale or incomplete Host report never qualifies for known-failure exempt
   assert.equal(isFreshInvocationReport({...report, checks: undefined}, 'current-run'), false);
   assert.equal(isFreshInvocationReport(null, 'current-run'), false);
 });
+
+
+test('editor word suggestions cannot be mistaken for Helper universal values', () => {
+  const universal = new Set(['NO', 'AUTO']);
+  assert.deepEqual(leakedCommentCompletions([
+    {label: 'No', kind: 0}, {label: 'AUTO', kind: 0}
+  ], new Set(), universal, 14, 16), []);
+  assert.deepEqual(leakedCommentCompletions([
+    {label: 'NO', kind: 12}
+  ], new Set(), universal, 14, 16), ['NO']);
+});

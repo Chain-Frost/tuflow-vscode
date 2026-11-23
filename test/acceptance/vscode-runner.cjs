@@ -12,7 +12,7 @@ const {
   childSummaryDiagnostics, leakedCommentCompletions
 } = require('./assertions.cjs');
 
-const FIXTURES = path.join(__dirname, 'fixtures');
+const FIXTURES = path.resolve(process.env.TUFLOW_ACCEPT_FIXTURES || path.join(__dirname, 'fixtures'));
 const MATRIX = JSON.parse(fs.readFileSync(path.join(FIXTURES, 'matrix.json'), 'utf8'));
 const PROFILES = {
   'helper-only': { helper: true, validator: false, opener: false, lens: false },
@@ -73,6 +73,7 @@ async function probeMetric(name, count, action, report) {
   const cpu = process.cpuUsage(before.cpu);
   report.metrics[name] = {
     ...stats(samples),
+    valuesMs: samples,
     cpuUserMs: round(cpu.user / 1000),
     cpuSystemMs: round(cpu.system / 1000),
     rssBeforeBytes: before.rss,
@@ -275,7 +276,8 @@ module.exports.run = async function run() {
 
       const valuePosition = new vscode.Position(line, probe.line.indexOf('==') + 3);
       const valueItems = itemsOf(await vscode.commands.executeCommand('vscode.executeCompletionItemProvider', document.uri, valuePosition));
-      const unrelatedValues = valueItems.map(itemName).filter(name => universal.has(name.toUpperCase()));
+      const unrelatedValues = valueItems.filter(item => item.kind === vscode.CompletionItemKind.Value)
+        .map(itemName).filter(name => universal.has(name.toUpperCase()));
       check('no-universal-gis-values', unrelatedValues.length ? 'fail' : 'pass',
         { unrelatedValues, completionCount: valueItems.length });
     }
@@ -343,6 +345,11 @@ module.exports.run = async function run() {
       { edits: Array.isArray(edits) ? edits.length : null, manualOwnershipCheckRequired: true });
 
     const iterations = Math.max(3, Math.min(50, Number(process.env.TUFLOW_ACCEPT_REPEATS || '12')));
+    await probeMetric('rootWarmOpen', iterations, async () => {
+      await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+      const doc = await vscode.workspace.openTextDocument(rootUri);
+      await vscode.window.showTextDocument(doc, {preview: false});
+    }, report);
     await probeMetric('completion', iterations, requestCompletions, report);
     await probeMetric('hover', iterations, requestHovers, report);
     // Comments in the synthetic file do not trigger model/GIS traversals. They exercise editor scaling.
@@ -356,7 +363,7 @@ module.exports.run = async function run() {
       const start = performance.now();
       const largeDoc = await vscode.workspace.openTextDocument(vscode.Uri.file(syntheticPath));
       await vscode.window.showTextDocument(largeDoc, { preview: true });
-      report.metrics.largeFile = { lineCount: largeDoc.lineCount, openAndShowMs: round(performance.now() - start) };
+      report.metrics.largeFile = { lineCount: largeDoc.lineCount, bytes: fs.statSync(syntheticPath).size, openAndShowMs: round(performance.now() - start) };
       await probeMetric('largeFileCompletion', iterations,
         () => vscode.commands.executeCommand('vscode.executeCompletionItemProvider', largeDoc.uri, new vscode.Position(0, 16)), report);
     } finally {

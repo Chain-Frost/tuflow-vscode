@@ -31,15 +31,9 @@ if (process.env.TUFLOW_HOST_ACCEPTANCE_SHA &&
   throw new Error('Acceptance source identity mismatch: claimed ' +
     process.env.TUFLOW_HOST_ACCEPTANCE_SHA + ', actual ' + acceptanceSha);
 }
-const fixtures = path.join(acceptance, 'test', 'acceptance', 'fixtures');
+const fixtures = path.resolve(process.env.TUFLOW_ACCEPT_FIXTURES || path.join(acceptance, 'test', 'acceptance', 'fixtures'));
 const runner = path.join(acceptance, 'test', 'acceptance', 'vscode-runner.cjs');
 const outputDir = path.resolve(process.env.TUFLOW_ACCEPT_ARTIFACTS || 'acceptance-host-reports');
-const knownBaselineFailures = new Set([
-  'multiword-command-hover',
-  'no-cross-file-command-leakage',
-  'no-generic-completions-in-comment',
-  'no-universal-gis-values'
-]);
 const profiles = [
   {name: 'validator-only', extensions: [validator]},
   {name: 'helper-only', extensions: [helper]},
@@ -89,7 +83,7 @@ async function main() {
     main: './extension.js'
   }));
   fs.writeFileSync(path.join(driver, 'extension.js'), 'exports.activate = () => {};\n');
-  const executable = await downloadAndUnzipVSCode();
+  const executable = await downloadAndUnzipVSCode(process.env.TUFLOW_ACCEPT_VSCODE_VERSION || '1.147.0');
   const [cli, ...cliPrefix] = resolveCliArgsFromVSCodeExecutablePath(
     executable, {reuseMachineInstall: true});
   const summary = {
@@ -136,13 +130,14 @@ async function main() {
           '--disable-gpu', '--no-sandbox'],
         extensionTestsEnv: {
           TUFLOW_ACCEPT_PROFILE: profile.name,
-          TUFLOW_ACCEPT_PHASE: 'pinned-preintegration-linux-windows',
+          TUFLOW_ACCEPT_PHASE: process.env.TUFLOW_ACCEPT_PHASE || 'integrated',
           TUFLOW_ACCEPT_REVISION: process.env.TUFLOW_HOST_HELPER_SHA || 'unrecorded',
           TUFLOW_ACCEPT_OUTPUT: reportFile,
           TUFLOW_ACCEPT_INVOCATION: invocationId,
-          TUFLOW_ACCEPT_REPEATS: '5',
-          TUFLOW_ACCEPT_LINES: '1000',
-          TUFLOW_ACCEPT_SETTLE_MS: '1500'
+          TUFLOW_ACCEPT_REPEATS: process.env.TUFLOW_ACCEPT_REPEATS || '30',
+          TUFLOW_ACCEPT_LINES: process.env.TUFLOW_ACCEPT_LINES || '10000',
+          TUFLOW_ACCEPT_SETTLE_MS: '1800',
+          TUFLOW_ACCEPT_FIXTURES: fixtures
         }
       });
     } catch (error) {
@@ -155,8 +150,8 @@ async function main() {
     const report = fresh ? parsedReport : null;
     const failures = (report?.checks || [])
       .filter(item => item.status === 'fail').map(item => item.id);
-    const known = failures.filter(id => knownBaselineFailures.has(id));
-    const unexpected = failures.filter(id => !knownBaselineFailures.has(id));
+    const known = [];
+    const unexpected = failures;
     if (!report || unexpected.length || (runError && !failures.length)) unexpectedFailures++;
     const result = {
       profile: profile.name, reportRecorded: Boolean(report),
@@ -175,8 +170,7 @@ async function main() {
   }
   save('summary.json', {...summary, unexpectedFailures});
   console.log('[acceptance] unexpected failures: ' + unexpectedFailures);
-  // Known #12 Helper failures are recorded, not passed. Other failures
-  // indicate a harness regression or newly discovered integration defect.
+  // Every failed assertion fails integrated acceptance; there are no historical exemptions.
   if (unexpectedFailures) process.exitCode = 1;
 }
 main().catch(error => {

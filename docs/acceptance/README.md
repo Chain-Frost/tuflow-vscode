@@ -35,14 +35,17 @@ Use `node --test test/acceptance/assertions.test.cjs test/acceptance/compare-rep
 to test these invariants without VS Code. The Linux/Windows fixture CI executes
 these tests as well as fixture integrity checks.
 
-`.github/workflows/acceptance-host.yml` exercises **real VS Code Extension
-Host** profiles on GitHub-hosted Linux and Windows using the pinned Helper #12
-and Validator main source SHAs recorded in the workflow, producing disposable
-source-built VSIX files and per-profile JSON artifacts. Known pre-integration
-Helper completion/hover failures are retained as failures in JSON, not treated
-as passed. This is a **test of the harness against a known baseline**, not
-acceptance of the complete #1–#8 feature stack or a substitute for real model
-shares and manual UI verification.
+`.github/workflows/acceptance-host.yml` tests the integrated Helper at the exact
+acceptance checkout SHA and pinned current Validator source, using Node 24 and
+VS Code 1.147.0. Every failed assertion fails the run; historical Helper #12
+failures are never exempted. Both source-built VSIX hashes and actual installed
+versions are recorded. The standalone driver also accepts
+`TUFLOW_ACCEPT_VSCODE_VERSION`, `TUFLOW_ACCEPT_FIXTURES`,
+`TUFLOW_ACCEPT_PHASE`, `TUFLOW_ACCEPT_REPEATS` and `TUFLOW_ACCEPT_LINES` for
+like-for-like local baseline/post-change trials. Raw timing arrays are preserved,
+including subsequent root open/show trials. A first editor open is not proof of
+cold filesystem caches. Manual UI, network watchers and real GIS layers still
+require separate observations.
 
 ## Profiles
 
@@ -81,14 +84,14 @@ For **Validator alone**:
 
 For **Helper plus Validator**, explicitly install the companion into the isolated extensions directory (or use a pinned VSIX):
 
-    code --user-data-dir "$testRoot\both-user" --extensions-dir "$testRoot\both-ext" --install-extension Chain-Frost.tuflow-path-validator
+    code --user-data-dir "$testRoot\both-user" --extensions-dir "$testRoot\both-ext" --install-extension "$testRoot\validator-source-built.vsix"
     $env:TUFLOW_ACCEPT_PROFILE = 'combined'
     $env:TUFLOW_ACCEPT_OUTPUT = Join-Path $testRoot 'both-before.json'
     code --user-data-dir "$testRoot\both-user" --extensions-dir "$testRoot\both-ext" --extensionDevelopmentPath="$helper" --extensionTestsPath="$runner" "$fixtures"
 
 For **all four**, use a *different* profile and extensions directory:
 
-    code --user-data-dir "$testRoot\full-user" --extensions-dir "$testRoot\full-ext" --install-extension Chain-Frost.tuflow-path-validator
+    code --user-data-dir "$testRoot\full-user" --extensions-dir "$testRoot\full-ext" --install-extension "$testRoot\validator-source-built.vsix"
     code --user-data-dir "$testRoot\full-user" --extensions-dir "$testRoot\full-ext" --install-extension Fr43nk.seito-openfile
     code --user-data-dir "$testRoot\full-user" --extensions-dir "$testRoot\full-ext" --install-extension usernamehw.errorlens
     $env:TUFLOW_ACCEPT_PROFILE = 'full'
