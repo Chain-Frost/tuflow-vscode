@@ -124,5 +124,13 @@
     "id": "0805575c-1827-403e-9b99-d2f77f2c84a9",
     "publisherId": "724e0895-6846-4103-9c3b-04710b69098d",
     "publisherDisplayName": "lmillard79"
+  },
+  "overrides": {
+    "minimatch@^3.1.2": {
+      "brace-expansion": "1.1.22"
+    },
+    "mocha@^11.7.6": {
+      "serialize-javascript": "7.1.4"
+    }
   }
 }
