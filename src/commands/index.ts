@@ -1,6 +1,5 @@
 /**
- * Central editor command registry. Existing records are retained until the
- * separate official-documentation audits are completed by Agents D/E.
+ * Editor-only registry combining the documented TCF/TGC and TBC/ECF/TRFC/QCF catalogues.
  */
 import { tcfCommands } from './tcfCommands';
 import { tgcCommands } from './tgcCommands';
@@ -135,8 +134,8 @@ function importLegacy(category: ControlFileCategory, commands: readonly TuflowCo
 }
 
 const registry = createCommandRegistry([
-    ...importLegacy('TCF', tcfCommands),
-    ...importLegacy('TGC', tgcCommands),
+    ...tcfCommands,
+    ...tgcCommands,
     ...importLegacy('TBC', tbcCommands),
     ...importLegacy('ECF', ecfCommands),
     ...importLegacy('TRFC', trfcCommands),

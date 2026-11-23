@@ -3,7 +3,8 @@
  * recognition; this module never validates paths, scenarios or future syntax.
  */
 import {
-    getCommandsForFile, lookupCommandsForFile, normalizeCommandName, parseTuflowLine
+    getCommandsByName, getCommandsForFile, getControlFileCategory,
+    lookupCommandsForFile, normalizeCommandName, parseTuflowLine
 } from '../commands';
 import type { CommandDefinition, ParsedTuflowLine } from '../commands';
 
@@ -191,7 +192,19 @@ export function planHover(
         cursor < left.range.start.character || cursor >= left.range.end.character) {
         return undefined;
     }
-    const matches = lookupCommandsForFile(fileName, parsed);
+    const scoped = lookupCommandsForFile(fileName, parsed);
+    let matches = scoped;
+    if (!matches.length && !getControlFileCategory(fileName)) {
+        // TEF files can inherit TCF/ECF commands. TRD includes and untitled
+        // TUFLOW editors retain exact-name help but not global completions.
+        const extension = /\.[a-z0-9]+$/i.exec(fileName)?.[0].toLowerCase();
+        const candidates = getCommandsByName(left.text);
+        const inherited = extension === '.tef'
+            ? candidates.filter(command => command.categories.some(
+                category => category === 'TCF' || category === 'ECF'))
+            : candidates;
+        matches = inherited.slice(0, 1);
+    }
     if (!matches.length) return undefined;
     return {
         range: replaceRange(lineNumber, left.range.start.character, left.range.end.character),

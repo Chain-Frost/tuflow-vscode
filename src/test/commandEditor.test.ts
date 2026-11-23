@@ -247,3 +247,17 @@ test('verified syntax displays Markdown metacharacters as literal code', () => {
     const ticks = documentationForCommand({ ...verified, syntax: 'Read File == `<path>`' });
     assert.ok(ticks.includes('**Syntax:** `` Read File == `<path>` ``'));
 });
+
+test('integrated TEF and extensionless hovers inherit audited command help without false completions', () => {
+    for (const file of ['events.tef', 'included.trd', 'Untitled-1']) {
+        const hover = planHover(file, 'End Time == 12', 4);
+        assert.ok(hover, 'expected inherited End Time hover in ' + file);
+        assert.match(hover.documentation, /End Time/);
+        assert.match(hover.documentation, /hour/i);
+        assert.match(hover.documentation, /80-AppendicesA-TCFCommands\.html/);
+        assert.doesNotMatch(hover.documentation, /HH:MM:SS/);
+        assert.match(hover.documentation, /\*\*Syntax:\*\* `End Time == <time_in_hours>`/);
+    }
+    assert.deepEqual(planCompletions('events.tef', 'End T', 5), []);
+    assert.equal(planHover('model.tgc', 'End Time == 12', 4), undefined);
+});
