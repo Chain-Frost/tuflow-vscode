@@ -261,3 +261,19 @@ test('integrated TEF and extensionless hovers inherit audited command help witho
     assert.deepEqual(planCompletions('events.tef', 'End T', 5), []);
     assert.equal(planHover('model.tgc', 'End Time == 12', 4), undefined);
 });
+
+test('signature argument scanner preserves embedded apostrophes and quoted separators', () => {
+    const noSeparator = "BC Event Source == O'Brien";
+    const first = planSignature('.ecf', noSeparator, noSeparator.length);
+    assert.ok(first);
+    assert.equal(first.activeParameter, 0);
+    const unquoted = "BC Event Source == O'Brien | design";
+    const second = planSignature('.ecf', unquoted, unquoted.length);
+    assert.ok(second);
+    assert.equal(second.activeParameter, 1);
+    const quoted = "BC Event Source == 'O''Brien | retained' | design";
+    const third = planSignature('.ecf', quoted, quoted.length);
+    assert.ok(third);
+    assert.equal(third.activeParameter, 1);
+});
+

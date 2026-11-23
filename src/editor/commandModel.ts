@@ -222,7 +222,9 @@ function separatorsBeforeCursor(line: string, sep: ',' | '|'): number {
                 if (line[i + 1] === quote) i++;
                 else quote = null;
             }
-        } else if (char === '"' || char === "'") {
+        } else if ((char === '"' || char === "'") &&
+            (i === 0 || /[\s=,(|]/.test(line[i - 1]))) {
+            // Follow the shared parser: O'Brien is not an opening quote.
             quote = char;
         } else if (char === sep) {
             count++;
