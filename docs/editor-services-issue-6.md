@@ -21,3 +21,11 @@ Value completions do not promise exhaustive TUFLOW support or constrain numerica
 - Issue #4 independently audits TCF/TGC data. The `Map Output Format` hover acceptance test is present but conditional until that verified entry is in the registry; the core hover provider already handles multiword commands without special cases.
 - Issue #1 changes the registered VS Code language ID from `tuflow-helper` to `tuflow`. When #1 is merged, update the single registration call in `src/extension.ts` accordingly; no parser changes are required.
 - No changes to file opening (owned by issue #1), provider diagnostics, TUFLOW runner, release selection, QGIS integration or publishing.
+
+## Audited syntax rendering (November 2026)
+
+The command formatter must present documented operand placeholders as **literal code**, not unquoted Markdown. The [Windows issue #8 GUI acceptance](https://github.com/Chain-Frost/tuflow-vscode/pull/15#issuecomment-7091160677) showed `End Time == <time_in_hours>` rendered as `End Time ==` because VS Code treated the raw angle-bracket operand as HTML.
+
+`documentationForCommand` now places **verified syntax** in a Markdown inline code span (with a safe delimiter when the syntax itself contains backticks). This preserves literal `<...>`, punctuation and optional modifiers without modifying command data. It applies to both completion and hover documentation through their common formatter. Unverified catalogue entries remain explicitly marked as unaudited.
+
+Pure regression tests cover `RF Grid Origin == <OX>, <OY>`, the future audited `End Time == <time_in_hours>` form and embedded backticks. Extension Host coverage asserts the actual MarkdownString returned by VS Code hover. The integrated hours-based End Time regression is also exercised in disposable [QA PR #26](https://github.com/Chain-Frost/tuflow-vscode/pull/26), which is **not for merging**. The final *rendered* VS Code GUI acceptance is a separate check; do not claim it passed solely from Markdown source assertions.
