@@ -36,6 +36,13 @@ def acceptance_failures(data, invocation):
  return errors
 
 
+def verify_outcome(data, invocation, exit_code, report_path):
+ errors=acceptance_failures(data,invocation)
+ if exit_code!=0:errors.append('VS Code host exit code: '+str(exit_code))
+ if errors:raise RuntimeError('Acceptance failed: '+'; '.join(errors)+' (report: '+str(report_path)+')')
+ return data['summary']
+
+
 def main():
     r=Path('E:/Github/tuflow-issue9-20261124');c=json.loads((r/'config-private.json').read_text());code='C:/Program Files/Microsoft VS Code/Code.exe';cli='C:/Program Files/Microsoft VS Code/bin/code.cmd'
     phase=sys.argv[1] if len(sys.argv)>1 else 'integrated';mode=sys.argv[2] if len(sys.argv)>2 else 'ntfs'
@@ -77,9 +84,7 @@ def main():
       try:exit_code=proc.wait(timeout=15)
       except subprocess.TimeoutExpired as exc:
        raise RuntimeError('VS Code host did not exit after its report; result unverified') from exc
-      failures=acceptance_failures(data,invocation)
-      if exit_code!=0:failures.append('VS Code host exit code: '+str(exit_code))
-      if failures:raise RuntimeError('Acceptance failed: '+'; '.join(failures)+' (report: '+str(canonical)+')')
+      verify_outcome(data,invocation,exit_code,canonical)
      print(phase,mode,profile,data['summary'],flush=True)
 
 
