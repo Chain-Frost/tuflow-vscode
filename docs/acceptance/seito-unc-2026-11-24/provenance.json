@@ -1,0 +1,11 @@
+{
+  "upstream": "https://gitlab.com/fr43nk/seito-openfile",
+  "baselineAndLatest": "39ef7abc3374a8888f93919201425684e9cf1a40",
+  "fixCommit": "56b0a240390650e8eb7ef0983b25a68269c5cf20",
+  "version": "2.3.3 (unreleased local fix)",
+  "baselineVsixSha256": "897e6e85daafa331306af95fbb52e908f76b72152014cc9191cd79e7010be5c5",
+  "fixedVsixSha256": "c91460b2d5f282b36ab184d2a03b655fc858657892c9f48d6b93fbd1001b20d0",
+  "installedAndBuiltExtensionJsSha256": "d146af04d577d3d92b8a8a1beae360bac8f3b21ac728d40dba5eb90a827e4d65",
+  "platform": "Windows 10; VS Code 1.147.0; real remote SMB",
+  "sanitized": true
+}

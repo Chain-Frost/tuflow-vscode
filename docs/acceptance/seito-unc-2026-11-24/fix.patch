@@ -1,0 +1,124 @@
+From 56b0a240390650e8eb7ef0983b25a68269c5cf20 Mon Sep 17 00:00:00 2001
+From: Chain Frost <chainfrost@outlook.com>
+Date: Tue, 24 Nov 2026 12:24:50 +0800
+Subject: [PATCH] Preserve Windows UNC roots during filename case correction
+
+---
+ src/commands/openFileFromText.ts       |  3 +-
+ src/common/fileoperations.ts           | 16 +++++++-
+ src/test/suite/common/uncpaths.test.ts | 55 ++++++++++++++++++++++++++
+ 3 files changed, 71 insertions(+), 3 deletions(-)
+ create mode 100644 src/test/suite/common/uncpaths.test.ts
+
+diff --git a/src/commands/openFileFromText.ts b/src/commands/openFileFromText.ts
+index e020787..b6f1731 100644
+--- a/src/commands/openFileFromText.ts
++++ b/src/commands/openFileFromText.ts
+@@ -7,7 +7,6 @@ import { type Suffix } from "../types/suffix.type";
+ import { exec } from "child_process";
+ import { globSync } from "glob";
+ // var glob = require('glob-all')
+-import { trueCasePathSync } from "true-case-path";
+ import {
+   commands,
+   Position,
+@@ -386,7 +385,7 @@ export class OpenFileFromText {
+       return await Promise.resolve(p);
+     }
+     if (p !== "") {
+-      p = trueCasePathSync(p); // Avoid open document as non-matching case.  E.g. input text is "Extension.js" but real file name is extension.js, without this code, file opened and shown as "Extension.js" on Windows because file name are case insensitive.
++      p = FileOperations.getTrueCasePath(p); // Preserve UNC roots while correcting document filename case.
+       try {
+         const openDoc = await workspace.openTextDocument(p);
+ 
+diff --git a/src/common/fileoperations.ts b/src/common/fileoperations.ts
+index 5a7388e..e9761aa 100644
+--- a/src/common/fileoperations.ts
++++ b/src/common/fileoperations.ts
+@@ -1,7 +1,21 @@
+-import { dirname, join, isAbsolute } from "path";
++import { dirname, join, isAbsolute, normalize, parse } from "path";
+ import { existsSync, statSync } from "fs";
++import { trueCasePathSync } from "true-case-path";
+ 
+ export class FileOperations {
++  public static getTrueCasePath(filePath: string): string {
++    const normalized = normalize(filePath);
++    const root = parse(normalized).root;
++    if (process.platform === "win32" && root.startsWith("\\\\")) {
++      // true-case-path treats the first segment of an absolute Windows path as
++      // a drive letter. Keep the UNC server/share intact and resolve only its
++      // children relative to that root. Normalize the dependency's extra separator.
++      const child = normalized.substring(root.length);
++      return child === "" ? root : normalize(trueCasePathSync(child, root));
++    }
++    return trueCasePathSync(filePath);
++  }
++
+   public static getAbsoluteFromRelativePath(iPath: string, iCurrPath: string, baseMustBeDir = false): string {
+     if (iPath === undefined || iPath === "" || iCurrPath === undefined) {
+       return "";
+diff --git a/src/test/suite/common/uncpaths.test.ts b/src/test/suite/common/uncpaths.test.ts
+new file mode 100644
+index 0000000..b2f5240
+--- /dev/null
++++ b/src/test/suite/common/uncpaths.test.ts
+@@ -0,0 +1,55 @@
++import * as assert from "assert";
++import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "fs";
++import { tmpdir } from "os";
++import { basename, dirname, join, parse } from "path";
++import { FileOperations } from "../../../common/fileoperations";
++
++suite("Case correction preserves path roots", () => {
++  let local: string;
++  suiteSetup(() => {
++    local = mkdtempSync(join(tmpdir(), "seito-case-"));
++    mkdirSync(join(local, "Nested"));
++    writeFileSync(join(local, "Nested", "Child.trd"), "! disposable fixture");
++  });
++  suiteTeardown(() => rmSync(local, { recursive: true, force: true }));
++
++  test("local existing and missing files", () => {
++    const expected = join(local, "Nested", "Child.trd");
++    assert.strictEqual(FileOperations.getTrueCasePath(expected), expected);
++    assert.throws(() => FileOperations.getTrueCasePath(join(local, "missing.trd")));
++    if (process.platform === "win32") {
++      const corrected = FileOperations.getTrueCasePath(expected.toUpperCase());
++      assert.strictEqual(basename(corrected), "Child.trd");
++      assert.strictEqual(basename(dirname(corrected)), "Nested");
++      assert.strictEqual(parse(FileOperations.getTrueCasePath(expected)).root.toUpperCase(), parse(expected).root.toUpperCase());
++    }
++  });
++
++  test("relative child resolution retains local base", () => {
++    const expected = join(local, "Nested", "Child.trd");
++    const resolved = FileOperations.getAbsoluteFromRelativePath("Nested/Child.trd", local, true);
++    assert.strictEqual(FileOperations.getTrueCasePath(resolved), expected);
++  });
++
++  for (const mode of ["UNC", "MAPPED"]) {
++    test(`${mode}: root, mixed-case child, missing file and relative child on real storage`, function () {
++      const base = process.env[`SEITO_TEST_${mode}`];
++      if (process.platform !== "win32" || !base) {
++        this.skip();
++        return;
++      }
++      // Owner-provided disposable fixture; tests never modify the SMB share.
++      const expected = join(base, "Nested", "Child.trd");
++      assert.ok(existsSync(expected), "Prepare Nested/Child.trd in the disposable fixture");
++      const root = parse(expected).root;
++      if (mode === "UNC") {
++        assert.strictEqual(FileOperations.getTrueCasePath(root), root);
++      }
++      const actual = FileOperations.getTrueCasePath(join(base, "NESTED", "CHILD.TRD"));
++      assert.strictEqual(actual, expected);
++      assert.strictEqual(parse(actual).root, root);
++      assert.strictEqual(FileOperations.getTrueCasePath(FileOperations.getAbsoluteFromRelativePath("Nested/Child.trd", base, true)), expected);
++      assert.throws(() => FileOperations.getTrueCasePath(join(base, "missing.trd")));
++    });
++  }
++});
+-- 
+2.55.0.windows.3
+

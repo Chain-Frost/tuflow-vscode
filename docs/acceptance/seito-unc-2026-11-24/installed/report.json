@@ -1,0 +1,21 @@
+{
+  "extension": "2.3.3",
+  "onlySeito": true,
+  "rows": [
+    {
+      "mode": "local",
+      "openedChild": true,
+      "active": "e:\\Github\\seito-unc-evidence-20261124\\fixture\\child.trd"
+    },
+    {
+      "mode": "unc",
+      "openedChild": true,
+      "active": "\\\\SMB-SERVER\\TEST-SHARE\\CodexValidation\\disposable-fixture\\seito-only\\child.trd"
+    },
+    {
+      "mode": "mapped",
+      "openedChild": true,
+      "active": "t:\\CodexValidation\\disposable-fixture\\seito-only\\child.trd"
+    }
+  ]
+}

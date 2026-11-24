@@ -1,0 +1,97 @@
+{
+  "extension": "2.3.3",
+  "extensionPath": "E:\\Github\\seito-unc-evidence-20261124\\fixed-extensions\\fr43nk.seito-openfile-2.3.3",
+  "helperPresent": false,
+  "rows": [
+    {
+      "mode": "local",
+      "kind": "relative",
+      "pass": true,
+      "active": "\\child.trd"
+    },
+    {
+      "mode": "local",
+      "kind": "nested",
+      "pass": true,
+      "active": "\\Nested\\Child.trd"
+    },
+    {
+      "mode": "local",
+      "kind": "mixedCase",
+      "pass": true,
+      "active": "\\Nested\\Child.trd"
+    },
+    {
+      "mode": "local",
+      "kind": "absolute",
+      "pass": true,
+      "active": "\\Nested\\Child.trd"
+    },
+    {
+      "mode": "local",
+      "kind": "missing",
+      "pass": true,
+      "active": "\\root.tcf"
+    },
+    {
+      "mode": "unc",
+      "kind": "relative",
+      "pass": true,
+      "active": "\\child.trd"
+    },
+    {
+      "mode": "unc",
+      "kind": "nested",
+      "pass": true,
+      "active": "\\Nested\\Child.trd"
+    },
+    {
+      "mode": "unc",
+      "kind": "mixedCase",
+      "pass": true,
+      "active": "\\Nested\\Child.trd"
+    },
+    {
+      "mode": "unc",
+      "kind": "absolute",
+      "pass": true,
+      "active": "\\Nested\\Child.trd"
+    },
+    {
+      "mode": "unc",
+      "kind": "missing",
+      "pass": true,
+      "active": "\\root.tcf"
+    },
+    {
+      "mode": "mapped",
+      "kind": "relative",
+      "pass": true,
+      "active": "\\child.trd"
+    },
+    {
+      "mode": "mapped",
+      "kind": "nested",
+      "pass": true,
+      "active": "\\Nested\\Child.trd"
+    },
+    {
+      "mode": "mapped",
+      "kind": "mixedCase",
+      "pass": true,
+      "active": "\\Nested\\Child.trd"
+    },
+    {
+      "mode": "mapped",
+      "kind": "absolute",
+      "pass": true,
+      "active": "\\Nested\\Child.trd"
+    },
+    {
+      "mode": "mapped",
+      "kind": "missing",
+      "pass": true,
+      "active": "\\root.tcf"
+    }
+  ]
+}

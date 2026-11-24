@@ -1,0 +1,334 @@
+
+[main 2026-11-24T04:23:22.282Z] [node-compile-cache] main: packaged cache enabled (status: enabled, configured: C:\Program Files\Microsoft VS Code\8a14f0cc1b\resources\app\node-compile-cache\main, active: C:\Program Files\Microsoft VS Code\8a14f0cc1b\resources\app\node-compile-cache\main\v24.22.1-x64-d4bb394e)
+[main 2026-11-24T04:23:22.292Z] StorageMainService: creating application shared storage
+[main 2026-11-24T04:23:22.345Z] [shared storage] Creating shared storage database at ':memory:' (wasCreated: true)
+[main 2026-11-24T04:23:22.345Z] [shared storage] Initializing fallback application storage (path: in-memory)
+[main 2026-11-24T04:23:22.348Z] Error: Error mutex already exists
+    at xa.installMutex (file:///C:/Program%20Files/Microsoft%20VS%20Code/8a14f0cc1b/resources/app/out/mainImpl.js:334:30635)
+[main 2026-11-24T04:23:22.364Z] [shared storage] Fallback application storage initialized with 3 items
+Via 'product.json#extensionEnabledApiProposals' extension 'ms-vscode.remote-repositories' wants API proposal 'timeline' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+Via 'product.json#extensionEnabledApiProposals' extension 'github.vscode-pull-request-github' wants API proposal 'agentsWindowActivation' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+Via 'product.json#extensionEnabledApiProposals' extension 'github.remotehub' wants API proposal 'timeline' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+[main 2026-11-24T04:23:22.674Z] update#disable - updates are disabled by user preference
+[main 2026-11-24T04:23:22.674Z] update#setState disabled
+[RemoteAgentHost] Reconciling: desired=[], current=[]
+Started local extension host with pid 620388.
+Loading development extension at e:\Github\seito-openfile
+Extension 'github.copilot-chat' appears in product.json but enables LESS API proposals than the extension wants.
+package.json (LOSES): agentSessionsWorkspace
+speech
+structuralDiff
+agentsWindowConfiguration
+chatDebug
+chatHooks
+envIsConnectionMetered
+extensionsAny
+newSymbolNamesProvider
+interactive
+codeActionAI
+activeComment
+commentReveal
+contribCommentThreadAdditionalMenu
+contribCommentsViewThreadMenus
+contribChatEditorInlineGutterMenu
+documentFiltersExclusive
+embeddings
+findTextInFiles
+findTextInFiles2
+languageModelToolSupportsModel
+findFiles2
+textSearchProvider
+terminalDataWriteEvent
+terminalExecuteCommandEvent
+terminalSelection
+terminalQuickFixProvider
+mappedEditsProvider
+aiRelatedInformation
+aiSettingsSearch
+chatParticipantAdditions
+defaultChatParticipant
+contribSourceControlInputBoxMenu
+authLearnMore
+authIssuers
+testObserver
+aiTextSearchProvider
+chatParticipantPrivate
+chatProvider
+contribDebugCreateConfiguration
+chatReferenceDiagnostic
+textSearchProvider2
+chatReferenceBinaryData
+languageModelSystem
+languageModelCapabilities
+languageModelPricing
+languageModelRateLimit
+inlineCompletionsAdditions
+chatStatusItem
+chatInputNotification
+taskProblemMatcherStatus
+contribLanguageModelToolSets
+textDocumentChangeReason
+resolvers
+taskExecutionTerminal
+dataChannels
+languageModelThinkingPart
+chatSessionsProvider
+devDeviceId
+contribEditorContentMenu
+chatPromptFiles
+mcpServerDefinitions
+tabInputMultiDiff
+workspaceTrust
+environmentPower
+terminalTitle
+toolInvocationApproveCombination
+chatSessionCustomizationProvider
+product.json (WINS): agentSessionsWorkspace
+agentsWindowConfiguration
+interactive
+terminalDataWriteEvent
+terminalExecuteCommandEvent
+terminalSelection
+terminalQuickFixProvider
+chatParticipantAdditions
+defaultChatParticipant
+embeddings
+chatProvider
+mappedEditsProvider
+aiRelatedInformation
+aiSettingsSearch
+codeActionAI
+findTextInFiles
+findTextInFiles2
+textSearchProvider
+textSearchProvider2
+activeComment
+commentReveal
+contribSourceControlInputBoxMenu
+contribCommentEditorActionsMenu
+contribCommentThreadAdditionalMenu
+contribCommentsViewThreadMenus
+contribChatEditorInlineGutterMenu
+extensionAffinity
+newSymbolNamesProvider
+findFiles2
+chatReferenceDiagnostic
+extensionsAny
+authLearnMore
+authIssuers
+testObserver
+aiTextSearchProvider
+documentFiltersExclusive
+chatParticipantPrivate
+contribDebugCreateConfiguration
+inlineCompletionsAdditions
+chatReferenceBinaryData
+languageModelSystem
+languageModelCapabilities
+languageModelThinkingPart
+languageModelToolSupportsModel
+chatStatusItem
+taskProblemMatcherStatus
+contribLanguageModelToolSets
+textDocumentChangeReason
+resolvers
+taskExecutionTerminal
+dataChannels
+chatSessionsProvider
+chatSessionCustomizationProvider
+devDeviceId
+contribEditorContentMenu
+tokenInformation
+toolInvocationApproveCombination
+chatPromptFiles
+mcpServerDefinitions
+tabInputMultiDiff
+workspaceTrust
+chatHooks
+chatDebug
+envIsConnectionMetered
+environmentPower
+terminalTitle
+languageModelPricing
+languageModelRateLimit
+chatInputNotification
+speech
+DELTA: structuralDiff
+Proceeding with EXTRA proposals (structuralDiff) because extension is in development mode. Still, this EXTENSION WILL BE BROKEN unless product.json is updated.
+[AccountPolicyGate] apply: state=inactive, reason=undefined, isRestricted=false
+[RemoteAgentHost] Reconciling: desired=[], current=[]
+Settings Sync: Account status changed from uninitialized to unavailable
+(node:620388) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `Code --trace-deprecation ...` to show where the warning was created)
+seito-openfile extension started
+
+  Extension Test Suite
+    âˆš Sample test
+  Text operation Tests
+Initialize!
+Try creating directory: e:/Github/seito-openfile/Unittests-tmp
+Try creating directory: e:/Github/seito-openfile/Unittests-tmp/test
+Try creating directory: e:/Github/seito-openfile/Unittests-tmp/test/dir1
+Try creating directory: e:/Github/seito-openfile/Unittests-tmp/src
+Try creating directory: e:/Github/seito-openfile/Unittests-common
+Try creating directory: e:/Github/seito-openfile/Unittests-common/test
+Creating file e:/Github/seito-openfile/Unittests-tmp/test.ts
+Creating file e:/Github/seito-openfile/Unittests-tmp/Unicode.txt
+Creating file e:/Github/seito-openfile/Unittests-tmp/.DS_Store
+Creating file e:/Github/seito-openfile/Unittests-tmp/test/hans.txt
+Creating file e:/Github/seito-openfile/Unittests-tmp/test/test.scss
+Creating file e:/Github/seito-openfile/Unittests-tmp/test/_test2.scss
+Creating file e:/Github/seito-openfile/Unittests-tmp/test/_test3.scss
+Creating file e:/Github/seito-openfile/Unittests-tmp/test/testcase.txt
+Creating file e:/Github/seito-openfile/Unittests-common/test.ts
+Creating file e:/Github/seito-openfile/Unittests-tmp/test/dir1/testcase2.ts
+Creating file e:/Github/seito-openfile/Unittests-tmp/src/Class1.ts
+Creating file e:/Github/seito-openfile/Unittests-tmp/src/Class12
+(node:620388) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+    âˆš Read second line
+    âˆš Read third line (empty)
+    âˆš Get word, wrong position
+    âˆš Get word, left most position
+    âˆš Get word, right most position
+    âˆš Get word, empty quoted string
+    âˆš Get word, comment line
+    âˆš Get word, space delimited
+    âˆš Get word, <> bound
+    âˆš Get word, '' bound
+    âˆš Get word, "" bound
+    âˆš Get word, " bound, missing right "
+    âˆš Get word, " bound, leading .. 
+    âˆš Get word, right most position, with config
+    âˆš Get word, with line number and a colon, cursor before first colon
+    âˆš Get word, with line number and a colon, cursor at line number
+    âˆš Get word, with line column and a colon, cursor before first colon
+    âˆš Get word, with line column and a colon, cursor at line number
+    âˆš Get word, with line column and a colon, cursor at column number
+    âˆš Get path and line number, "windows absolute path string"
+    âˆš Get path and line number, "windows absolute path string and tailing colon"
+    âˆš Get path and line number, "windows absolute path string and tailing colon and number"
+    âˆš Get path and line column, "windows absolute path string and line:column"
+    âˆš Issue 25: Goto right position if non-bmp characters are in content
+  File operation Tests
+Initialize!
+Try creating directory: e:/Github/seito-openfile/Unittests-tmp
+Try creating directory: e:/Github/seito-openfile/Unittests-tmp/test
+Try creating directory: e:/Github/seito-openfile/Unittests-tmp/test/dir1
+Try creating directory: e:/Github/seito-openfile/Unittests-tmp/src
+Try creating directory: e:/Github/seito-openfile/Unittests-common
+Try creating directory: e:/Github/seito-openfile/Unittests-common/test
+Creating file e:/Github/seito-openfile/Unittests-tmp/test.ts
+Creating file e:/Github/seito-openfile/Unittests-tmp/Unicode.txt
+Creating file e:/Github/seito-openfile/Unittests-tmp/.DS_Store
+Creating file e:/Github/seito-openfile/Unittests-tmp/test/hans.txt
+Creating file e:/Github/seito-openfile/Unittests-tmp/test/test.scss
+Creating file e:/Github/seito-openfile/Unittests-tmp/test/_test2.scss
+Creating file e:/Github/seito-openfile/Unittests-tmp/test/_test3.scss
+Creating file e:/Github/seito-openfile/Unittests-tmp/test/testcase.txt
+Creating file e:/Github/seito-openfile/Unittests-common/test.ts
+Creating file e:/Github/seito-openfile/Unittests-tmp/test/dir1/testcase2.ts
+Creating file e:/Github/seito-openfile/Unittests-tmp/src/Class1.ts
+Creating file e:/Github/seito-openfile/Unittests-tmp/src/Class12
+    1) ** e:/Github/seito-openfile/Unittests-tmp must exists before run tests, and match exact case
+    âˆš AlwaysRelToAbsPath 1
+    âˆš RelToAbsPath 1
+    âˆš RelToAbsPath 2
+    âˆš RelToAbsPath 3
+    âˆš RelToAbsPath 4
+    âˆš RelToAbsPath 5
+    âˆš RelToAbsPath 6
+    âˆš RelToAbsPath 7
+    âˆš RelToAbsPath 8
+    âˆš RelToAbsPath 9
+    âˆš RelToAbsPath, current file does not exist
+    âˆš RelToAbsPath, text file does not exist
+    âˆš FuzzyPath, file has leading underscore (scss) and suffix but not in file
+    âˆš FuzzyPath, file has leading underscore (scss) and suffix but only suffix in file
+    âˆš FuzzyPath, file has leading underscore (scss) and suffix but only suffix in file, relative path
+    âˆš FuzzyPath, file has leading underscore (scss) and suffix but only underscore, relative path
+E:\Github\seito-openfile\Unittests-tmp\test\testcase.txt:2
+    âˆš Github #6: Open with line number (96ms)
+E:\Github\seito-openfile\Unittests-tmp\test\testcase.txt:2:5
+    âˆš Open with line number and column (43ms)
+    âˆš resolvePath, resolve path to absolute
+    âˆš resolvePath, resolve path to home
+    âˆš resolvePath, resolve path to same folder, without file extension, implicit file extension
+    âˆš resolvePath, resolve path to same folder, fuzzy, extraExtensions
+    âˆš resolvePath, resolve path to same folder, not in workspace, without file extension, not resolved to directory
+    âˆš resolvePath, treat absolute path also as relative path, resolve path to same folder, without file extension
+    âˆš resolvePath, resolve path to workspace folder
+res:  e:\Github\seito-openfile\Unittests-tmp\test\test.scss  set  e:\Github\seito-openfile\Unittests-tmp\test\test.scss
+    âˆš resolvePath, resolve path to parent folder
+    âˆš resolvePath, resolve path to workspace src folder, without file extension
+    âˆš resolvePath, resolve path to searchPaths
+    âˆš resolvePath, resolve path to 2nd item in searchPaths
+    âˆš resolvePath, resolve path failure gives empty string, and won't resolve absolute path to folder
+    âˆš resolvePath, resolve path with path substitution by leadingPathMapping
+    âˆš Github #9: resolvePath, resolve path with deletion by leadingPathMapping. Support open paths from git diff which starts with a/ or b/
+    2) resolvePath, resolve path with path substitution, using prefix match with ending '*', by leadingPathMapping.
+    âˆš resolvePath, resolve path with path substitution, using prefix match with ending '*', by leadingPathMapping's deletion, removing path's leading variable
+    3) resolvePath, resolve path with path substitution, using prefix match with ending '*', by leadingPathMapping, removing '$' for single variable
+    âˆš A multi-lined selection should split, and support cutting :content from lines of grep/ack output like file:line:column:content
+    âˆš Gitlab issue 23, open file which has no suffix at all
+    âˆš Gitlab issue 23, open file which has no suffix at all, added path to search list
+    âˆš Gitlab issue 23, open file which has no suffix at all, added path to search list and subfolders
+    âˆš Issue 26: Using environment variables in path
+    âˆš Issue 29: Using environment variables in path (%VAR%)
+    âˆš Issue 29: Using environment variables in path (${VAR})
+    âˆš Issue 29: Using environment variables in path (${VAR)
+    âˆš Issue 29: Using environment variables in path multiple positions (${VAR})
+    âˆš Issue 30: Open in file explorer if path string is just a path
+    âˆš Issue 30: Open in file explorer if path string is just a relative path to workspace
+    4) Issue 31: Using multiple environment variables in string
+  69 passing (257ms)
+  4 failing
+  1) File operation Tests
+       ** e:/Github/seito-openfile/Unittests-tmp must exists before run tests, and match exact case:
+
+      AssertionError [ERR_ASSERTION]: 'e:\\Github\\seito-openfile\\Unittests-tmp' == 'E:\\Github\\seito-openfile\\Unittests-tmp'
+      + expected - actual
+
+      -e:\Github\seito-openfile\Unittests-tmp
+      +E:\Github\seito-openfile\Unittests-tmp
+      
+  	at Context.<anonymous> (E:\Github\seito-unc-evidence-20261124\baseline-source\out\test\suite\common\fileoperations.test.js:41:16)
+  	at process.processImmediate (node:internal/timers:574:21)
+
+  2) File operation Tests
+       resolvePath, resolve path with path substitution, using prefix match with ending '*', by leadingPathMapping.:
+
+      AssertionError [ERR_ASSERTION]: '' == 'e:\\Github\\seito-openfile\\Unittests-tmp\\test\\dir1\\testcase2.ts'
+      + expected - actual
+
+      +e:\Github\seito-openfile\Unittests-tmp\test\dir1\testcase2.ts
+      
+  	at Context.<anonymous> (E:\Github\seito-unc-evidence-20261124\baseline-source\out\test\suite\common\fileoperations.test.js:274:16)
+  	at process.processImmediate (node:internal/timers:574:21)
+
+  3) File operation Tests
+       resolvePath, resolve path with path substitution, using prefix match with ending '*', by leadingPathMapping, removing '$' for single variable:
+
+      AssertionError [ERR_ASSERTION]: '' == 'e:\\Github\\seito-openfile\\Unittests-tmp\\src\\Class1.ts'
+      + expected - actual
+
+      +e:\Github\seito-openfile\Unittests-tmp\src\Class1.ts
+      
+  	at Context.<anonymous> (E:\Github\seito-unc-evidence-20261124\baseline-source\out\test\suite\common\fileoperations.test.js:286:16)
+  	at process.processImmediate (node:internal/timers:574:21)
+
+  4) File operation Tests
+       Issue 31: Using multiple environment variables in string:
+
+      AssertionError [ERR_ASSERTION]: '${HOME}/folder/config-prod.ini' == '/User/frank/folder/config-prod.ini'
+      + expected - actual
+
+      -${HOME}/folder/config-prod.ini
+      +/User/frank/folder/config-prod.ini
+      
+  	at Context.<anonymous> (E:\Github\seito-unc-evidence-20261124\baseline-source\out\test\suite\common\fileoperations.test.js:358:16)
+  	at process.processImmediate (node:internal/timers:574:21)
+
+Error: 4 tests failed.
+	at E:\Github\seito-unc-evidence-20261124\baseline-source\out\test\suite\index.js:24:32
+	at done (E:\Github\seito-openfile\node_modules\mocha\lib\mocha.js:1028:7)
+[main 2026-11-24T04:23:23.752Z] Extension host with pid 620388 exited with code: 0, signal: unknown.
