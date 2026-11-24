@@ -1,0 +1,494 @@
+{
+  "ntfs": {
+    "baseline": {
+      "rootFirstOpen": {
+        "openAndShowMs": 2425.91,
+        "alreadyOpenBeforeMeasurement": false
+      },
+      "documentOpen": {
+        "model.tcf": {
+          "openAndShowMs": 233.01,
+          "languageId": "tuflow"
+        },
+        "geometry.tgc": {
+          "openAndShowMs": 131.04,
+          "languageId": "tuflow"
+        },
+        "boundary.tbc": {
+          "openAndShowMs": 113.3,
+          "languageId": "tuflow"
+        },
+        "estuary.ecf": {
+          "openAndShowMs": 71.99,
+          "languageId": "tuflow"
+        },
+        "events.tef": {
+          "openAndShowMs": 62.94,
+          "languageId": "tuflow"
+        },
+        "include/nested.trd": {
+          "openAndShowMs": 62.17,
+          "languageId": "tuflow"
+        },
+        "settings.qcf": {
+          "openAndShowMs": 109.59,
+          "languageId": "tuflow"
+        }
+      },
+      "rootWarmOpen": {
+        "samples": 30,
+        "p50Ms": 55.32,
+        "p95Ms": 75.65,
+        "maxMs": 85.62,
+        "cpuUserMs": 250,
+        "cpuSystemMs": 109,
+        "rssBeforeBytes": 249724928,
+        "rssAfterBytes": 249958400
+      },
+      "completion": {
+        "samples": 30,
+        "p50Ms": 2.57,
+        "p95Ms": 3.17,
+        "maxMs": 3.71,
+        "cpuUserMs": 32,
+        "cpuSystemMs": 16,
+        "rssBeforeBytes": 250118144,
+        "rssAfterBytes": 260018176
+      },
+      "hover": {
+        "samples": 30,
+        "p50Ms": 1.23,
+        "p95Ms": 11.99,
+        "maxMs": 25.15,
+        "cpuUserMs": 15,
+        "cpuSystemMs": 16,
+        "rssBeforeBytes": 260059136,
+        "rssAfterBytes": 260653056
+      },
+      "largeFile": {
+        "lineCount": 10002,
+        "bytes": 438947,
+        "openAndShowMs": 65.16
+      },
+      "largeFileCompletion": {
+        "samples": 30,
+        "p50Ms": 1.84,
+        "p95Ms": 2.46,
+        "maxMs": 3.45,
+        "cpuUserMs": 0,
+        "cpuSystemMs": 16,
+        "rssBeforeBytes": 262717440,
+        "rssAfterBytes": 265048064
+      }
+    },
+    "integrated": {
+      "rootFirstOpen": {
+        "openAndShowMs": 125.43,
+        "alreadyOpenBeforeMeasurement": false
+      },
+      "documentOpen": {
+        "model.tcf": {
+          "openAndShowMs": 94.4,
+          "languageId": "tuflow"
+        },
+        "geometry.tgc": {
+          "openAndShowMs": 102.18,
+          "languageId": "tuflow"
+        },
+        "boundary.tbc": {
+          "openAndShowMs": 68.87,
+          "languageId": "tuflow"
+        },
+        "estuary.ecf": {
+          "openAndShowMs": 67.89,
+          "languageId": "tuflow"
+        },
+        "events.tef": {
+          "openAndShowMs": 57.83,
+          "languageId": "tuflow"
+        },
+        "include/nested.trd": {
+          "openAndShowMs": 61.39,
+          "languageId": "tuflow"
+        },
+        "settings.qcf": {
+          "openAndShowMs": 78.29,
+          "languageId": "tuflow"
+        }
+      },
+      "rootWarmOpen": {
+        "samples": 30,
+        "p50Ms": 64.51,
+        "p95Ms": 73.25,
+        "maxMs": 90.42,
+        "cpuUserMs": 344,
+        "cpuSystemMs": 62,
+        "rssBeforeBytes": 240758784,
+        "rssAfterBytes": 244678656
+      },
+      "completion": {
+        "samples": 30,
+        "p50Ms": 3.48,
+        "p95Ms": 5.45,
+        "maxMs": 5.84,
+        "cpuUserMs": 125,
+        "cpuSystemMs": 16,
+        "rssBeforeBytes": 244867072,
+        "rssAfterBytes": 257007616
+      },
+      "hover": {
+        "samples": 30,
+        "p50Ms": 0.96,
+        "p95Ms": 1.42,
+        "maxMs": 1.55,
+        "cpuUserMs": 16,
+        "cpuSystemMs": 16,
+        "rssBeforeBytes": 257019904,
+        "rssAfterBytes": 257077248
+      },
+      "largeFile": {
+        "lineCount": 10002,
+        "bytes": 438947,
+        "openAndShowMs": 65.45
+      },
+      "largeFileCompletion": {
+        "samples": 30,
+        "p50Ms": 10.97,
+        "p95Ms": 14.12,
+        "maxMs": 14.18,
+        "cpuUserMs": 62,
+        "cpuSystemMs": 0,
+        "rssBeforeBytes": 258842624,
+        "rssAfterBytes": 264085504
+      }
+    }
+  },
+  "unc": {
+    "baseline": {
+      "rootFirstOpen": {
+        "openAndShowMs": 208.91,
+        "alreadyOpenBeforeMeasurement": false
+      },
+      "documentOpen": {
+        "model.tcf": {
+          "openAndShowMs": 103.64,
+          "languageId": "tuflow"
+        },
+        "geometry.tgc": {
+          "openAndShowMs": 219.52,
+          "languageId": "tuflow"
+        },
+        "boundary.tbc": {
+          "openAndShowMs": 105.43,
+          "languageId": "tuflow"
+        },
+        "estuary.ecf": {
+          "openAndShowMs": 101.49,
+          "languageId": "tuflow"
+        },
+        "events.tef": {
+          "openAndShowMs": 102.77,
+          "languageId": "tuflow"
+        },
+        "include/nested.trd": {
+          "openAndShowMs": 83.57,
+          "languageId": "tuflow"
+        },
+        "settings.qcf": {
+          "openAndShowMs": 123.77,
+          "languageId": "tuflow"
+        }
+      },
+      "rootWarmOpen": {
+        "samples": 30,
+        "p50Ms": 54.7,
+        "p95Ms": 72.77,
+        "maxMs": 90.43,
+        "cpuUserMs": 157,
+        "cpuSystemMs": 156,
+        "rssBeforeBytes": 243326976,
+        "rssAfterBytes": 245395456
+      },
+      "completion": {
+        "samples": 30,
+        "p50Ms": 2.35,
+        "p95Ms": 3.67,
+        "maxMs": 4.41,
+        "cpuUserMs": 93,
+        "cpuSystemMs": 16,
+        "rssBeforeBytes": 245477376,
+        "rssAfterBytes": 256958464
+      },
+      "hover": {
+        "samples": 30,
+        "p50Ms": 0.87,
+        "p95Ms": 1.2,
+        "maxMs": 2.95,
+        "cpuUserMs": 16,
+        "cpuSystemMs": 0,
+        "rssBeforeBytes": 256958464,
+        "rssAfterBytes": 256987136
+      },
+      "largeFile": {
+        "lineCount": 10002,
+        "bytes": 438947,
+        "openAndShowMs": 68.21
+      },
+      "largeFileCompletion": {
+        "samples": 30,
+        "p50Ms": 1.89,
+        "p95Ms": 2.55,
+        "maxMs": 2.57,
+        "cpuUserMs": 46,
+        "cpuSystemMs": 15,
+        "rssBeforeBytes": 255799296,
+        "rssAfterBytes": 265220096
+      }
+    },
+    "integrated": {
+      "rootFirstOpen": {
+        "openAndShowMs": 167.71,
+        "alreadyOpenBeforeMeasurement": false
+      },
+      "documentOpen": {
+        "model.tcf": {
+          "openAndShowMs": 52.72,
+          "languageId": "tuflow"
+        },
+        "geometry.tgc": {
+          "openAndShowMs": 2432.69,
+          "languageId": "tuflow"
+        },
+        "boundary.tbc": {
+          "openAndShowMs": 145.82,
+          "languageId": "tuflow"
+        },
+        "estuary.ecf": {
+          "openAndShowMs": 100.74,
+          "languageId": "tuflow"
+        },
+        "events.tef": {
+          "openAndShowMs": 77.51,
+          "languageId": "tuflow"
+        },
+        "include/nested.trd": {
+          "openAndShowMs": 69.6,
+          "languageId": "tuflow"
+        },
+        "settings.qcf": {
+          "openAndShowMs": 79.42,
+          "languageId": "tuflow"
+        }
+      },
+      "rootWarmOpen": {
+        "samples": 30,
+        "p50Ms": 54.94,
+        "p95Ms": 80.85,
+        "maxMs": 86.6,
+        "cpuUserMs": 172,
+        "cpuSystemMs": 109,
+        "rssBeforeBytes": 246075392,
+        "rssAfterBytes": 248401920
+      },
+      "completion": {
+        "samples": 30,
+        "p50Ms": 3.31,
+        "p95Ms": 4.26,
+        "maxMs": 4.88,
+        "cpuUserMs": 62,
+        "cpuSystemMs": 0,
+        "rssBeforeBytes": 248569856,
+        "rssAfterBytes": 258252800
+      },
+      "hover": {
+        "samples": 30,
+        "p50Ms": 1,
+        "p95Ms": 1.54,
+        "maxMs": 2.78,
+        "cpuUserMs": 16,
+        "cpuSystemMs": 16,
+        "rssBeforeBytes": 258256896,
+        "rssAfterBytes": 258629632
+      },
+      "largeFile": {
+        "lineCount": 10002,
+        "bytes": 438947,
+        "openAndShowMs": 61.98
+      },
+      "largeFileCompletion": {
+        "samples": 30,
+        "p50Ms": 9.85,
+        "p95Ms": 11.5,
+        "maxMs": 12.25,
+        "cpuUserMs": 46,
+        "cpuSystemMs": 0,
+        "rssBeforeBytes": 263557120,
+        "rssAfterBytes": 268705792
+      }
+    }
+  },
+  "mapped": {
+    "baseline": {
+      "rootFirstOpen": {
+        "openAndShowMs": 237.88,
+        "alreadyOpenBeforeMeasurement": false
+      },
+      "documentOpen": {
+        "model.tcf": {
+          "openAndShowMs": 91.05,
+          "languageId": "tuflow"
+        },
+        "geometry.tgc": {
+          "openAndShowMs": 242.2,
+          "languageId": "tuflow"
+        },
+        "boundary.tbc": {
+          "openAndShowMs": 150.2,
+          "languageId": "tuflow"
+        },
+        "estuary.ecf": {
+          "openAndShowMs": 89.91,
+          "languageId": "tuflow"
+        },
+        "events.tef": {
+          "openAndShowMs": 78.66,
+          "languageId": "tuflow"
+        },
+        "include/nested.trd": {
+          "openAndShowMs": 79.26,
+          "languageId": "tuflow"
+        },
+        "settings.qcf": {
+          "openAndShowMs": 127.05,
+          "languageId": "tuflow"
+        }
+      },
+      "rootWarmOpen": {
+        "samples": 30,
+        "p50Ms": 53.21,
+        "p95Ms": 65.39,
+        "maxMs": 81.41,
+        "cpuUserMs": 265,
+        "cpuSystemMs": 63,
+        "rssBeforeBytes": 240041984,
+        "rssAfterBytes": 242376704
+      },
+      "completion": {
+        "samples": 30,
+        "p50Ms": 2.75,
+        "p95Ms": 4.29,
+        "maxMs": 16.09,
+        "cpuUserMs": 125,
+        "cpuSystemMs": 31,
+        "rssBeforeBytes": 243027968,
+        "rssAfterBytes": 240730112
+      },
+      "hover": {
+        "samples": 30,
+        "p50Ms": 0.95,
+        "p95Ms": 2.85,
+        "maxMs": 2.94,
+        "cpuUserMs": 15,
+        "cpuSystemMs": 0,
+        "rssBeforeBytes": 240730112,
+        "rssAfterBytes": 241209344
+      },
+      "largeFile": {
+        "lineCount": 10002,
+        "bytes": 438947,
+        "openAndShowMs": 65.46
+      },
+      "largeFileCompletion": {
+        "samples": 30,
+        "p50Ms": 2.29,
+        "p95Ms": 2.94,
+        "maxMs": 3.69,
+        "cpuUserMs": 47,
+        "cpuSystemMs": 0,
+        "rssBeforeBytes": 248913920,
+        "rssAfterBytes": 256344064
+      }
+    },
+    "integrated": {
+      "rootFirstOpen": {
+        "openAndShowMs": 144.42,
+        "alreadyOpenBeforeMeasurement": false
+      },
+      "documentOpen": {
+        "model.tcf": {
+          "openAndShowMs": 59.03,
+          "languageId": "tuflow"
+        },
+        "geometry.tgc": {
+          "openAndShowMs": 172.1,
+          "languageId": "tuflow"
+        },
+        "boundary.tbc": {
+          "openAndShowMs": 170.69,
+          "languageId": "tuflow"
+        },
+        "estuary.ecf": {
+          "openAndShowMs": 157.47,
+          "languageId": "tuflow"
+        },
+        "events.tef": {
+          "openAndShowMs": 145.46,
+          "languageId": "tuflow"
+        },
+        "include/nested.trd": {
+          "openAndShowMs": 139.03,
+          "languageId": "tuflow"
+        },
+        "settings.qcf": {
+          "openAndShowMs": 69.95,
+          "languageId": "tuflow"
+        }
+      },
+      "rootWarmOpen": {
+        "samples": 30,
+        "p50Ms": 51.03,
+        "p95Ms": 64.16,
+        "maxMs": 65.31,
+        "cpuUserMs": 219,
+        "cpuSystemMs": 156,
+        "rssBeforeBytes": 242929664,
+        "rssAfterBytes": 248610816
+      },
+      "completion": {
+        "samples": 30,
+        "p50Ms": 3.52,
+        "p95Ms": 13.2,
+        "maxMs": 30.71,
+        "cpuUserMs": 109,
+        "cpuSystemMs": 0,
+        "rssBeforeBytes": 248791040,
+        "rssAfterBytes": 260145152
+      },
+      "hover": {
+        "samples": 30,
+        "p50Ms": 0.93,
+        "p95Ms": 1.19,
+        "maxMs": 1.26,
+        "cpuUserMs": 32,
+        "cpuSystemMs": 0,
+        "rssBeforeBytes": 260149248,
+        "rssAfterBytes": 260202496
+      },
+      "largeFile": {
+        "lineCount": 10002,
+        "bytes": 438947,
+        "openAndShowMs": 65.18
+      },
+      "largeFileCompletion": {
+        "samples": 30,
+        "p50Ms": 9.28,
+        "p95Ms": 13.75,
+        "maxMs": 14.86,
+        "cpuUserMs": 16,
+        "cpuSystemMs": 0,
+        "rssBeforeBytes": 260632576,
+        "rssAfterBytes": 265351168
+      }
+    }
+  }
+}

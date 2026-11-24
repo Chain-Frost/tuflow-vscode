@@ -1,0 +1,10 @@
+{
+  "valid": true,
+  "layers": [
+    "acceptance_points"
+  ],
+  "features": 1,
+  "missing_layer_absent": true,
+  "unchanged": true,
+  "sha256": "41d51cf4a6362956a6512e93713bc9a6417f8f0f34443d4291e0ddbfecc3e438"
+}

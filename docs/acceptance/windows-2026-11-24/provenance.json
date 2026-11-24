@@ -1,0 +1,44 @@
+{
+  "packages": {
+    "helper": {
+      "sourceSha": "b838b184f5e74c116bde70578f5d8bf2d30d2225",
+      "sha256": "e3cea314de3e6e2664c83b4357d283606a110ea2ab8c121ab5b4df6ed8cf0df3",
+      "bytes": 67820,
+      "version": "0.8.2",
+      "id": "lmillard79.tuflow-helper"
+    },
+    "validator": {
+      "sourceSha": "b8d5f9d42fe0a7f1f5e8d5337e8c9646ffdebfc5",
+      "sha256": "6dc8dfeaa3bff8eec733e13c85774fce7f23d4bd969a41041f0009e8ba2f0e09",
+      "bytes": 37296,
+      "version": "0.2.7",
+      "id": "Chain-Frost.tuflow-path-validator"
+    },
+    "baseline": {
+      "sourceSha": "4e2fffd9f924f45e510c784ce4a8b3c6d5335258",
+      "sha256": "0ac585ac644c3f99606c4a8d03b8e6b526a1888ce13de0a10126ef9e140e9c2b",
+      "bytes": 8816083,
+      "version": "0.8.2",
+      "id": "lmillard79.tuflow-helper"
+    },
+    "seito": {
+      "sourceSha": "39ef7abc3374a8888f93919201425684e9cf1a40",
+      "sha256": "897e6e85daafa331306af95fbb52e908f76b72152014cc9191cd79e7010be5c5",
+      "bytes": 133867,
+      "version": "2.3.3",
+      "id": "Fr43nk.seito-openfile"
+    },
+    "errorlens": {
+      "sourceSha": "43632f75bb42af5945fdcc7d4e3b001a89456ca7",
+      "sha256": "f579746cdf6923f006045d6888bc6c48ea292b6501b3a608e02b0b37d3e12a62",
+      "bytes": 63377,
+      "version": "3.30.0",
+      "id": "usernamehw.errorlens"
+    }
+  },
+  "windows": "Windows-10-10.0.19045-SP0",
+  "vscode": "1.147.0 / 8a14f0cc1b08d531eb83255ea3764ae22aa932b5 / x64",
+  "buildNode": "24.22.3",
+  "build": "WSL Docker node:24-bookworm; npm ci, package:vsix / package:vsix:ci",
+  "cache": "First editor open; no physical cache eviction"
+}

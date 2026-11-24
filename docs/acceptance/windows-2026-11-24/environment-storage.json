@@ -1,0 +1,13 @@
+{
+  "local": {
+    "drive": "E:",
+    "fileSystem": "NTFS",
+    "type": "Fixed"
+  },
+  "smb": {
+    "drive": "T:",
+    "remote": "\\\\SMB-SERVER\\TEST-SHARE",
+    "mappingStatus": "OK (0)"
+  },
+  "obtainedFrom": "Get-Volume and Get-SmbMapping, no elevation"
+}

@@ -1,0 +1,14 @@
+{
+  "startedAt": "2026-11-23T17:58:11.268Z",
+  "workspace": [
+    "\\\\SMB-SERVER\\TEST-SHARE\\CodexValidation\\issue9-nov24-b14834e8"
+  ],
+  "expected": "\\\\SMB-SERVER\\TEST-SHARE\\CodexValidation\\issue9-nov24-b14834e8\\watch\\child.trd",
+  "actual": "\\\\SMB-SERVER\\TEST-SHARE\\CodexValidation\\issue9-nov24-b14834e8\\watch\\root.tcf",
+  "pass": false,
+  "finishedAt": "2026-11-23T17:58:11.890Z",
+  "summary": {
+    "pass": false,
+    "error": null
+  }
+}

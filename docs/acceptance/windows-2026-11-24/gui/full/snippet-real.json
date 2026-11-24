@@ -1,0 +1,39 @@
+{
+  "time": "2026-11-23T17:52:58.404Z",
+  "document": "e:\\Github\\tuflow-issue9-20261124\\manual-fixtures\\probe.tef",
+  "language": "tuflow",
+  "text": "Define Event == design_event\r\n    End Time == 12\r\nEnd Define",
+  "selection": {
+    "start": {
+      "line": 0,
+      "character": 16
+    },
+    "end": {
+      "line": 0,
+      "character": 28
+    },
+    "active": {
+      "line": 0,
+      "character": 28
+    },
+    "anchor": {
+      "line": 0,
+      "character": 16
+    }
+  },
+  "diagnostics": [
+    {
+      "file": "e:\\github\\tuflow-issue9-20261124\\manual-fixtures\\formatting.tcf",
+      "items": []
+    },
+    {
+      "file": "e:\\github\\tuflow-issue9-20261124\\manual-fixtures\\probe.tgc",
+      "items": []
+    },
+    {
+      "file": "e:\\github\\tuflow-issue9-20261124\\manual-fixtures\\probe.tef",
+      "items": []
+    }
+  ],
+  "obsoleteHelperOpener": false
+}

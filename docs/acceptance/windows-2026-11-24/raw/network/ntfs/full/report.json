@@ -1,0 +1,217 @@
+{
+  "startedAt": "2026-11-23T17:39:20.118Z",
+  "workspace": [
+    "e:\\Github\\tuflow-issue9-20261124\\fixtures"
+  ],
+  "checks": [
+    {
+      "name": "nested-missing-and-shared-parents",
+      "status": "PASS",
+      "ms": 1,
+      "diagnostics": {
+        "root.tcf": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV002",
+            "message": "Referenced file has 1 issue(s): child.trd",
+            "line": 0
+          }
+        ],
+        "second.tcf": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV002",
+            "message": "Referenced file has 1 issue(s): child.trd",
+            "line": 0
+          }
+        ],
+        "child.trd": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV001",
+            "message": "File not found: external.trd",
+            "line": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "external-create",
+      "status": "PASS",
+      "ms": 171,
+      "diagnostics": {
+        "root.tcf": [],
+        "second.tcf": [],
+        "child.trd": []
+      }
+    },
+    {
+      "name": "external-modify-child",
+      "status": "PASS",
+      "ms": 169,
+      "diagnostics": {
+        "root.tcf": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV002",
+            "message": "Referenced file has 1 issue(s): child.trd",
+            "line": 0
+          }
+        ],
+        "second.tcf": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV002",
+            "message": "Referenced file has 1 issue(s): child.trd",
+            "line": 0
+          }
+        ],
+        "child.trd": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV001",
+            "message": "File not found: absent.trd",
+            "line": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "external-restore-child",
+      "status": "PASS",
+      "ms": 169,
+      "diagnostics": {
+        "root.tcf": [],
+        "second.tcf": [],
+        "child.trd": []
+      }
+    },
+    {
+      "name": "external-rename-away",
+      "status": "PASS",
+      "ms": 174,
+      "diagnostics": {
+        "root.tcf": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV002",
+            "message": "Referenced file has 1 issue(s): child.trd",
+            "line": 0
+          }
+        ],
+        "second.tcf": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV002",
+            "message": "Referenced file has 1 issue(s): child.trd",
+            "line": 0
+          }
+        ],
+        "child.trd": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV001",
+            "message": "File not found: external.trd",
+            "line": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "external-rename-back",
+      "status": "PASS",
+      "ms": 173,
+      "diagnostics": {
+        "root.tcf": [],
+        "second.tcf": [],
+        "child.trd": []
+      }
+    },
+    {
+      "name": "external-delete",
+      "status": "PASS",
+      "ms": 189,
+      "diagnostics": {
+        "root.tcf": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV002",
+            "message": "Referenced file has 1 issue(s): child.trd",
+            "line": 0
+          }
+        ],
+        "second.tcf": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV002",
+            "message": "Referenced file has 1 issue(s): child.trd",
+            "line": 0
+          }
+        ],
+        "child.trd": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV001",
+            "message": "File not found: external.trd",
+            "line": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "manual-refresh-missing",
+      "status": "PASS",
+      "ms": 1,
+      "diagnostics": {
+        "root.tcf": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV002",
+            "message": "Referenced file has 1 issue(s): child.trd",
+            "line": 0
+          }
+        ],
+        "second.tcf": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV002",
+            "message": "Referenced file has 1 issue(s): child.trd",
+            "line": 0
+          }
+        ],
+        "child.trd": [
+          {
+            "source": "TUFLOW Path Validator",
+            "code": "TPV001",
+            "message": "File not found: external.trd",
+            "line": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "manual-refresh-recovered",
+      "status": "PASS",
+      "ms": 2,
+      "diagnostics": {
+        "root.tcf": [],
+        "second.tcf": [],
+        "child.trd": []
+      }
+    }
+  ],
+  "selectors": [
+    {
+      "code": "TPV001",
+      "source": "TUFLOW Path Validator",
+      "message": "File not found: missing_selector.gpkg",
+      "line": 2
+    }
+  ],
+  "finishedAt": "2026-11-23T17:39:30.622Z",
+  "summary": {
+    "checks": 9,
+    "failed": 0,
+    "error": null
+  }
+}
