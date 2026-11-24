@@ -1,7 +1,6 @@
 name: Extension CI
 
 on:
-  # Also verify feature-branch-targeted stacked PRs.
   pull_request:
   push:
     branches: [master]
@@ -42,6 +41,14 @@ jobs:
         run: npm run lint
       - name: Verify build/test failure propagation
         run: npm run test:fail-closed
+      - name: Verify acceptance fixture integrity and script syntax
+        if: matrix.vscode == '1.147.0'
+        run: |
+          node test/acceptance/check-fixtures.mjs
+          node --check test/acceptance/vscode-runner.cjs
+          node --check test/acceptance/run-host.cjs
+          node --check test/acceptance/assertions.cjs
+          node --check test/acceptance/compare-reports.mjs
       - name: Full test command (Linux)
         if: runner.os == 'Linux'
         run: xvfb-run -a npm test

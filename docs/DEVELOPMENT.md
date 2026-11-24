@@ -71,12 +71,13 @@ normal full test suite; a failure in detection or cleanup fails the job.
 
 ## CI
 
-The pull-request and `master` workflows run locked installation, compilation,
-linting, failure-propagation checks and tests on Ubuntu and Windows. **Both
-platforms** package and audit a VSIX and run an additional Extension Host smoke
-test against the installed package. Ubuntu retains its VSIX as a workflow
-artifact for optional manual installation. A broken compile,
-unit test, Extension Host test or package check fails the job.
+Three workflows cover the maintained upstream checks:
+
+- [Extension CI](../.github/workflows/ci.yml): Ubuntu and Windows × VS Code 1.74.3 and 1.147.0, locked install, audits, compile/lint, failure propagation, all unit tests (including catalogue, parser, grammar, language registration and acceptance assertions), real Extension Host tests, VSIX audit and installed-VSIX tests. Fixture integrity and script syntax run once per OS in the 1.147.0 jobs. Ubuntu retains its VSIX for manual installation.
+- [Grammar and installed coexistence](../.github/workflows/grammar.yml): actual TextMate/Oniguruma tokenisation, exact-source VSIX inspection and the three isolated installed Helper/Validator profiles on both OSs.
+- [Integrated host acceptance](../.github/workflows/acceptance-host.yml): four installed-extension profiles per OS, using source-built Helper and a pinned Validator. See the [acceptance runbook](acceptance/README.md).
+
+The first two workflows run on PRs and pushes to `master`; integrated host acceptance runs on PRs and by manual dispatch. Failed assertions fail CI. Historical workstation-specific drivers and their Python workflow are retained in the fork, not required for upstream CI.
 
 **Packaging is not publishing.** This workflow does not push tags, merge code,
 release artifacts, or publish to the VS Code Marketplace or Open VSX.

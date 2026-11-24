@@ -32,4 +32,4 @@ Run npm ci, then npm run compile, followed by:
 
     node --test out/test/commandCatalogue.test.js
 
-The tests compile from src/test/commandCatalogue.test.ts. The common unit-test runner and the command-catalogue CI workflow execute the compiled tests.
+The tests compile from src/test/commandCatalogue.test.ts. The common unit-test runner executes the compiled tests in Extension CI.
