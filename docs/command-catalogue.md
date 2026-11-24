@@ -12,6 +12,8 @@ This is an **editor-only** metadata source, not a control-file validator. Filesy
 
 TCF and TGC use source-audited metadata from [issue #4](tcf-tgc-command-audit.md); TBC, ECF, TRFC and QCF use source-audited metadata from [issue #5](command-audit-issue-5.md). Unverified legacy descriptions and examples are **not necessarily correct**; unaudited entries retain a needs-audit status. Audited entries are checked against the 2026.3 appendices, with individually verified fields listed under verifiedFields.
 
+The editor's exact-name hover may provide documentation in contexts without a scoped catalogue (for TEF, inherited TCF/ECF commands only); this is not including-file context resolution or a global completion fallback.
+
 ## Catalogue maintenance guide
 
 1. Consult the [official TUFLOW Classic/HPC manual](https://docs.tuflow.com/classic-hpc/manual/2026.3/) at each entry's provenance URL. Confirm its exact name, allowed file contexts, full left-hand syntax, suffixes and right-hand parameters. Some inherited records appear approximate or in the wrong control-file category.

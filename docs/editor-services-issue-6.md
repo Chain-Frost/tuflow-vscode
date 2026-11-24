@@ -10,7 +10,8 @@ Editor assistance uses the typed registry and pure single-line parser from #3 an
 | Right of `==`, no value | Documented literal choices, or a path placeholder **only** for source-backed file/GIS inputs | None | Only on an explicitly structured, audited multi-argument value |
 | Right of `==`, partial value | Replace the whole editable value span with matching documented choices; no universal keywords | None | Explicit comma- or vertical-bar-delimited arguments only; active parameter follows the separator |
 | Inside `!` or `#` comment | None | None | None |
-| Unknown syntax / syntax-only file (`.tef`, `.toc`, etc.) | None | None | None |
+| Unknown command syntax | No catalogue match | None | None |
+| File without a scoped command catalogue (`.tef`, `.trd`, `.toc`, etc.) | No global command completions | Exact-name documentation when metadata matches; TEF restricted to inherited TCF/ECF definitions | None |
 
 Value completions do not promise exhaustive TUFLOW support or constrain numerical ranges. The `TGC` option for `Base Cell Size` is a documented literal alternative to a number, not an indication that other inputs are invalid. When no reliable argument count exists, signature help is omitted.
 

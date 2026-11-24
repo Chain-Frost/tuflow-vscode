@@ -116,7 +116,7 @@ TUFLOW Helper uses VS Code language ID `tuflow` (formerly `tuflow-helper`), shar
 
 TUFLOW Helper no longer contributes `tuflow-helper.openFileUnderCursor` or its menu action; use seito-openfile for navigation. The existing `tuflow-helper.openDocumentation` command and its context-menu entry remain available.
 
-See [the co-installation guide](docs/coexistence.md) and the [Windows GUI issue #1 acceptance report](https://github.com/Chain-Frost/tuflow-vscode/pull/12#issuecomment-7090660493). The command editor now uses the typed, audited catalogue and shared parser; unsupported contexts do not fall back to unrelated commands. See [editor services](docs/editor-services-issue-6.md).
+See [the co-installation guide](docs/coexistence.md) and the [Windows GUI issue #1 acceptance report](https://github.com/Chain-Frost/tuflow-vscode/pull/12#issuecomment-7090660493). The command editor now uses the typed, audited catalogue and shared parser; unsupported contexts do not fall back to unrelated command completions. Exact-name documentation hover can still be available in include and event files. See [editor services](docs/editor-services-issue-6.md).
 
 ## Known Issues
 

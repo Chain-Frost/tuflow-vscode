@@ -32,9 +32,9 @@ These names are **not** classified as invalid syntax; the extension simply stops
 | --- | --- | --- |
 | Audited by this issue | `.tbc`, `.ecf`, `.trfc`, `.qcf` | Context-specific, source-linked command suggestions |
 | Separate [TCF/TGC audit](tcf-tgc-command-audit.md) | `.tcf`, `.tgc` | Context-specific audited entries; not exhaustive |
-| Syntax-only (no command catalogue) | `.tef`, `.tmf`, `.ebc`, `.egf`, `.rdf`, `.trd`, `.erd`, `.elf`, `.tlf`, `.trfcf`, `.toc`, `.fvc`, `.fvm`, `.fvsed`, `.fvptm`, `.mcf`, `.fvwq` | Syntax highlighting only; **no global/unrelated command completions** |
+| Syntax-only (no command catalogue) | `.tef`, `.tmf`, `.ebc`, `.egf`, `.rdf`, `.trd`, `.erd`, `.elf`, `.tlf`, `.trfcf`, `.toc`, `.fvc`, `.fvm`, `.fvsed`, `.fvptm`, `.mcf`, `.fvwq` | Syntax highlighting and applicable snippets; **no global/unrelated command completions**. Exact-name hover may still provide documentation |
 
-Being syntax-only is not evidence that a file has no valid commands. Any expansion requires a separate official-documentation audit and tests.
+Having no scoped command catalogue is not evidence that a file has no valid commands. For hover, TEF permits inherited TCF/ECF matches; other unscoped contexts can show exact-name help without inferring the including-file context. Any expansion requires a separate official-documentation audit and tests.
 
 ## Maintainer notes
 
